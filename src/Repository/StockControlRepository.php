@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\StackControl;
+use App\Entity\StockControl;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method StackControl|null find($id, $lockMode = null, $lockVersion = null)
- * @method StackControl|null findOneBy(array $criteria, array $orderBy = null)
- * @method StackControl[]    findAll()
- * @method StackControl[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method StockControl|null find($id, $lockMode = null, $lockVersion = null)
+ * @method StockControl|null findOneBy(array $criteria, array $orderBy = null)
+ * @method StockControl[]    findAll()
+ * @method StockControl[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class StackControlRepository extends ServiceEntityRepository
+class StockControlRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, StackControl::class);
+        parent::__construct($registry, StockControl::class);
     }
 
     // /**
-    //  * @return StackControl[] Returns an array of StackControl objects
+    //  * @return StockControl[] Returns an array of StockControl objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class StackControlRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?StackControl
+    public function findOneBySomeField($value): ?StockControl
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.exampleField = :val')

@@ -34,9 +34,9 @@ class InCommunity
     private $role = [];
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\StackControl", mappedBy="id_maker")
+     * @ORM\OneToMany(targetEntity="App\Entity\StockControl", mappedBy="id_maker")
      */
-    private $stackControls;
+    private $stockControls;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CollectControl", mappedBy="id_maker")
@@ -45,7 +45,7 @@ class InCommunity
 
     public function __construct()
     {
-        $this->stackControls = new ArrayCollection();
+        $this->stockControls = new ArrayCollection();
         $this->collectControls = new ArrayCollection();
     }
 
@@ -91,30 +91,30 @@ class InCommunity
     }
 
     /**
-     * @return Collection|StackControl[]
+     * @return Collection|StockControl[]
      */
-    public function getStackControls(): Collection
+    public function getStockControls(): Collection
     {
-        return $this->stackControls;
+        return $this->stockControls;
     }
 
-    public function addStackControl(StackControl $stackControl): self
+    public function addStockControl(StockControl $stockControl): self
     {
-        if (!$this->stackControls->contains($stackControl)) {
-            $this->stackControls[] = $stackControl;
-            $stackControl->setIdMaker($this);
+        if (!$this->stockControls->contains($stockControl)) {
+            $this->stockControls[] = $stockControl;
+            $stockControl->setIdMaker($this);
         }
 
         return $this;
     }
 
-    public function removeStackControl(StackControl $stackControl): self
+    public function removeStockControl(StockControl $stockControl): self
     {
-        if ($this->stackControls->contains($stackControl)) {
-            $this->stackControls->removeElement($stackControl);
+        if ($this->stockControls->contains($stockControl)) {
+            $this->stockControls->removeElement($stockControl);
             // set the owning side to null (unless already changed)
-            if ($stackControl->getIdMaker() === $this) {
-                $stackControl->setIdMaker(null);
+            if ($stockControl->getIdMaker() === $this) {
+                $stockControl->setIdMaker(null);
             }
         }
 

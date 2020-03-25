@@ -34,9 +34,9 @@ class Pieces
     private $download_url;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\StackControl", mappedBy="id_piece")
+     * @ORM\OneToMany(targetEntity="App\Entity\StockControl", mappedBy="id_piece")
      */
-    private $stackControls;
+    private $stockControls;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\CollectControl", mappedBy="id_piece")
@@ -45,7 +45,7 @@ class Pieces
 
     public function __construct()
     {
-        $this->stackControls = new ArrayCollection();
+        $this->stockControls = new ArrayCollection();
         $this->collectControls = new ArrayCollection();
     }
 
@@ -91,30 +91,30 @@ class Pieces
     }
 
     /**
-     * @return Collection|StackControl[]
+     * @return Collection|StockControl[]
      */
-    public function getStackControls(): Collection
+    public function getStockControls(): Collection
     {
-        return $this->stackControls;
+        return $this->stockControls;
     }
 
-    public function addStackControl(StackControl $stackControl): self
+    public function addStockControl(StockControl $stockControl): self
     {
-        if (!$this->stackControls->contains($stackControl)) {
-            $this->stackControls[] = $stackControl;
-            $stackControl->setIdPiece($this);
+        if (!$this->stockControls->contains($stockControl)) {
+            $this->stockControls[] = $stockControl;
+            $stockControl->setIdPiece($this);
         }
 
         return $this;
     }
 
-    public function removeStackControl(StackControl $stackControl): self
+    public function removeStockControl(StockControl $stockControl): self
     {
-        if ($this->stackControls->contains($stackControl)) {
-            $this->stackControls->removeElement($stackControl);
+        if ($this->stockControls->contains($stockControl)) {
+            $this->stockControls->removeElement($stockControl);
             // set the owning side to null (unless already changed)
-            if ($stackControl->getIdPiece() === $this) {
-                $stackControl->setIdPiece(null);
+            if ($stockControl->getIdPiece() === $this) {
+                $stockControl->setIdPiece(null);
             }
         }
 

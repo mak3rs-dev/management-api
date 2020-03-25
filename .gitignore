@@ -17,3 +17,6 @@
 
 ## PhpStorm ##
 /.idea
+
+## .env ##
+.env
