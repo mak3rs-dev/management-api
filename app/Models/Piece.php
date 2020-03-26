@@ -9,7 +9,7 @@ class Piece extends Model
     protected $table = 'pieces';
 
     protected $fillable = [
-        'uuid', 'community_id', 'picture', 'download_url'
+        'uuid', 'community_id', 'name', 'picture', 'download_url', 'description'
     ];
 
     public function Community() {

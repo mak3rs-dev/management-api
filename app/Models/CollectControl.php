@@ -9,15 +9,15 @@ class CollectControl extends Model
     protected $table = 'collect_control';
 
     protected $fillable = [
-        'id', 'in_community_id', 'piece_id', 'status_id', 'units'
+        'id', 'in_community_id', 'community_id', 'status_id', 'address', 'province', 'state', 'country', 'cp'
     ];
 
     public function InCommunity() {
         return $this->belongsTo(InCommunity::class, 'in_community_id');
     }
 
-    public function Piece() {
-        return $this->belongsTo(Piece::class, 'piece_id');
+    public function Community() {
+        return $this->belongsTo(Community::class, 'community_id');
     }
 
     public function Status() {

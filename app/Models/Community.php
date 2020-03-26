@@ -9,6 +9,6 @@ class Community extends Model
     protected $table = 'community';
 
     protected $fillable = [
-        'uuid', 'alias', 'name'
+        'uuid', 'alias', 'name', 'description'
     ];
 }
