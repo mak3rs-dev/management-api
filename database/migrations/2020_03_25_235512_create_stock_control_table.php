@@ -17,8 +17,8 @@ class CreateStockControlTable extends Migration
 
         Schema::create('stock_control', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('in_community_id')->constrained();
-            $table->foreignId('piece_id')->constrained();
+            $table->foreignId('in_community_id')->references('id')->on('in_community');
+            $table->foreignId('piece_id')->references('id')->on('pieces');
             $table->integer('units_manufactured');
             $table->timestamps();
         });

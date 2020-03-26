@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePiecesTable extends Migration
+class CreateCollectPieces extends Migration
 {
     /**
      * Run the migrations.
@@ -15,13 +15,11 @@ class CreatePiecesTable extends Migration
     {
         Schema::disableForeignKeyConstraints();
 
-        Schema::create('pieces', function (Blueprint $table) {
+        Schema::create('collect_pieces', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
-            $table->foreignId('community_id')->references('id')->on('community');
-            $table->longText('picture')->nullable();
-            $table->longText('download_url')->nullable();
-            $table->longText('description')->nullable();
+            $table->foreignId('collect_control_id')->references('id')->on('collect_control');
+            $table->foreignId('piece_id')->references('id')->on('pieces');
+            $table->integer('units');
             $table->timestamps();
         });
 
@@ -35,6 +33,6 @@ class CreatePiecesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pieces');
+        Schema::dropIfExists('collect_pieces');
     }
 }

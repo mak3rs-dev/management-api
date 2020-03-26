@@ -17,9 +17,9 @@ class CreateIncommunityTable extends Migration
 
         Schema::create('in_community', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('community_id')->constrained();
-            $table->foreignId('role_id')->constrained();
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('community_id')->references('id')->on('community');
+            $table->foreignId('role_id')->references('id')->on('roles');
             $table->timestamps();
         });
 

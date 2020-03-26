@@ -18,6 +18,7 @@ class CreateCommunityTable extends Migration
             $table->uuid('uuid');
             $table->string('alias', 60);
             $table->string('name', 120);
+            $table->longText('description')->nullable();
             $table->timestamps();
         });
     }
