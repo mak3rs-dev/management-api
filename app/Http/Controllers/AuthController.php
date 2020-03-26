@@ -24,6 +24,23 @@ class AuthController extends Controller
     }
 
     /**
+     * @OA\POST(
+     *     path="/login",
+     *     tags={"Auth"},
+     *     description="Logueo",
+     *     @OA\RequestBody( required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="email", description="", type="string"),
+     *         @OA\Property(property="password", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description=""),
+     *     @OA\Response(response=401, description="Unauthorized; Email not verified")
+     * )
+     *
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -52,13 +69,33 @@ class AuthController extends Controller
 
         // We check that the user has validated their email
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
-            return response()->json(['error' => 'Email not verified'], 401);
+            return response()->json(['error' => 'Email not verified'], 200);
         }
 
         return $this->respondWithToken($token);
     }
 
     /**
+     * @OA\POST(
+     *     path="/register",
+     *     tags={"Auth"},
+     *     description="Registro",
+     *     @OA\RequestBody(required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="email", description="",  type="string"),
+     *         @OA\Property(property="password", description="", type="string"),
+     *         @OA\Property(property="password_confirm", description="", type="string"),
+     *         @OA\Property(property="phone", description="", type="string"),
+     *         @OA\Property(property="name", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response( response=200, description="Registrado correctamente"),
+     *     @OA\Response( response=500, description="El usuario no se ha podido registrar correctamente")
+     * )
+     *
      * Set credentials user.
      *
      * @return \Illuminate\Http\JsonResponse
