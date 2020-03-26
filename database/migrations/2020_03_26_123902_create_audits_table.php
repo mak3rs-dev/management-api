@@ -13,6 +13,8 @@ class CreateAuditsTable extends Migration
      */
     public function up()
     {
+        Schema::defaultStringLength(191);
+
         Schema::create('audits', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('user_type')->nullable();
@@ -26,6 +28,8 @@ class CreateAuditsTable extends Migration
             $table->string('user_agent', 1023)->nullable();
             $table->string('tags')->nullable();
             $table->timestamps();
+
+            $table->index(['user_id', 'user_type']);
         });
     }
 
