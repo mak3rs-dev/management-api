@@ -22,7 +22,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'verifiedHash']]);
+        $this->middleware('jwt.auth', ['except' => ['login', 'register', 'verifiedHash']]);
     }
 
     /**

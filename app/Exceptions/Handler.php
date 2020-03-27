@@ -2,9 +2,7 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Throwable;
 
@@ -61,29 +59,6 @@ class Handler extends ExceptionHandler
     }
 
     /**
-     * Prepare a JSON response for the given exception.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function prepareJsonResponse($request, Throwable $e)
-    {
-        $e = parent::prepareException($e);
-
-        if ($e instanceof AuthenticationException) {
-            self::unauthenticated($request, $e);
-        }
-
-        return new JsonResponse(
-            self::convertExceptionToArray($e),
-            $this->isHttpException($e) ? $e->getStatusCode() : 500,
-            $this->isHttpException($e) ? $e->getHeaders() : [],
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-        );
-    }
-
-    /**
      * @override Handler::class
      * @param Throwable $e
      * @return array
@@ -101,16 +76,5 @@ class Handler extends ExceptionHandler
         ] : [
             'errors' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
         ];
-    }
-
-    /**
-     * @override Handler::class
-     * @param \Illuminate\Http\Request $request
-     * @param AuthenticationException $exception
-     * @return string|\Symfony\Component\HttpFoundation\Response
-     */
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return redirect()->guest(route('not-login'));
     }
 }
