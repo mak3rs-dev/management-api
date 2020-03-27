@@ -33,7 +33,7 @@ class PiecesController extends Controller
      *       ),
      *     ),
      *     ),
-     *     @OA\Response(response=200, description="List Communities"),
+     *     @OA\Response(response=200, description="List Pieces"),
      * )
      *
      * @param Request $request

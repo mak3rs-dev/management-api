@@ -370,7 +370,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "List Communities"
+                        "description": "List Pieces"
                     }
                 }
             }
