@@ -13,7 +13,7 @@
         "version": "1.0.0"
     },
     "paths": {
-        "/login": {
+        "/auth/login": {
             "post": {
                 "tags": [
                     "Auth"
@@ -50,7 +50,7 @@
                 }
             }
         },
-        "/register": {
+        "/auth/register": {
             "post": {
                 "tags": [
                     "Auth"
@@ -99,7 +99,7 @@
                 }
             }
         },
-        "/verified-hash": {
+        "/auth/verified-hash": {
             "get": {
                 "tags": [
                     "Auth"
@@ -125,6 +125,82 @@
                 "responses": {
                     "200": {
                         "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Obtener información de mi",
+                "operationId": "App\\Http\\Controllers\\AuthController::me",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Desloguear mi usuario",
+                "operationId": "App\\Http\\Controllers\\AuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "Desconectado correctamente"
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Actualizar mi token",
+                "operationId": "App\\Http\\Controllers\\AuthController::refresh",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/all": {
+            "get": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Obtenemos todas las comunidades",
+                "operationId": "App\\Http\\Controllers\\CommunityController::communities",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List Communities"
                     }
                 }
             }

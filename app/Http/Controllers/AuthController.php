@@ -27,7 +27,7 @@ class AuthController extends Controller
 
     /**
      * @OA\POST(
-     *     path="/login",
+     *     path="/auth/login",
      *     tags={"Auth"},
      *     description="Logueo",
      *     @OA\RequestBody( required=true,
@@ -45,6 +45,7 @@ class AuthController extends Controller
      *
      * Get a JWT via given credentials.
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
@@ -77,9 +78,9 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-     /**
+    /**
      * @OA\POST(
-     *     path="/register",
+     *     path="/auth/register",
      *     tags={"Auth"},
      *     description="Registro",
      *     @OA\RequestBody(required=true,
@@ -90,7 +91,7 @@ class AuthController extends Controller
      *         @OA\Property(property="password", description="", type="string"),
      *         @OA\Property(property="password_confirm", description="", type="string"),
      *         @OA\Property(property="phone", description="", type="string"),
-     *         @OA\Property(property="name", description="", type="string"),
+     *         @OA\Property(property="name", description="", type="string")
      *       ),
      *     ),
      *     ),
@@ -98,9 +99,9 @@ class AuthController extends Controller
      *     @OA\Response( response=500, description="El usuario no se ha podido registrar correctamente")
      * )
      *
-     * Set credentials user.
-     *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function register(Request $request)
     {
@@ -155,7 +156,7 @@ class AuthController extends Controller
 
     /**
      *@OA\GET(
-     *     path="/verified-hash",
+     *     path="/auth/verified-hash",
      *     tags={"Auth"},
      *     description="Validación del hash",
      *     @OA\RequestBody( required=true,
@@ -187,6 +188,13 @@ class AuthController extends Controller
     }
 
     /**
+     *@OA\GET(
+     *     path="/auth/me",
+     *     tags={"Auth"},
+     *     description="Obtener información de mi",
+     *     @OA\Response(response=200, description=""),
+     * )
+     *
      * Get the authenticated User.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -197,6 +205,13 @@ class AuthController extends Controller
     }
 
     /**
+     * @OA\GET(
+     *     path="/auth/logout",
+     *     tags={"Auth"},
+     *     description="Desloguear mi usuario",
+     *     @OA\Response(response=200, description="Desconectado correctamente"),
+     * )
+     *
      * Log the user out (Invalidate the token).
      *
      * @return \Illuminate\Http\JsonResponse
@@ -205,10 +220,17 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Desconectado correctamente']);
     }
 
     /**
+     * *@OA\GET(
+     *     path="/auth/refresh",
+     *     tags={"Auth"},
+     *     description="Actualizar mi token",
+     *     @OA\Response(response=200, description=""),
+     * )
+     *
      * Refresh a token.
      *
      * @return \Illuminate\Http\JsonResponse
