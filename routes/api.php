@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', 'AuthController@login');
+Route::post('login', 'AuthController@login')->name('login');
 Route::post('register', 'AuthController@register');
+Route::get('verified-hash/{hash}', 'AuthController@verifiedHash')->name('verified_hash');

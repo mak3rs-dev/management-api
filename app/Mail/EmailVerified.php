@@ -11,14 +11,16 @@ class EmailVerified extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private $url;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($_url)
     {
-        //
+        $this->url = $_url;
     }
 
     /**
@@ -28,6 +30,8 @@ class EmailVerified extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this->subject('Verificación Email')->view('mail.emailVerified')->with([
+          'url' => $this->url
+        ]);
     }
 }

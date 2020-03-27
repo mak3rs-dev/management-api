@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EmailVerified;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -20,7 +22,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'verifiedHash']]);
     }
 
     /**
@@ -75,7 +77,7 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
-    /**
+     /**
      * @OA\POST(
      *     path="/register",
      *     tags={"Auth"},
@@ -132,17 +134,56 @@ class AuthController extends Controller
         $user->password = bcrypt($request->password);
         $user->name = $request->name;
         $user->phone = $request->phone;
-        $user->email_verified_at = Carbon::now();
-        //$user->hash_email_verified = Str::uuid();
-        $user->role_id = Role::where('name', 'User')->first()->id;
-
-        //TODO: Enivar el correo de confirmación
+        $user->hash_email_verified = Str::uuid();
+        $user->role_id = Role::where('name', 'USER:COMMON')->first()->id;
 
         if (!$user->save()) {
-            return response()->json(['message' => 'El usuario no se ha podido registrar correctamente'], 500);
+            return response()->json(['errors' => 'El usuario no se ha podido registrar correctamente'], 500);
+        }
+
+        try {
+            Mail::to($user->email)->send(new EmailVerified(route('verified_hash', $user->hash_email_verified)));
+        } catch (\Exception $e) {
+            $user->delete();
+            return response()->json([
+                'errors' => 'El usuario no se ha podido registrar correctamente'
+            ], 500);
         }
 
         return response()->json(['message' => 'Registrado correctamente'], 200);
+    }
+
+    /**
+     *@OA\GET(
+     *     path="/verified-hash",
+     *     tags={"Auth"},
+     *     description="Validación del hash",
+     *     @OA\RequestBody( required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="hash", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description=""),
+     * )
+     */
+    public function verifiedHash(Request $request) {
+        $user = User::where('hash_email_verified', $request->hash)->first();
+
+        if ($user == null) {
+            return redirect('/');
+        }
+
+        $user->hash_email_verified = null;
+        $user->email_verified_at = Carbon::now();
+
+        if (!$user->save()) {
+            return redirect('/');
+        }
+
+        return redirect()->to('https://management.mak3rs.tk/login?action=accountactivated');
     }
 
     /**

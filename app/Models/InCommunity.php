@@ -23,4 +23,9 @@ class InCommunity extends Model
     public function Community() {
         return $this->belongsTo(Community::class, 'community_id');
     }
+
+    public function hasRole(string $str) {
+        $role = $this->Role();
+        return $role != null ? false : $role->name == $str;
+    }
 }
