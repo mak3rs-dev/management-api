@@ -274,7 +274,7 @@
             }
         },
         "/communities/update": {
-            "post": {
+            "put": {
                 "tags": [
                     "Community"
                 ],
