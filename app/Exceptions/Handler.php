@@ -72,11 +72,11 @@ class Handler extends ExceptionHandler
         $e = parent::prepareException($e);
 
         if ($e instanceof AuthenticationException) {
-            $this->unauthenticated($request, $e);
+            self::unauthenticated($request, $e);
         }
 
         return new JsonResponse(
-            $this->convertExceptionToArray($e),
+            self::convertExceptionToArray($e),
             $this->isHttpException($e) ? $e->getStatusCode() : 500,
             $this->isHttpException($e) ? $e->getHeaders() : [],
             JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
