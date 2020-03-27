@@ -340,6 +340,40 @@
                     }
                 }
             }
+        },
+        "/pieces/all": {
+            "get": {
+                "tags": [
+                    "Pieces"
+                ],
+                "description": "Obtenemos todas las piezas",
+                "operationId": "App\\Http\\Controllers\\PiecesController::pieces",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "community": {
+                                        "description": "uuid",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List Communities"
+                    }
+                }
+            }
         }
     }
 }

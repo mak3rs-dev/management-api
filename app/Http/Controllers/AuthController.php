@@ -114,7 +114,7 @@ class AuthController extends Controller
             'password_confirm' => 'required|string|same:password'
         ], [
             'email.required' => 'El email es requerido',
-            'email.unique' => 'El email no introducido ya ha sido registrado',
+            'email.unique' => 'El email introducido ya ha sido registrado',
             'phone.required' => 'El teléfono es requerido',
             'name.required' => 'El nombre es requerido',
             'password.required' => 'La contraseña es requerida',
