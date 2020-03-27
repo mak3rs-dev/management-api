@@ -69,6 +69,8 @@ class Handler extends ExceptionHandler
      */
     protected function prepareJsonResponse($request, Throwable $e)
     {
+        $e = parent::prepareException($e);
+
         if ($e instanceof AuthenticationException) {
             $this->unauthenticated($request, $e);
         }
