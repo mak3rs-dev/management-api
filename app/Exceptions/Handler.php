@@ -51,30 +51,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if (env('APP_DEBUG') === true) {
-            return parent::render($request, $exception);
-        } else {
-            return parent::prepareJsonResponse($request, $exception);
-        }
-    }
-
-    /**
-     * @override Handler::class
-     * @param Throwable $e
-     * @return array
-     */
-    protected function convertExceptionToArray(Throwable $e)
-    {
-        return config('app.debug') ? [
-            'message' => $e->getMessage(),
-            'exception' => get_class($e),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => collect($e->getTrace())->map(function ($trace) {
-                return Arr::except($trace, ['args']);
-            })->all(),
-        ] : [
-            'errors' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
-        ];
+        return parent::render($request, $exception);
     }
 }
