@@ -15,13 +15,34 @@ class RoleSeeder extends Seeder
         DB::table('roles')->insert(
             [
             'uuid' => \Illuminate\Support\Str::uuid(),
-            'name' => 'User',
+            'name' => 'USER:ADMIN',
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
-            ],
+            ]
+        );
+
+        DB::table('roles')->insert(
             [
                 'uuid' => \Illuminate\Support\Str::uuid(),
-                'name' => 'Admin',
+                'name' => 'USER:COMMON',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
+            ]
+        );
+
+        DB::table('roles')->insert(
+            [
+                'uuid' => \Illuminate\Support\Str::uuid(),
+                'name' => 'MAKER:ADMIN',
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now(),
+            ]
+        );
+
+        DB::table('roles')->insert(
+            [
+                'uuid' => \Illuminate\Support\Str::uuid(),
+                'name' => 'MAKER:USER',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ]
