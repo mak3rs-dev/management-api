@@ -60,4 +60,39 @@ class CommunityController extends Controller
 
         return response()->json($communities);
     }
+
+    /**
+     * @OA\GET(
+     *     path="/communities/alias/{alias}",
+     *     tags={"Community"},
+     *     description="Obtenemos la comunidad por su alias",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="alias", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="Object Community or null"),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function commnunityAlias(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'alias' => 'required|string'
+        ], [
+            'alias.required' => 'El alias es requerido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        return Community::where('alias', $request->alias)->first();
+    }
 }
