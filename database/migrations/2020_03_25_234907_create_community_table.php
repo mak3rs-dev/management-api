@@ -15,7 +15,7 @@ class CreateCommunityTable extends Migration
     {
         Schema::create('community', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
+            $table->uuid('uuid')->index();
             $table->string('alias', 60)->unique();
             $table->string('name', 120);
             $table->longText('description')->nullable();

@@ -272,6 +272,44 @@
                     }
                 }
             }
+        },
+        "/communities/update": {
+            "post": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Creamos la comunidad",
+                "operationId": "App\\Http\\Controllers\\CommunityController::update",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Object Community or null"
+                    }
+                }
+            }
         }
     }
 }

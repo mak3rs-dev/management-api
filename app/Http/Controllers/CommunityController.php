@@ -149,4 +149,61 @@ class CommunityController extends Controller
             'message' => 'La comunidad se ha creado correctamente'
         ], 200);
     }
+
+    /**
+     * @OA\POST(
+     *     path="/communities/update",
+     *     tags={"Community"},
+     *     description="Creamos la comunidad",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="uuid", description="", type="string"),
+     *         @OA\Property(property="name", description="", type="string"),
+     *         @OA\Property(property="description", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="Object Community or null"),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'uuid' => 'required|string',
+            'name' => 'required|string',
+            'description' => 'nullable|string'
+        ], [
+            'alias.required' => 'El alias es requerido',
+            'name.required' => 'El nombre es requerido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Check community exists
+        $community = Community::where('uuid', $request->uuid)->first();
+
+        if ($community == null) {
+            return response()->json(['errors' => 'La comunidad no existe'], 404);
+        }
+
+        $community->name = $request->name;
+        $community->description = $request->description;
+
+        if (!$community->save()) {
+            return response()->json(['errors' => 'No se ha podido actualizar la comunidad'], 500);
+        }
+
+        return response()->json([
+            'community' => $community,
+            'message' => 'La comunidad se ha actualizado correctamente'
+        ], 200);
+    }
 }

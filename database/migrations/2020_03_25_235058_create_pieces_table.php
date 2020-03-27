@@ -17,7 +17,7 @@ class CreatePiecesTable extends Migration
 
         Schema::create('pieces', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
+            $table->uuid('uuid')->index();
             $table->foreignId('community_id')->references('id')->on('community');
             $table->longText('picture')->nullable();
             $table->longText('download_url')->nullable();
