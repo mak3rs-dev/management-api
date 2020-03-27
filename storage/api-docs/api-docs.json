@@ -211,7 +211,7 @@
                     "Community"
                 ],
                 "description": "Obtenemos la comunidad por su alias",
-                "operationId": "App\\Http\\Controllers\\CommunityController::commnunityAlias",
+                "operationId": "App\\Http\\Controllers\\CommunityController::alias",
                 "requestBody": {
                     "required": false,
                     "content": {
@@ -219,6 +219,44 @@
                             "schema": {
                                 "properties": {
                                     "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Object Community or null"
+                    }
+                }
+            }
+        },
+        "/communities/create": {
+            "post": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Creamos la comunidad",
+                "operationId": "App\\Http\\Controllers\\CommunityController::create",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "description": {
                                         "description": "",
                                         "type": "string"
                                     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Community;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CommunityController extends Controller
 {
@@ -15,7 +16,7 @@ class CommunityController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt.auth', ['except' => ['communities']]);
+        $this->middleware('jwt.auth', ['except' => ['communities', 'alias']]);
     }
 
     /**
@@ -80,7 +81,7 @@ class CommunityController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function commnunityAlias(Request $request) {
+    public function alias(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
             'alias' => 'required|string'
@@ -94,5 +95,58 @@ class CommunityController extends Controller
         }
 
         return Community::where('alias', $request->alias)->first();
+    }
+
+    /**
+     * @OA\POST(
+     *     path="/communities/create",
+     *     tags={"Community"},
+     *     description="Creamos la comunidad",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="alias", description="", type="string"),
+     *         @OA\Property(property="name", description="", type="string"),
+     *         @OA\Property(property="description", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="Object Community or null"),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function create(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'alias' => 'required|string',
+            'name' => 'required|string',
+            'description' => 'nullable|string'
+        ], [
+            'alias.required' => 'El alias es requerido',
+            'name.required' => 'El nombre es requerido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $community = new Community();
+        $community->uuid = Str::uuid();
+        $community->alias = $request->alias;
+        $community->name = $request->name;
+        $community->description = $request->description;
+
+        if (!$community->save()) {
+            return response()->json(['errors' => 'No se ha podido crear la comunidad'], 500);
+        }
+
+        return response()->json([
+            'community' => $community,
+            'message' => 'La comunidad se ha creado correctamente'
+        ], 200);
     }
 }
