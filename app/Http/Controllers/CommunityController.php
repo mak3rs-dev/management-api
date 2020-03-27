@@ -15,7 +15,7 @@ class CommunityController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('api');
+        $this->middleware('jwt.auth');
     }
 
     /**
