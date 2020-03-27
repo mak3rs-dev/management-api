@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
 use Throwable;
@@ -76,5 +77,16 @@ class Handler extends ExceptionHandler
         ] : [
             'errors' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
         ];
+    }
+
+    /**
+     * @override Handler::class
+     * @param \Illuminate\Http\Request $request
+     * @param AuthenticationException $exception
+     * @return string|\Symfony\Component\HttpFoundation\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return redirect()->guest(route('not-login'));
     }
 }
