@@ -5,4 +5,5 @@ Route::group(['prefix' => 'communities'], function () {
     Route::get('alias/{alias}', 'CommunityController@alias');
     Route::post('create', 'CommunityController@create');
     Route::put('update', 'CommunityController@update');
+    Route::delete('delete', 'CommunityController@delete');
 });
