@@ -151,7 +151,7 @@ class CommunityController extends Controller
     }
 
     /**
-     * @OA\POST(
+     * @OA\PUT(
      *     path="/communities/update",
      *     tags={"Community"},
      *     description="Creamos la comunidad",
