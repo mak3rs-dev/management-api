@@ -51,11 +51,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if (env('APP_DEBUG') === true) {
-            return parent::render($request, $exception);
-        } else {
-            return parent::prepareJsonResponse($request, $exception);
-        }
+        return parent::render($request, $exception);
     }
 
     /**
