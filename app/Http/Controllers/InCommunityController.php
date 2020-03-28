@@ -71,13 +71,11 @@ class InCommunityController extends Controller
 
         $ranking = StockControl::from('stock_control as sc')
             ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
-            ->select('ic.user_id', 'sc.units_manufactured as units_manufactured', 'ic.user.name as name')
+            ->join('users as u', 'u.id', '=', 'ic.user_id')
+            ->select('u.name as name', 'sc.units_manufactured as units_manufactured')
             ->where('ic.community_id', $community->id)
-            ->with('ic.user', function ($query) {
-                return $query->select('id', 'name');
-            })
             ->orderBy('sc.units_manufactured', 'desc')
-            ->get(['name', 'units_manufactured']);
+            ->get();
 
         return response()->json($ranking);
     }

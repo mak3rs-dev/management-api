@@ -18,3 +18,6 @@ include_once  'path/routeAuth.php';
 
 // Route Community
 include_once 'path/routeCommunity.php';
+
+// Route Pieces
+include_once 'path/routePieces.php';
