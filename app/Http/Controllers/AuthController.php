@@ -177,17 +177,9 @@ class AuthController extends Controller
 
     /**
      *@OA\GET(
-     *     path="/auth/verified-hash",
+     *     path="/auth/verified-hash/{hash}",
      *     tags={"Auth"},
      *     description="Validación del hash",
-     *     @OA\RequestBody( required=true,
-     *     @OA\MediaType(
-     *       mediaType="application/json",
-     *       @OA\Schema(
-     *         @OA\Property(property="hash", description="", type="string"),
-     *       ),
-     *     ),
-     *     ),
      *     @OA\Response(response=200, description=""),
      * )
      */
