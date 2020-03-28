@@ -123,17 +123,23 @@ class CommunityController extends Controller
     public function create(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
-            'alias' => 'required|string',
+            'alias' => 'required|string|unique:community',
             'name' => 'required|string',
             'description' => 'nullable|string'
         ], [
             'alias.required' => 'El alias es requerido',
+            'alias.unique' => 'El alias introducido ya está en uso',
             'name.required' => 'El nombre es requerido'
         ]);
 
         // We check that the validation is correct
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Check controller access
+        if (!auth()->user()->hasRole('USER:ADMIN')) {
+            return response()->json(['errors' => 'No tienes permisos para crear comunidades :('], 422);
         }
 
         $community = new Community();

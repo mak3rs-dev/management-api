@@ -94,6 +94,7 @@ class AuthController extends Controller
      *         @OA\Property(property="password_confirm", description="", type="string"),
      *         @OA\Property(property="phone", description="", type="string"),
      *         @OA\Property(property="name", description="", type="string"),
+     *         @OA\Property(property="alias", description="", type="string"),
      *         @OA\Property(property="address", description="Dirección", type="string"),
      *         @OA\Property(property="location", description="Localidad", type="string"),
      *         @OA\Property(property="province", description="Provincia", type="string"),
@@ -118,6 +119,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'phone' => 'required|string',
             'name' => 'required|string',
+            'alias' => 'nullable|string|unique:users',
             'password' => 'required|string|min:8|max:12',
             'password_confirm' => 'required|string|same:password',
             'address' => 'nullable|string',
@@ -132,6 +134,7 @@ class AuthController extends Controller
             'email.unique' => 'El email introducido ya ha sido registrado',
             'phone.required' => 'El teléfono es requerido',
             'name.required' => 'El nombre es requerido',
+            'alias.unique' => 'El alias introducido ya está en uso :(',
             'password.required' => 'La contraseña es requerida',
             'password.min' => 'La longitud mínima de la contraseña es de 8 caracteres',
             'password.max' => 'La longitud máxima de la contraseña es de 12 caracteres',
@@ -149,6 +152,7 @@ class AuthController extends Controller
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
         $user->name = $request->name;
+        $user->alias = $request->alias;
         $user->phone = $request->phone;
         $user->hash_email_verified = Str::uuid();
         $user->role_id = Role::where('name', 'USER:COMMON')->first()->id;

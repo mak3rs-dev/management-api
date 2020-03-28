@@ -12,7 +12,7 @@ class StockControl extends Model implements Auditable
     protected $table = 'stock_control';
 
     protected $fillable = [
-        'id', 'in_community_id', 'piece_id', 'units_manufactured'
+        'id', 'in_community_id', 'piece_id', 'units_manufactured', 'validated_at'
     ];
 
     public function InCommunity() {
