@@ -139,7 +139,7 @@ class AuthController extends Controller
             'password.min' => 'La longitud mínima de la contraseña es de 8 caracteres',
             'password.max' => 'La longitud máxima de la contraseña es de 12 caracteres',
             'password.same' => 'Las contraseñas no son iguales',
-            'cp.regex' => 'El código postal no es correcto, por favor elimine las letras'
+            'cp.regex' => 'El código postal no es correcto, porfavor elimine las letras'
         ]);
 
         // We check that the validation is correct
