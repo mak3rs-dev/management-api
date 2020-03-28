@@ -127,7 +127,7 @@ class AuthController extends Controller
             'province' => 'nullable|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
-            'cp' => 'nullable|string'
+            'cp' => 'nullable|string|regex:^[0-9]+$'
         ], [
             'email.required' => 'El email es requerido',
             'email.email' => 'El email no es válido',
@@ -138,7 +138,8 @@ class AuthController extends Controller
             'password.required' => 'La contraseña es requerida',
             'password.min' => 'La longitud mínima de la contraseña es de 8 caracteres',
             'password.max' => 'La longitud máxima de la contraseña es de 12 caracteres',
-            'password.same' => 'Las contraseñas no son iguales'
+            'password.same' => 'Las contraseñas no son iguales',
+            'cp.regex' => 'El código postal no es correcto, por favor elimine las letras'
         ]);
 
         // We check that the validation is correct
