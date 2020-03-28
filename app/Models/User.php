@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use OwenIt\Auditing\Contracts\Auditable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable implements JWTSubject, Auditable
 {
     use Notifiable;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'users';
 
