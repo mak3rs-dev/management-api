@@ -75,7 +75,7 @@ class InCommunityController extends Controller
             ->select('u.name as name', 'sc.units_manufactured as units_manufactured')
             ->where('ic.community_id', $community->id)
             ->orderBy('sc.units_manufactured', 'desc')
-            ->get();
+            ->paginate(15);
 
         return response()->json($ranking);
     }
