@@ -82,6 +82,30 @@
                                     "name": {
                                         "description": "",
                                         "type": "string"
+                                    },
+                                    "address": {
+                                        "description": "Dirección",
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "description": "Localidad",
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "description": "Provincia",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "Comunidad",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "País",
+                                        "type": "string"
+                                    },
+                                    "cp": {
+                                        "description": "Código Postal",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"

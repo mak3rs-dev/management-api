@@ -91,7 +91,13 @@ class AuthController extends Controller
      *         @OA\Property(property="password", description="", type="string"),
      *         @OA\Property(property="password_confirm", description="", type="string"),
      *         @OA\Property(property="phone", description="", type="string"),
-     *         @OA\Property(property="name", description="", type="string")
+     *         @OA\Property(property="name", description="", type="string"),
+     *         @OA\Property(property="address", description="Dirección", type="string"),
+     *         @OA\Property(property="location", description="Localidad", type="string"),
+     *         @OA\Property(property="province", description="Provincia", type="string"),
+     *         @OA\Property(property="state", description="Comunidad", type="string"),
+     *         @OA\Property(property="country", description="País", type="string"),
+     *         @OA\Property(property="cp", description="Código Postal", type="string")
      *       ),
      *     ),
      *     ),
@@ -111,7 +117,13 @@ class AuthController extends Controller
             'phone' => 'required|string',
             'name' => 'required|string',
             'password' => 'required|string|min:8|max:12',
-            'password_confirm' => 'required|string|same:password'
+            'password_confirm' => 'required|string|same:password',
+            'address' => 'nullable|string',
+            'location' => 'nullable|string',
+            'province' => 'nullable|string',
+            'state' => 'nullable|string',
+            'country' => 'nullable|string',
+            'cp' => 'nullable|string'
         ], [
             'email.required' => 'El email es requerido',
             'email.unique' => 'El email introducido ya ha sido registrado',
@@ -137,6 +149,12 @@ class AuthController extends Controller
         $user->phone = $request->phone;
         $user->hash_email_verified = Str::uuid();
         $user->role_id = Role::where('name', 'USER:COMMON')->first()->id;
+        $user->address = $request->address;
+        $user->location = $request->location;
+        $user->province = $request->province;
+        $user->state = $request->state;
+        $user->country = $request->country;
+        $user->cp = $request->cp;
 
         if (!$user->save()) {
             return response()->json(['errors' => 'El usuario no se ha podido registrar correctamente'], 500);
