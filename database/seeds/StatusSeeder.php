@@ -35,7 +35,7 @@ class StatusSeeder extends Seeder
             [
                 'uuid' => \Illuminate\Support\Str::uuid(),
                 'code' => 'RECEIVED',
-                'name' => 'Received',
+                'name' => 'Recibida',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
             ]
