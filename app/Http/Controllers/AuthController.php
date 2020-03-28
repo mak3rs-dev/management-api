@@ -56,6 +56,7 @@ class AuthController extends Controller
             'password' => 'required|string'
         ], [
             'email.required' => 'El email es requerido',
+            'email.email' => 'El email no es válido',
             'password.required' => 'La contraseña es requerida',
         ]);
 
@@ -127,6 +128,7 @@ class AuthController extends Controller
             'cp' => 'nullable|string'
         ], [
             'email.required' => 'El email es requerido',
+            'email.email' => 'El email no es válido',
             'email.unique' => 'El email introducido ya ha sido registrado',
             'phone.required' => 'El teléfono es requerido',
             'name.required' => 'El nombre es requerido',
