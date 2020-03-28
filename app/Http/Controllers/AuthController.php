@@ -197,7 +197,7 @@ class AuthController extends Controller
             return response()->json(['errors' => 'No se ha podido validar el email']);
         }
 
-        return redirect()->to('https://management.mak3rs.tk/login?action=accountactivated');
+        return redirect()->to('https://management.mak3rs.tk/login?msg=accountactivated');
     }
 
     /**
