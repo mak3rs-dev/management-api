@@ -72,6 +72,7 @@ class AuthController extends Controller
 
         // We check that the user has validated their email
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
+            auth()->logout();
             return response()->json(['error' => 'Email not verified'], 200);
         }
 
