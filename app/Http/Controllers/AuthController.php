@@ -195,14 +195,14 @@ class AuthController extends Controller
         $user = User::where('hash_email_verified', $request->hash)->first();
 
         if ($user == null) {
-            return redirect('/');
+            return redirect()->json(['errors' => 'El hash no es válido']);
         }
 
         $user->hash_email_verified = null;
         $user->email_verified_at = Carbon::now();
 
         if (!$user->save()) {
-            return redirect('/');
+            return redirect()->json(['errors' => 'No se ha podido validar el email']);
         }
 
         return redirect()->to('https://management.mak3rs.tk/login?action=accountactivated');
