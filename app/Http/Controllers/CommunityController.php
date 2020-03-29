@@ -78,15 +78,8 @@ class CommunityController extends Controller
      */
     public function alias($alias) {
         // Validate request
-        $validator = Validator::make($alias, [
-            'alias' => 'required|string',
-        ], [
-            'alias.required' => 'El alias es requerido'
-        ]);
-
-        // We check that the validation is correct
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if ($alias == null) {
+            return response()->json(['errors' => 'El alias es requerido'], 422);
         }
 
         $checkUser = auth()->check();
