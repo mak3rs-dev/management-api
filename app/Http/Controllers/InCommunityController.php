@@ -28,7 +28,7 @@ class InCommunityController extends Controller
      */
     public function ranking($alias) {
         // Validate request
-        if ($alias) {
+        if ($alias == null) {
             return response()->json(['errors' => 'El alias no puede ser nulo'], 422);
         }
 
