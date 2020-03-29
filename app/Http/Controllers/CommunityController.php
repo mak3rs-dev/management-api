@@ -89,7 +89,7 @@ class CommunityController extends Controller
             $select = ['uuid', 'alias', 'description', 'created_at'];
 
         } else {
-            $select = ['uuid', 'alias', 'description', 'created_at'];
+            $select = ['alias', 'description', 'created_at'];
         }
 
         $community = Community::select($select)->where('alias', $alias)->first();
