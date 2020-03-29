@@ -193,12 +193,14 @@ class UserController extends Controller
      */
     public function communities(Request $request) {
         // Check user join comminities
-        $inCommunity = InCommunity::select('uuid', 'name', 'alias', 'created_at', 'updated_at')
-            ->where('user_id', auth()->user()->id)->get();
+        $inCommunity = InCommunity::where('user_id', auth()->user()->id)->count();
 
-        if (count($inCommunity) == 0) {
+        if ($inCommunity == 0) {
             return response()->json(['errors' => 'El usuario no pertenece a ninguna comunidad!!'], 404);
         }
+
+        $inCommunity = InCommunity::select('uuid', 'name', 'alias', 'created_at', 'updated_at')
+            ->where('user_id', auth()->user()->id)->paginate(15);
 
         return response()->json($inCommunity, 200);
     }
