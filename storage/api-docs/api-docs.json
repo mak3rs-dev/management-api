@@ -550,7 +550,7 @@
                 }
             }
         },
-        "/user/communities": {
+        "/users/communities": {
             "get": {
                 "tags": [
                     "User"

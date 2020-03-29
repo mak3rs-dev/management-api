@@ -181,7 +181,7 @@ class UserController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/user/communities",
+     *     path="/users/communities",
      *     tags={"User"},
      *     description="Listado de comunidades a las que pertenece el usuario",
      *     @OA\Response(response=200, description="OK"),
