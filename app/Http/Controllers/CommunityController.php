@@ -53,7 +53,8 @@ class CommunityController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $communities = Community::when($request->alias != null, function ($query) use ($request) {
+        $communities = Community::select('name', 'alias', 'description')
+        ->when($request->alias != null, function ($query) use ($request) {
             return $query->where('alias', 'like', "%$request->alias%");
         })
         ->when($request->name != null, function ($query) use ($request) {
