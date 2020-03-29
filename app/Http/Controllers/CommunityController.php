@@ -82,7 +82,17 @@ class CommunityController extends Controller
             return response()->json(['errors' => 'El alias es requerido'], 422);
         }
 
-        $community = Community::select('name', 'alias', 'description', 'created_at')->where('alias', $alias)->first();
+        $checkUser = auth()->check();
+        $select = [];
+
+        if ($checkUser) {
+            $select = ['uuid', 'alias', 'description', 'created_at'];
+
+        } else {
+            $select = ['uuid', 'alias', 'description', 'created_at'];
+        }
+
+        $community = Community::select($select)->where('alias', $alias)->first();
 
         if ($community == null) {
             return response()->json(['errors' => 'La comunidad no se encuentra'], 404);
@@ -90,7 +100,7 @@ class CommunityController extends Controller
 
         $community->user = false;
 
-        if (auth()->check()) {
+        if ($checkUser) {
             $inCommunity = inCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->count();
             if ($inCommunity > 0) {
                 $community->user = true;
