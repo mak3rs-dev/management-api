@@ -17,7 +17,7 @@ class PiecesController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt.auth', ['except' => ['uuid']]);
+        $this->middleware('jwt.auth');
     }
 
     /**
