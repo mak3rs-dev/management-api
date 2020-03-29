@@ -83,6 +83,10 @@
                                         "description": "",
                                         "type": "string"
                                     },
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
                                     "address": {
                                         "description": "Dirección",
                                         "type": "string"
@@ -413,6 +417,49 @@
                 "responses": {
                     "200": {
                         "description": "List Pieces"
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/pieces/create": {
+            "post": {
+                "tags": [
+                    "Pieces"
+                ],
+                "description": "Creamos una pieza",
+                "operationId": "App\\Http\\Controllers\\PiecesController::create",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Piece"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
                     }
                 }
             }

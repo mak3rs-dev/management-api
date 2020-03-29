@@ -12,7 +12,7 @@ class Piece extends Model implements Auditable
     protected $table = 'pieces';
 
     protected $fillable = [
-        'uuid', 'community_id', 'name', 'picture', 'download_url', 'description'
+        'uuid', 'community_id', 'name', 'picture', 'description'
     ];
 
     public function Community() {
