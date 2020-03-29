@@ -509,7 +509,7 @@
                     "Community"
                 ],
                 "description": "Cuando un usuario añade o actualiza una pieza a una comunidad",
-                "operationId": "App\\Http\\Controllers\\UserController::addorUpdatePieceStock",
+                "operationId": "App\\Http\\Controllers\\UserController::addOrUpdatePieceStock",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -545,6 +545,23 @@
                         "description": ""
                     },
                     "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/user/communities": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Listado de comunidades a las que pertenece el usuario",
+                "operationId": "App\\Http\\Controllers\\UserController::communities",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
                         "description": ""
                     }
                 }

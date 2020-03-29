@@ -97,7 +97,7 @@ class CommunityController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        return Community::where('alias', $request->alias)->first();
+        return Community::select('name', 'alias', 'description', 'created_at')->where('alias', $request->alias)->first();
     }
 
     /**

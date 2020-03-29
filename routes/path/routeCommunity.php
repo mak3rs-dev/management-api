@@ -8,5 +8,5 @@ Route::group(['prefix' => 'communities'], function () {
     Route::delete('delete', 'CommunityController@delete');
     Route::get('ranking/{alias?}', 'InCommunityController@ranking');
     Route::post('join', 'UserController@joinCommunity');
-    Route::post('piece/add-or-update', 'UserController@addorUpdatePieceStock');
+    Route::post('piece/add-or-update', 'UserController@addOrUpdatePieceStock');
 });

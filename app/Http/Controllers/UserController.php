@@ -103,7 +103,7 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function addorUpdatePieceStock(Request $request) {
+    public function addOrUpdatePieceStock(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
             'uuid_community' => 'required|string',
@@ -177,5 +177,29 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'La pieza se ha añadido correctamente a la comunidad &#128521;'], 200);
+    }
+
+    /**
+     * @OA\GET(
+     *     path="/user/communities",
+     *     tags={"User"},
+     *     description="Listado de comunidades a las que pertenece el usuario",
+     *     @OA\Response(response=200, description="OK"),
+     *     @OA\Response(response=404, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function communities(Request $request) {
+        // Check user join comminities
+        $inCommunity = InCommunity::select('uuid', 'name', 'alias', 'created_at', 'updated_at')
+            ->where('user_id', auth()->user()->id)->get();
+
+        if (count($inCommunity) == 0) {
+            return response()->json(['errors' => 'El usuario no pertenece a ninguna comunidad!!'], 404);
+        }
+
+        return response()->json($inCommunity, 200);
     }
 }
