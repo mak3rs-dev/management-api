@@ -369,7 +369,11 @@
                                         "type": "string"
                                     },
                                     "community": {
-                                        "description": "uuid",
+                                        "description": "Community uuid",
+                                        "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "Community alias",
                                         "type": "string"
                                     }
                                 },

@@ -30,7 +30,8 @@ class PiecesController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="name", description="", type="string"),
-     *         @OA\Property(property="community", description="uuid", type="string"),
+     *         @OA\Property(property="community", description="Community uuid", type="string"),
+     *         @OA\Property(property="alias", description="Community alias", type="string"),
      *       ),
      *     ),
      *     ),
@@ -45,7 +46,8 @@ class PiecesController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string',
-            'community' => 'nullable|string'
+            'community' => 'nullable|string',
+            'alias' => 'nullable|string'
         ]);
 
         // We check that the validation is correct
@@ -57,6 +59,10 @@ class PiecesController extends Controller
 
         if ($request->community != null) {
             $community = Community::where('uuid', $request->community)->first();
+        }
+
+        if ($request->alias != null) {
+            $community = Community::where('alias', $request->alias)->first();
         }
 
         $pieces = Piece::when($request->name != null, function ($query) use ($request) {
