@@ -139,7 +139,7 @@ class CommunityController extends Controller
 
         // Check controller access
         if (!auth()->user()->hasRole('USER:ADMIN')) {
-            return response()->json(['errors' => 'No tienes permisos para crear comunidades :('], 422);
+            return response()->json(['errors' => 'No tienes permisos para crear comunidades &#128532;'], 422);
         }
 
         $community = new Community();
