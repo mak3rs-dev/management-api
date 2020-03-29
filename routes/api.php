@@ -21,3 +21,6 @@ include_once 'path/routeCommunity.php';
 
 // Route Pieces
 include_once 'path/routePieces.php';
+
+// Route users
+include_once 'path/routeUsers.php';
