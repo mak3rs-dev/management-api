@@ -72,7 +72,7 @@ class InCommunityController extends Controller
         $ranking = StockControl::from('stock_control as sc')
             ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
-            ->select('u.name as name', 'sc.units_manufactured as units_manufactured')
+            ->select('u.name as name', 'u.uuid as user_uuid', 'sc.units_manufactured as units_manufactured')
             ->where('ic.community_id', $community->id)
             ->orderBy('sc.units_manufactured', 'desc')
             ->paginate(15);
