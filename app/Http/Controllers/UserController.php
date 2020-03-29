@@ -196,7 +196,7 @@ class UserController extends Controller
         $inCommunity = InCommunity::where('user_id', auth()->user()->id)->count();
 
         if ($inCommunity == 0) {
-            return response()->json(['errors' => 'El usuario no pertenece a ninguna comunidad!!'], 404);
+            return response()->json(['errors' => 'No perteneces ha ninguna comunidad!!'], 404);
         }
 
         $inCommunity = InCommunity::select('uuid', 'name', 'alias', 'created_at', 'updated_at')
