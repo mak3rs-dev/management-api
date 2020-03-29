@@ -164,6 +164,10 @@ class UserController extends Controller
                 $stockControl->units_manufactured += $request->units;
 
             } else {
+                if ($stockControl->units_manufactured < $request->units) {
+                    return response()->json(['errors' => 'No puedes descontar stock que no tienes'], 500);
+                }
+
                 $stockControl->units_manufactured -= abs($request->units);
             }
         }
