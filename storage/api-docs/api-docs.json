@@ -224,22 +224,6 @@
                 ],
                 "description": "Obtenemos la comunidad por su alias",
                 "operationId": "App\\Http\\Controllers\\CommunityController::alias",
-                "requestBody": {
-                    "required": false,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "alias": {
-                                        "description": "",
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "Object Community or null"
@@ -353,33 +337,13 @@
                 }
             }
         },
-        "/communities/ranking/{alias?}": {
+        "/communities/ranking/{alias}": {
             "get": {
                 "tags": [
                     "Community"
                 ],
                 "description": "Ranking de la comunidad",
                 "operationId": "App\\Http\\Controllers\\InCommunityController::ranking",
-                "requestBody": {
-                    "required": false,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "uuid": {
-                                        "description": "",
-                                        "type": "string"
-                                    },
-                                    "alias": {
-                                        "description": "",
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
                 "responses": {
                     "200": {
                         "description": "ok"

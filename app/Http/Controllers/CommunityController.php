@@ -70,14 +70,6 @@ class CommunityController extends Controller
      *     path="/communities/alias/{alias}",
      *     tags={"Community"},
      *     description="Obtenemos la comunidad por su alias",
-     *     @OA\RequestBody( required=false,
-     *     @OA\MediaType(
-     *       mediaType="application/json",
-     *       @OA\Schema(
-     *         @OA\Property(property="alias", description="", type="string"),
-     *       ),
-     *     ),
-     *     ),
      *     @OA\Response(response=200, description="Object Community or null"),
      * )
      *
