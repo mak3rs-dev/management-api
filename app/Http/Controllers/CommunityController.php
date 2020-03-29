@@ -84,20 +84,13 @@ class CommunityController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function alias(Request $request) {
+    public function alias($alias) {
         // Validate request
-        $validator = Validator::make($request->all(), [
-            'alias' => 'required|string'
-        ], [
-            'alias.required' => 'El alias es requerido'
-        ]);
-
-        // We check that the validation is correct
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        if ($alias == null) {
+            return response()->json(['errors' => 'El alias es requerido'], 422);
         }
 
-        return Community::select('name', 'alias', 'description', 'created_at')->where('alias', $request->alias)->first();
+        return Community::select('name', 'alias', 'description', 'created_at')->where('alias', $alias)->first();
     }
 
     /**
