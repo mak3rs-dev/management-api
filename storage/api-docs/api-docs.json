@@ -448,6 +448,10 @@
                                     "uuid": {
                                         "description": "Community",
                                         "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "Community",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
