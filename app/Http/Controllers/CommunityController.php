@@ -90,7 +90,22 @@ class CommunityController extends Controller
             return response()->json(['errors' => 'El alias es requerido'], 422);
         }
 
-        return Community::select('name', 'alias', 'description', 'created_at')->where('alias', $alias)->first();
+        $community = Community::select('name', 'alias', 'description', 'created_at')->where('alias', $alias)->first();
+
+        if ($community == null) {
+            return response()->json(['errors' => 'La comunidad no se encuentra'], 404);
+        }
+
+        $community->user = false;
+
+        if (auth()->check()) {
+            $inCommunity = inCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->count();
+            if ($inCommunity > 0) {
+                $community->user = true;
+            }
+        }
+
+        return response()->json($community, 200);
     }
 
     /**

@@ -17,47 +17,22 @@ class InCommunityController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/ranking/{alias?}",
+     *     path="/communities/ranking/{alias}",
      *     tags={"Community"},
      *     description="Ranking de la comunidad",
-     *     @OA\RequestBody( required=false,
-     *     @OA\MediaType(
-     *       mediaType="application/json",
-     *       @OA\Schema(
-     *         @OA\Property(property="uuid", description="", type="string"),
-     *         @OA\Property(property="alias", description="", type="string"),
-     *       ),
-     *     ),
-     *     ),
      *     @OA\Response(response=200, description="ok"),
      * )
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function ranking(Request $request) {
+    public function ranking($alias) {
         // Validate request
-        $validator = Validator::make($request->all(), [
-            'uuid' => 'nullable|string',
-            'alias' => 'nullable|string'
-        ]);
-
-        if ($request->uuid == null && $request->alias == null) {
-            return response()->json(['errors' => 'No se ha recibido ningún parámetro'], 422);
+        if ($alias) {
+            return response()->json(['errors' => 'El alias no puede ser nulo'], 422);
         }
 
-        // We check that the validation is correct
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $community = Community::when($request->uuid, function ($query) use ($request) {
-            return $query->where('uuid', $request->uuid);
-        })
-        ->when($request->alias, function ($query) use ($request) {
-            return $query->where('alias', $request->alias);
-        })
-        ->first();
+        $community = Community::where('alias', $alias)->first();
 
         if ($community == null) {
             return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
