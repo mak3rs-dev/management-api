@@ -557,6 +557,26 @@
                 ],
                 "description": "Listado de comunidades a las que pertenece el usuario",
                 "operationId": "App\\Http\\Controllers\\UserController::communities",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid": {
+                                        "description": "User",
+                                        "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK"

@@ -7,6 +7,7 @@ use App\Models\InCommunity;
 use App\Models\Piece;
 use App\Models\Role;
 use App\Models\StockControl;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -184,6 +185,15 @@ class UserController extends Controller
      *     path="/users/communities",
      *     tags={"User"},
      *     description="Listado de comunidades a las que pertenece el usuario",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="uuid", description="User", type="string"),
+     *         @OA\Property(property="alias", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
      *     @OA\Response(response=200, description="OK"),
      *     @OA\Response(response=404, description=""),
      * )
@@ -192,8 +202,32 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function communities(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'uuid' => 'nullable|string',
+            'alias' => 'nullable|string',
+        ]);
+
+        $user = null;
+
+        if ($request->uuid == null && $request->alias == null) {
+            $user = auth()->user();
+
+        } else {
+            $user = User::when($request->uuid != null, function ($query) use ($request) {
+                return $query->where('uuid', $request->uuid);
+            })
+            ->when($request->alias != null, function ($query) use ($request) {
+                return $query->where('alias', $request->alias);
+           })->firts();
+        }
+
+        if ($user == null) {
+            return response()->json(['errors' => 'No se ha encontrado ningún usuario'], 404);
+        }
+
         // Check user join comminities
-        $inCommunity = InCommunity::select('community_id')->where('user_id', auth()->user()->id)->get()->toArray();
+        $inCommunity = InCommunity::select('community_id')->where('user_id', $user->id)->get()->toArray();
 
         if (count($inCommunity) == 0) {
             return response()->json(['errors' => 'No perteneces ha ninguna comunidad!!'], 404);
