@@ -61,21 +61,21 @@ class StockControlController extends Controller
         }
 
         // Check join Community
-        $inCommunity = InCommunity::where('community_id', $community->id)->first();
+        $inCommunity = $community->InCommunities()->where('community_id', $community->id)->first();
 
         if ($inCommunity == null) {
             return response()->json(['errors' => 'El usuario no pertenece a esta comunidad!!'], 404);
         }
 
         // Check pieces
-        $piece = Piece::where('uuid', $request->uuid_piece)->first();
+        $piece = $community->Pieces()->where('uuid', $request->uuid_piece)->first();
 
         if ($piece == null) {
             return response()->json(['errors' => 'No se encuentra ninguna pieza!!'], 404);
         }
 
         // Check stock exists
-        $stockControl = StockControl::where('in_community_id', $inCommunity->id)->where('piece_id', $piece->id)->first();
+        $stockControl = $inCommunity->StockControl()->where('piece_id', $piece->id)->first();
 
         if ($stockControl == null)  {
             // Create Stock

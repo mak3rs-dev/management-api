@@ -53,7 +53,7 @@ class InCommunityController extends Controller
             return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
         }
 
-        $inCommunity = InCommunity::where('community_id', $community->id)->count();
+        $inCommunity = $community->InCommunities()->count();
 
         if ($inCommunity == 0) {
             return response()->json(['errors' => 'La comunidad no tiene ningún mak3r'], 404);
@@ -66,7 +66,7 @@ class InCommunityController extends Controller
             array_push($select, 'u.alias as user_alias');
 
             $inCommunity = null;
-            $inCommunity = InCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->first();
+            $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
             if ($inCommunity != null && $inCommunity->hasRole('MAKER:ADMIN')) {
                 array_push($select, 'u.address as user_address');

@@ -69,7 +69,7 @@ class UserController extends Controller
         }
 
         // Check user join in community
-        $inCommunity = InCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->count();
+        $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->count();
 
         if ($inCommunity > 0) {
             return response()->json(['errors' => 'Ya perteneces a está comundidad'], 500);

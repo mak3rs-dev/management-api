@@ -73,12 +73,6 @@ class CollectControlController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $piece = Piece::where('uuid_piece', $request->uuid_piece)->first();
-
-        if ($piece == null) {
-            return response()->json(['errors' => 'La pieza no existe!!'], 422);
-        }
-
         $community = Community::when($request->uuid_community != null, function ($query) use ($request) {
             return $query->where('uuid', $request->uuid_community);
         })
@@ -91,7 +85,13 @@ class CollectControlController extends Controller
             return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
         }
 
-        $inCommunity = InCommunity::where('community_id', $community->id)->where('user_id', auth()->user->id)->first();
+        $piece = $community->Pieces()->where('uuid_piece', $request->uuid_piece)->first();
+
+        if ($piece == null) {
+            return response()->json(['errors' => 'La pieza no se encuentra en la comunidad'], 422);
+        }
+
+        $inCommunity = $community->InCommunities()->where('user_id', auth()->user->id)->first();
 
         if ($inCommunity == null) {
             return response()->json(['errors' => 'No perteneces a esta comunidad'], 422);

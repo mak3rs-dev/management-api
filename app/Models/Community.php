@@ -14,4 +14,12 @@ class Community extends Model implements Auditable
     protected $fillable = [
         'uuid', 'alias', 'name', 'description'
     ];
+
+    public function Pieces() {
+        return $this->hasMany(Piece::class, 'community_id');
+    }
+
+    public function InCommunities() {
+        return $this->hasMany(InCommunity::class, 'community_id');
+    }
 }

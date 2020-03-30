@@ -27,6 +27,10 @@ class InCommunity extends Model implements Auditable
         return $this->belongsTo(Community::class, 'community_id');
     }
 
+    public function StockControl() {
+        return $this->hasMany(StockControl::class, 'in_community_id');
+    }
+
     public function hasRole(string $str) {
         $role = $this->Role;
         return $role == null ? false : trim($role->name) == $str;

@@ -110,7 +110,7 @@ class CommunityController extends Controller
         $community->user = false;
 
         if ($checkUser) {
-            $inCommunity = inCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->count();
+            $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->count();
             if ($inCommunity > 0) {
                 $community->user = true;
             }
@@ -277,13 +277,13 @@ class CommunityController extends Controller
             return response()->json(['errors' => 'La comunidad no existe'], 404);
         }
 
-        $countInCommunity = InCommunity::select('id')->where('community_id', $community->id)->get()->ToArray();
+        $countInCommunity = $community->InCommunities()->select('id')->get()->ToArray();
 
         if ($countInCommunity > 0) {
             return response()->json(['errors' => 'La comunidad no se puede eliminar por que tiene usuarios asignados'], 500);
         }
 
-        $countPieces = StockControl::whereIn('in_community_id', $countInCommunity)->count();
+        $countPieces = $community->InCommunities()->StockControl()->count();
 
         // TODO: Calculate pieces in stock community
 
