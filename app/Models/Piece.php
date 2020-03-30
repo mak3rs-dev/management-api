@@ -18,4 +18,12 @@ class Piece extends Model implements Auditable
     public function Community() {
         return $this->belongsTo(Community::class, 'community_id');
     }
+
+    Public function StockControl() {
+        return $this->hasMany(StockControl::class, 'piece_id');
+    }
+
+    Public function CollectPieces() {
+        return $this->hasMany(CollectPieces::class, 'piece_id');
+    }
 }

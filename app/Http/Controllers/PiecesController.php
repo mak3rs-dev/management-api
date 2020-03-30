@@ -71,6 +71,14 @@ class PiecesController extends Controller
         ->when($community != null, function ($query) use ($community) {
             return $query->where('community_id', $community->id);
         })
+        ->with([
+            'StockControl' => function ($query) {
+                return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+            },
+            'CollectPieces' => function ($query) {
+                return $query->selectRaw('piece_id, SUM(units) as units')->groupBy('piece_id');
+            }
+        ])
         ->paginate(15);
 
         return response()->json($pieces);
