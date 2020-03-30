@@ -53,15 +53,23 @@ class InCommunityController extends Controller
             return response()->json(['errors' => 'La comunidad no tiene ningún mak3r'], 404);
         }
 
-        $select = [];
+        $select = ['u.name as user_name', 'sc.units_manufactured as units_manufactured'];
 
         if (auth()->check()) {
-            $select = ['u.name as name', 'u.uuid as user_uuid', 'sc.units_manufactured as units_manufactured',
-                        'u.address as address', 'u.location as location', 'u.province as province', 'u.state as state',
-                        'u.country as country', 'u.cp as cp'];
+            array_push($select, 'u.uuid as user_uuid');
+            array_push($select, 'u.alias as user_alias');
 
-        } else {
-            $select = ['u.name as name', 'sc.units_manufactured as units_manufactured'];
+            $inCommunity = null;
+            $inCommunity = InCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->first();
+
+            if ($inCommunity != null && $inCommunity->hasRole('MAKER:ADMIN')) {
+                array_push($select, 'u.address as user_address');
+                array_push($select, 'u.location as user_location');
+                array_push($select, 'u.province as user_province');
+                array_push($select, 'u.state as user_state');
+                array_push($select, 'u.country as user_country');
+                array_push($select, 'u.cp as user_cp');
+            }
         }
 
         $ranking = StockControl::from('stock_control as sc')

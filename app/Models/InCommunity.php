@@ -12,7 +12,7 @@ class InCommunity extends Model implements Auditable
     protected $table = 'in_community';
 
     protected $fillable = [
-        'id', 'user_id', 'community_id', 'role_id', 'disabled_at'
+        'id', 'user_id', 'community_id', 'role_id', 'disabled_at', 'blockuser_at'
     ];
 
     public function Role() {
@@ -28,7 +28,15 @@ class InCommunity extends Model implements Auditable
     }
 
     public function hasRole(string $str) {
-        $role = $this->Role();
-        return $role != null ? false : $role->name == $str;
+        $role = $this->Role;
+        return $role == null ? false : trim($role->name) == $str;
+    }
+
+    public function isDisabledUser() {
+        return $this->disabled_at != null;
+    }
+
+    public function isBlockUser() {
+        return $this->blockuser_at != null;
     }
 }

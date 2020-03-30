@@ -67,7 +67,7 @@ class User extends Authenticatable implements JWTSubject, Auditable
     }
 
     public function hasRole(string $str) {
-        $role = $this->Role();
-        return $role != null ? false : $role->name == $str;
+        $role = $this->Role;
+        return $role == null ? false : trim($role->name) == $str;
     }
 }
