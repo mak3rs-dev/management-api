@@ -229,7 +229,7 @@ class UserController extends Controller
             })
             ->when($request->alias != null, function ($query) use ($request) {
                 return $query->where('alias', $request->alias);
-           })->firts();
+           })->first();
         }
 
         if ($user == null) {
