@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\RankingExport;
 use App\Models\Community;
 use App\Models\InCommunity;
 use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InCommunityController extends Controller
 {
@@ -17,21 +19,25 @@ class InCommunityController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/ranking/{alias}",
+     *     path="/communities/ranking/{alias}/{export}",
      *     tags={"Community"},
      *     description="Ranking de la comunidad",
      *     @OA\Response(response=200, description="ok"),
      * )
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param string $alias
+     * @param string $export
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function ranking(Request $request, $alias = "") {
+    public function ranking(Request $request, $alias = "", $export = "") {
         // Validate request
         $validator = Validator::make([
             'alias' => $alias,
+            'export' => $export
         ],[
             'alias' => 'required|string',
+            'export' => 'nullable|string',
         ], [
             'alias.required' => 'El alias es requerido'
         ]);
@@ -70,6 +76,10 @@ class InCommunityController extends Controller
                 array_push($select, 'u.country as user_country');
                 array_push($select, 'u.cp as user_cp');
             }
+        }
+
+        if ($export == "export") {
+            return Excel::download(new RankingExport($community, $select),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
         $ranking = StockControl::from('stock_control as sc')

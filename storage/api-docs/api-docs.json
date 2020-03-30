@@ -337,7 +337,7 @@
                 }
             }
         },
-        "/communities/ranking/{alias}": {
+        "/communities/ranking/{alias}/{export}": {
             "get": {
                 "tags": [
                     "Community"

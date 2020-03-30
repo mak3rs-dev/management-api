@@ -6,7 +6,7 @@ Route::group(['prefix' => 'communities'], function () {
     Route::post('create', 'CommunityController@create');
     Route::put('update', 'CommunityController@update');
     Route::delete('delete', 'CommunityController@delete');
-    Route::get('ranking/{alias?}', 'InCommunityController@ranking');
+    Route::get('ranking/{alias?}/{export?}', 'InCommunityController@ranking');
     Route::post('join', 'UserController@joinCommunity');
     Route::post('piece/add-or-update', 'UserController@addOrUpdatePieceStock');
 });
