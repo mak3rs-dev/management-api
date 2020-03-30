@@ -56,7 +56,9 @@ class InCommunityController extends Controller
         $select = [];
 
         if (auth()->check()) {
-            $select = ['u.name as name', 'u.uuid as user_uuid', 'sc.units_manufactured as units_manufactured'];
+            $select = ['u.name as name', 'u.uuid as user_uuid', 'sc.units_manufactured as units_manufactured',
+                        'u.address as address', 'u.location as location', 'u.province as province', 'u.state as state',
+                        'u.country as country', 'u.cp as cp'];
 
         } else {
             $select = ['u.name as name', 'sc.units_manufactured as units_manufactured'];
