@@ -445,7 +445,7 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "uuid": {
+                                    "community": {
                                         "description": "Community",
                                         "type": "string"
                                     },

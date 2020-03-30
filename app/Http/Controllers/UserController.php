@@ -27,7 +27,7 @@ class UserController extends Controller
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="uuid", description="Community", type="string"),
+     *         @OA\Property(property="community", description="Community", type="string"),
      *         @OA\Property(property="alias", description="Community", type="string"),
      *       ),
      *     ),
@@ -44,11 +44,11 @@ class UserController extends Controller
     public function joinCommunity(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
-            'uuid' => 'nullable|string',
+            'community' => 'nullable|string',
             'alias' => 'nullable|string'
         ]);
 
-        if ($request->uuid == null && $request->alias == null) {
+        if ($request->community == null && $request->alias == null) {
             return response()->json(['errors' => 'No se ha recibido ningún parámetro'], 422);
         }
 
@@ -58,8 +58,8 @@ class UserController extends Controller
         }
 
         // Check Community exists
-        $community = Community::when($request->uuid != null, function ($query) use ($request) {
-            return $query->where('uuid', $request->uuid);
+        $community = Community::when($request->community != null, function ($query) use ($request) {
+            return $query->where('uuid', $request->community);
         })
         ->when($request->alias != null, function ($query) use ($request) {
             return $query->where('alias', $request->alias);
