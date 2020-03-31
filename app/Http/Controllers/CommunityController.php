@@ -211,11 +211,12 @@ class CommunityController extends Controller
         $validator = Validator::make($request->all(), [
             'uuid' => 'required|string',
             'name' => 'required|string',
+            'alias' => 'nullable|string|unique:community',
             'description' => 'nullable|string'
         ], [
             'uuid.required' => 'El uuid es requerido',
-            'alias.required' => 'El alias es requerido',
-            'name.required' => 'El nombre es requerido'
+            'alias.unique' => 'El alias ya existe en la comunidad',
+            'name.required' => 'El nombre es requerido',
         ]);
 
         // We check that the validation is correct
@@ -243,6 +244,11 @@ class CommunityController extends Controller
         }
 
         $community->name = $request->name;
+
+        if ($request->alias != null) {
+            $community->alias = $request->alias;
+        }
+
         $community->description = $request->description;
 
         if (!$community->save()) {
