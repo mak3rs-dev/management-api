@@ -108,11 +108,16 @@ class CommunityController extends Controller
         }
 
         $community->user = false;
+        $community->user_admin = false;
 
         if ($checkUser) {
-            $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->count();
-            if ($inCommunity > 0) {
+            $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
+            if ($inCommunity != null) {
                 $community->user = true;
+
+                if ($inCommunity->hasRole('MAKER:ADMIN')) {
+                    $community->user_admin = true;
+                }
             }
         }
 
