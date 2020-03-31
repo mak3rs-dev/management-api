@@ -292,6 +292,16 @@ class CommunityController extends Controller
             return response()->json(['errors' => 'La comunidad no existe'], 404);
         }
 
+        $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
+
+        if ($inCommunity != null) {
+            return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
+        }
+
+        if (!$inCommunity->hasRole('MAKER:ADMIN')) {
+            return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+        }
+
         $countInCommunity = $community->InCommunities()->select('id')->get()->ToArray();
 
         if ($countInCommunity > 0) {
