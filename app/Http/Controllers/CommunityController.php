@@ -115,7 +115,7 @@ class CommunityController extends Controller
             if ($inCommunity != null) {
                 $community->user = true;
 
-                if ($inCommunity->hasRole('MAKER:ADMIN')) {
+                if ($inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN')) {
                     $community->user_admin = true;
                 }
             }
@@ -232,12 +232,14 @@ class CommunityController extends Controller
 
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
-        if ($inCommunity != null) {
-            return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
-        }
+        if (!auth()->user()->hasRole('USER:ADMIN')) {
+            if ($inCommunity != null) {
+                return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
+            }
 
-        if (!$inCommunity->hasRole('MAKER:ADMIN')) {
-            return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+            if (!$inCommunity->hasRole('MAKER:ADMIN')) {
+                return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+            }
         }
 
         $community->name = $request->name;
@@ -294,12 +296,14 @@ class CommunityController extends Controller
 
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
-        if ($inCommunity != null) {
-            return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
-        }
+        if (!auth()->user()->hasRole('USER:ADMIN')) {
+            if ($inCommunity != null) {
+                return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
+            }
 
-        if (!$inCommunity->hasRole('MAKER:ADMIN')) {
-            return response()->json(['errors' => 'No tienes permisos para borrar esta comunidad'], 403);
+            if (!$inCommunity->hasRole('MAKER:ADMIN')) {
+                return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+            }
         }
 
         $countInCommunity = $community->InCommunities()->select('id')->get()->ToArray();
