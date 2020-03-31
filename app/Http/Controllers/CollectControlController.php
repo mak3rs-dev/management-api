@@ -22,7 +22,7 @@ class CollectControlController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/collect-control",
+     *     path="/communities/collect-control/{alias?}/{export?}",
      *     tags={"Community"},
      *     description="Obtenemos todas las recogidas",
      *     @OA\RequestBody( required=true,
