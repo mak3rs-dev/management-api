@@ -219,7 +219,13 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        $select = ['users.name as name', 'users.uuid as uuid', 'users.alias as alias', 'users.email as email',
+                    'users.created_at as created_at', 'users.phone as phone', 'roles.name as role_name',
+                    'users.address as address', 'users.location as location', 'users.province as province',
+                    'users.state as state', 'users.country as country', 'users.cp as cp'];
+
+        $user = auth()->user()->select($select)->join('roles', 'roles.id', '=', 'users.role_id')->first();
+        return response()->json($user);
     }
 
     /**
