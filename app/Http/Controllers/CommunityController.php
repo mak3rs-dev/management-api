@@ -233,7 +233,7 @@ class CommunityController extends Controller
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
         if (!auth()->user()->hasRole('USER:ADMIN')) {
-            if ($inCommunity != null) {
+            if ($inCommunity == null) {
                 return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
             }
 
@@ -297,7 +297,7 @@ class CommunityController extends Controller
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
         if (!auth()->user()->hasRole('USER:ADMIN')) {
-            if ($inCommunity != null) {
+            if ($inCommunity == null) {
                 return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
             }
 
