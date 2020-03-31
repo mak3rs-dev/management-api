@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CollectControlExport;
 use App\Models\CollectControl;
 use App\Models\CollectPieces;
 use App\Models\Community;
@@ -10,9 +11,104 @@ use App\Models\Piece;
 use App\Models\Status;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CollectControlController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt.auth');
+    }
+
+    /**
+     * @OA\GET(
+     *     path="/communities/collect-control",
+     *     tags={"Community"},
+     *     description="Obtenemos todas las recogidas",
+     *     @OA\RequestBody( required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="alias_community", description="", type="string"),
+     *         @OA\Property(property="uuid_community", description="", type="string"),
+     *         @OA\Property(property="export", description="export", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="OK"),
+     *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=404, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * @param Request $request
+     * @param null $export
+     * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
+    public function getCollectControl(Request $request, $alias = null, $export = null) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'uuid_community' => 'nullable|string',
+            'alias_community' => 'nullable|string',
+            'export' => 'nullable|string'
+        ]);
+
+        if ($request->uuid == null && $request->alias == null) {
+            return response()->json(['errors' => 'No se ha recibido ningún parámetro'], 422);
+        }
+
+        if ($alias != null && $request->alias == null) {
+            $request->alias = $alias;
+        }
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Check community
+        $community = Community::when($request->uuid != null, function ($query) use ($request) {
+           return $query->where('uuid', $request->uuid);
+        })
+        ->when($request->alias != null, function ($query) use ($request) {
+            return $query->where('alias', $request->alias);
+        })
+        ->first();
+
+        if ($community == null) {
+            return response()->json(['errors' => 'La comunidad no existe'], 404);
+        }
+
+        $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
+
+        if ($inCommunity == null) {
+            return response()->json(['errors' => 'No perteneces a esta comunidad'], 404);
+        }
+
+        if ($export == 'export' || ($request->export != null && $request->export == 'export')) {
+            return Excel::download(new CollectControlExport($inCommunity),'collect_control.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        $select = ['u.name as name_user', 'u.alias as  alias_user', 'p.name as piece_name',
+                    'pc.units as cantidad', 'cc.address as address', 'cc.location as location',
+                    'cc.province as province', 'cc.state as state', 'cc.country as country',
+                    'cc.cp as cp'];
+
+        $CollectControl = CollectControl::from('collect_control as cc')
+            ->join('collect_pieces as pc', 'pc.collect_control_id', '=', 'cc.id')
+            ->join('pieces as p', 'p.id', '=', 'pc.piece_id')
+            ->join('status as st', 'st.id', '=', 'cc.status_id')
+            ->join('users as u', 'u.id', '=', 'cc.user_id')
+            ->select($select)
+            ->when(!$inCommunity->hasRole('MAKER:ADMIN'), function ($query) {
+                return $query->where('user_id', auth()->user()->id);
+            })
+            ->where('cc.community_id', $community->id)
+            ->paginate(15);
+
+        return response()->json($CollectControl, 200);
+    }
+
     /**
      *  @OA\POST(
      *     path="/communities/piece/add-collect",

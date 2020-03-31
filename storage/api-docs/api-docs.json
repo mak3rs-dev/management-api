@@ -183,6 +183,49 @@
                 }
             }
         },
+        "/communities/collect-control": {
+            "get": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Obtenemos todas las recogidas",
+                "operationId": "App\\Http\\Controllers\\CollectControlController::getCollectControl",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "alias_community": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "uuid_community": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/communities/piece/add-collect": {
             "post": {
                 "tags": [
