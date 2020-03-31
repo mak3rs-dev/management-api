@@ -299,7 +299,7 @@ class CommunityController extends Controller
         }
 
         if (!$inCommunity->hasRole('MAKER:ADMIN')) {
-            return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+            return response()->json(['errors' => 'No tienes permisos para borrar esta comunidad'], 403);
         }
 
         $countInCommunity = $community->InCommunities()->select('id')->get()->ToArray();
