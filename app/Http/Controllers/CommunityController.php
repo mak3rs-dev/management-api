@@ -104,7 +104,7 @@ class CommunityController extends Controller
         $community = Community::where('alias', $alias)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'La comunidad no se encuentra'], 404);
+            return response()->json(['error' => 'La comunidad no se encuentra'], 404);
         }
 
         $community->user = false;
@@ -166,7 +166,7 @@ class CommunityController extends Controller
 
         // Check controller access
         if (!auth()->user()->hasRole('USER:ADMIN')) {
-            return response()->json(['errors' => 'No tienes permisos para crear comunidades &#128532;'], 422);
+            return response()->json(['error' => 'No tienes permisos para crear comunidades &#128532;'], 422);
         }
 
         $community = new Community();
@@ -176,7 +176,7 @@ class CommunityController extends Controller
         $community->description = $request->description;
 
         if (!$community->save()) {
-            return response()->json(['errors' => 'No se ha podido crear la comunidad'], 500);
+            return response()->json(['error' => 'No se ha podido crear la comunidad'], 500);
         }
 
         return response()->json([
@@ -228,18 +228,18 @@ class CommunityController extends Controller
         $community = Community::where('uuid', $request->uuid)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'La comunidad no existe'], 404);
+            return response()->json(['error' => 'La comunidad no existe'], 404);
         }
 
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
         if (!auth()->user()->hasRole('USER:ADMIN')) {
             if ($inCommunity == null) {
-                return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
+                return response()->json(['error' => 'Tu no perteneces a esta comunidad'], 422);
             }
 
             if (!$inCommunity->hasRole('MAKER:ADMIN')) {
-                return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+                return response()->json(['error' => 'No tienes permisos para modificar esta comunidad'], 403);
             }
         }
 
@@ -252,7 +252,7 @@ class CommunityController extends Controller
         $community->description = $request->description;
 
         if (!$community->save()) {
-            return response()->json(['errors' => 'No se ha podido actualizar la comunidad'], 500);
+            return response()->json(['error' => 'No se ha podido actualizar la comunidad'], 500);
         }
 
         return response()->json([
@@ -297,25 +297,25 @@ class CommunityController extends Controller
         $community = Community::where('uuid', $request->uuid)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'La comunidad no existe'], 404);
+            return response()->json(['error' => 'La comunidad no existe'], 404);
         }
 
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
 
         if (!auth()->user()->hasRole('USER:ADMIN')) {
             if ($inCommunity == null) {
-                return response()->json(['errors' => 'Tu no perteneces a esta comunidad'], 422);
+                return response()->json(['error' => 'Tu no perteneces a esta comunidad'], 422);
             }
 
             if (!$inCommunity->hasRole('MAKER:ADMIN')) {
-                return response()->json(['errors' => 'No tienes permisos para modificar esta comunidad'], 403);
+                return response()->json(['error' => 'No tienes permisos para modificar esta comunidad'], 403);
             }
         }
 
         $countInCommunity = $community->InCommunities()->select('id')->get()->ToArray();
 
         if ($countInCommunity > 0) {
-            return response()->json(['errors' => 'La comunidad no se puede eliminar por que tiene usuarios asignados'], 500);
+            return response()->json(['error' => 'La comunidad no se puede eliminar por que tiene usuarios asignados'], 500);
         }
 
         $countPieces = $community->InCommunities()->StockControl()->count();
@@ -323,11 +323,11 @@ class CommunityController extends Controller
         // TODO: Calculate pieces in stock community
 
         if ($countPieces > 0) {
-            return response()->json(['errors' => 'La comunidad no se puede eliminar por que tiene piezas en stock'], 500);
+            return response()->json(['error' => 'La comunidad no se puede eliminar por que tiene piezas en stock'], 500);
         }
 
         if (!$community->delete()) {
-            return response()->json(['errors' => 'No se ha podido borrar la comunidad'], 500);
+            return response()->json(['error' => 'No se ha podido borrar la comunidad'], 500);
         }
 
         return response()->json([

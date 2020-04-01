@@ -165,7 +165,7 @@ class AuthController extends Controller
         $user->cp = $request->cp;
 
         if (!$user->save()) {
-            return response()->json(['errors' => 'El usuario no se ha podido registrar correctamente'], 500);
+            return response()->json(['error' => 'El usuario no se ha podido registrar correctamente'], 500);
         }
 
         try {
@@ -173,7 +173,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             $user->delete();
             return response()->json([
-                'errors' => 'El usuario no se ha podido registrar correctamente'
+                'error' => 'El usuario no se ha podido registrar correctamente'
             ], 500);
         }
 
@@ -192,14 +192,14 @@ class AuthController extends Controller
         $user = User::where('hash_email_verified', $request->hash)->first();
 
         if ($user == null) {
-            return response()->json(['errors' => 'El hash no es válido']);
+            return response()->json(['error' => 'El hash no es válido']);
         }
 
         $user->hash_email_verified = null;
         $user->email_verified_at = Carbon::now();
 
         if (!$user->save()) {
-            return response()->json(['errors' => 'No se ha podido validar el email']);
+            return response()->json(['error' => 'No se ha podido validar el email']);
         }
 
         return redirect()->to(env('APP_CLIENT').'/login?msg=accountactivated');

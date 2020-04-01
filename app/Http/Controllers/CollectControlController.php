@@ -161,7 +161,7 @@ class CollectControlController extends Controller
         ]);
 
         if ($request->uuid_user == null && $request->alias_user == null) {
-            return response()->json(['errors' => 'Los parámetros de la comunidad no son correctos!!'], 422);
+            return response()->json(['error' => 'Los parámetros de la comunidad no son correctos!!'], 422);
         }
 
         // We check that the validation is correct
@@ -178,19 +178,19 @@ class CollectControlController extends Controller
             ->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
+            return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
 
         $piece = $community->Pieces()->where('uuid_piece', $request->uuid_piece)->first();
 
         if ($piece == null) {
-            return response()->json(['errors' => 'La pieza no se encuentra en la comunidad'], 422);
+            return response()->json(['error' => 'La pieza no se encuentra en la comunidad'], 422);
         }
 
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user->id)->first();
 
         if ($inCommunity == null) {
-            return response()->json(['errors' => 'No perteneces a esta comunidad'], 422);
+            return response()->json(['error' => 'No perteneces a esta comunidad'], 422);
         }
 
         $collectControl = new CollectControl();
@@ -206,7 +206,7 @@ class CollectControlController extends Controller
         $collectControl->cp = $request->cp;
 
         if (!$collectControl->save()) {
-            return response()->json(['errors' => 'No se ha podido crear la recogida'], 500);
+            return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
         }
 
         $collectPiece = new CollectPieces();
@@ -215,7 +215,7 @@ class CollectControlController extends Controller
         $collectPiece->units = abs($request->units);
 
         if (!$collectPiece->save()) {
-            return response()->json(['errors' => 'No se ha podido añadir la pieza a la recogida'], 500);
+            return response()->json(['error' => 'No se ha podido añadir la pieza a la recogida'], 500);
         }
 
         return response()->json(['message' => 'La recogida se ha creado correctamente'], 200);

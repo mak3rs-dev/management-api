@@ -47,7 +47,7 @@ class UserController extends Controller
         ]);
 
         if ($request->community == null && $request->alias == null) {
-            return response()->json(['errors' => 'No se ha recibido ningún parámetro'], 422);
+            return response()->json(['error' => 'No se ha recibido ningún parámetro'], 422);
         }
 
         // We check that the validation is correct
@@ -65,14 +65,14 @@ class UserController extends Controller
         ->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'No se encuentra ninguna comunidad!!'], 404);
+            return response()->json(['error' => 'No se encuentra ninguna comunidad!!'], 404);
         }
 
         // Check user join in community
         $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->count();
 
         if ($inCommunity > 0) {
-            return response()->json(['errors' => 'Ya perteneces a está comundidad'], 500);
+            return response()->json(['error' => 'Ya perteneces a está comundidad'], 500);
         }
 
         $inCommunity = null;
@@ -82,7 +82,7 @@ class UserController extends Controller
         $inCommunity->role_id = Role::where('name', 'MAKER:USER')->first()->id;
 
         if (!$inCommunity->save()) {
-            return response()->json(['errors' => 'El usuario no se ha podido unir a la comunidad'], 500);
+            return response()->json(['error' => 'El usuario no se ha podido unir a la comunidad'], 500);
         }
 
         return response()->json(['message' => 'El usuario se ha añadido a la comunidad correctamente'], 200);
@@ -131,14 +131,14 @@ class UserController extends Controller
         }
 
         if ($user == null) {
-            return response()->json(['errors' => 'No se ha encontrado ningún usuario'], 404);
+            return response()->json(['error' => 'No se ha encontrado ningún mak3r'], 404);
         }
 
         // Check user join comminities
         $inCommunity = InCommunity::select('community_id')->where('user_id', $user->id)->get()->toArray();
 
         if (count($inCommunity) == 0) {
-            return response()->json(['errors' => 'No perteneces ha ninguna comunidad!!'], 404);
+            return response()->json(['error' => 'No perteneces a ninguna comunidad!!'], 404);
         }
 
         $community = Community::select('uuid', 'name', 'alias', 'created_at', 'updated_at')

@@ -57,21 +57,21 @@ class StockControlController extends Controller
         $community = Community::where('uuid', $request->uuid_community)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'No se encuentra ninguna comunidad!!'], 404);
+            return response()->json(['error' => 'No se encuentra ninguna comunidad!!'], 404);
         }
 
         // Check join Community
         $inCommunity = $community->InCommunities()->where('community_id', $community->id)->first();
 
         if ($inCommunity == null) {
-            return response()->json(['errors' => 'El usuario no pertenece a esta comunidad!!'], 404);
+            return response()->json(['error' => 'El usuario no pertenece a esta comunidad!!'], 404);
         }
 
         // Check pieces
         $piece = $community->Pieces()->where('uuid', $request->uuid_piece)->first();
 
         if ($piece == null) {
-            return response()->json(['errors' => 'No se encuentra ninguna pieza!!'], 404);
+            return response()->json(['error' => 'No se encuentra ninguna pieza!!'], 404);
         }
 
         // Check stock exists
@@ -80,7 +80,7 @@ class StockControlController extends Controller
         if ($stockControl == null)  {
             // Create Stock
             if ($request->units < 0) {
-                return response()->json(['errors' => 'No puedes añadir piezas que no tienes &#128530;'], 500);
+                return response()->json(['error' => 'No puedes añadir piezas que no tienes &#128530;'], 500);
             }
 
             $stockControl = null;
@@ -97,7 +97,7 @@ class StockControlController extends Controller
 
             } else {
                 if ($stockControl->units_manufactured < $request->units) {
-                    return response()->json(['errors' => 'No puedes descontar stock que no tienes'], 500);
+                    return response()->json(['error' => 'No puedes descontar stock que no tienes'], 500);
                 }
 
                 $stockControl->units_manufactured -= abs($request->units);
@@ -105,7 +105,7 @@ class StockControlController extends Controller
         }
 
         if (!$stockControl->save()) {
-            return response()->json(['errors' => 'No se ha podido añadir la pieza a la comunidad'], 500);
+            return response()->json(['error' => 'No se ha podido añadir la pieza a la comunidad'], 500);
         }
 
         return response()->json(['message' => 'La pieza se ha añadido correctamente a la comunidad &#128521;'], 200);

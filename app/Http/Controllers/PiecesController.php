@@ -118,7 +118,7 @@ class PiecesController extends Controller
         $community = Community::where('alias', $alias)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
+            return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
 
         // COMMUNITY
@@ -208,7 +208,7 @@ class PiecesController extends Controller
 
         // Check permission USER:ADMIN
         if (auth()->user()->hasRole('USER:ADMIN')) {
-            return response()->json(['errors' => 'No tienes permisos para crear una pieza &#128532;'], 403);
+            return response()->json(['error' => 'No tienes permisos para crear una pieza &#128532;'], 403);
         }
 
         $piece = new Piece();
@@ -217,7 +217,7 @@ class PiecesController extends Controller
         $piece->description = $request->description;
 
         if (!$piece->save()) {
-            return response()->json(['errors' => 'La pieza no se ha podido crear correctamente'], 500);
+            return response()->json(['error' => 'La pieza no se ha podido crear correctamente'], 500);
         }
 
         return response()->json([

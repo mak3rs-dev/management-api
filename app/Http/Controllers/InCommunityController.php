@@ -50,13 +50,13 @@ class InCommunityController extends Controller
         $community = Community::where('alias', $alias)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
+            return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
 
         $inCommunity = $community->InCommunities()->count();
 
         if ($inCommunity == 0) {
-            return response()->json(['errors' => 'La comunidad no tiene ningún mak3r'], 404);
+            return response()->json(['error' => 'La comunidad no tiene ningún mak3r'], 404);
         }
 
         $select = ['u.name as user_name', 'sc.units_manufactured as units_manufactured'];
