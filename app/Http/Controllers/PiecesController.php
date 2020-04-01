@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CollectControl;
+use App\Models\CollectPieces;
 use App\Models\Community;
 use App\Models\InCommunity;
 use App\Models\Piece;
+use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -112,47 +115,59 @@ class PiecesController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $community = Community::where('alias', $alias)->count();
+        $community = Community::where('alias', $alias)->first();
 
-        if ($community == 0) {
+        if ($community == null) {
             return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
         }
 
-        $pieces = Community::select('id')->where('alias', $alias)->with([
-            'Pieces'=> function ($query) {
-                return $query->select('community_id', 'name', 'uuid', 'picture', 'description', 'created_at');
-            },
-            'InCommunities' => function ($query) {
-                return $query->select('id', 'community_id');
-            },
-            'InCommunities.StockControl' => function ($query) {
-                return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
-            },
-            'InCommunities.CollectControl' => function ($query) {
-                return $query->select('id', 'in_community_id')->with([
-                    'CollectPieces' => function ($query) {
-                        return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
-                    }
-                ]);
-            },
-            'InCommunitiesUser' => function ($query) {
-                return $query->select('id', 'community_id', 'user_id')->with([
-                    'StockControl' => function ($query) {
-                        return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
-                    },
-                    'CollectControl' => function ($query) {
-                        return $query->select('id', 'in_community_id')->with([
-                            'CollectPieces' => function ($query) {
-                                return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
-                            }
-                        ]);
-                    }
-                ])->groupBy('community_id');
-            },
-        ])
-        ->get();
+        // COMMUNITY
+        $pieces = $community->Pieces()->paginate(15);
 
-        return response()->json($pieces);
+        $inCommunities = $community->InCommunities()->pluck('id')->toArray();
+
+        $stockControl = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
+            ->whereIn('in_community_id', $inCommunities)
+            ->groupBy('piece_id')
+            ->get();
+
+        $collectControl = CollectControl::whereIn('in_community_id', $inCommunities)->pluck('id')->toArray();
+
+        $collectPieces = CollectPieces::selectRaw('piece_id, SUM(units) as units')
+            ->whereIn('collect_control_id', $collectControl)
+            ->groupBy('piece_id')
+            ->get();
+        // FIN COMMUNITY
+
+        // USER
+        $inCommunitiesUser = $community->InCommunitiesUser()->pluck('id')->toArray();
+
+        $stockControlUser = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
+            ->whereIn('in_community_id', $inCommunitiesUser)
+            ->groupBy('piece_id')
+            ->get();
+
+        $collectControlUser = CollectControl::whereIn('in_community_id', $inCommunitiesUser)->pluck('id')->toArray();
+
+        $collectPiecesUser = CollectPieces::selectRaw('piece_id, SUM(units) as units')
+            ->whereIn('collect_control_id', $collectControlUser)
+            ->groupBy('piece_id')
+            ->get();
+        // FIN USER
+
+        $result = [
+            'pieces' => $pieces,
+            'community' => [
+                'stock_control' => $stockControl,
+                'collect_pieces' => $collectPieces
+            ],
+            'user' => [
+                'stock_control' => $stockControlUser,
+                'collect_pieces' => $collectPiecesUser
+            ]
+        ];
+
+        return response()->json($result);
     }
 
     /**

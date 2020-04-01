@@ -20,6 +20,8 @@ class CreateIncommunityTable extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('community_id')->references('id')->on('community');
             $table->foreignId('role_id')->references('id')->on('roles');
+            $table->timestamp('disabled_at')->nullable();
+            $table->timestamp('blockuser_at')->nullable();
             $table->timestamps();
         });
 

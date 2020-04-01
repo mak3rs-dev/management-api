@@ -20,6 +20,7 @@ class CreateStockControlTable extends Migration
             $table->foreignId('in_community_id')->references('id')->on('in_community');
             $table->foreignId('piece_id')->references('id')->on('pieces');
             $table->integer('units_manufactured');
+            $table->timestamp('validated_at')->nullable();
             $table->timestamps();
         });
 

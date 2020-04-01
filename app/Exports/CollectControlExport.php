@@ -47,7 +47,7 @@ class CollectControlExport implements FromCollection, WithHeadings
             'cc.province as province', 'cc.state as state', 'cc.country as country',
             'cc.cp as cp'];
 
-        $CollectControl = CollectControl::from('collect_control as cc')
+        return CollectControl::from('collect_control as cc')
             ->join('collect_pieces as pc', 'pc.collect_control_id', '=', 'cc.id')
             ->join('pieces as p', 'p.id', '=', 'pc.piece_id')
             ->join('status as st', 'st.id', '=', 'cc.status_id')
@@ -58,7 +58,5 @@ class CollectControlExport implements FromCollection, WithHeadings
             })
             ->where('cc.community_id', $this->community->community_id)
             ->get();
-
-        return $CollectControl;
     }
 }

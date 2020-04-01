@@ -18,7 +18,6 @@ class CreateCollectControlTable extends Migration
         Schema::create('collect_control', function (Blueprint $table) {
             $table->id();
             $table->foreignId('in_community_id')->references('id')->on('in_community');
-            $table->foreignId('community_id')->references('id')->on('community');
             $table->foreignId('status_id')->references('id')->on('status');
             $table->string('address')->nullable();
             $table->string('location', 60)->nullable();

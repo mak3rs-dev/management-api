@@ -19,12 +19,14 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->uuid('uuid')->index();
             $table->string('name', 60);
+            $table->string('alias', 60)->unique()->nullable();
             $table->string('email', 120)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('hash_email_verified')->nullable();
             $table->string('password');
             $table->string('phone', 20);
             $table->foreignId('role_id')->references('id')->on('roles');
+            $table->longText('picture')->nullable();
             $table->string('address')->nullable();
             $table->string('location', 60)->nullable();
             $table->string('province', 60)->nullable();

@@ -19,6 +19,7 @@ class CreatePiecesTable extends Migration
             $table->id();
             $table->uuid('uuid')->index();
             $table->foreignId('community_id')->references('id')->on('community');
+            $table->string('name', 60);
             $table->longText('picture')->nullable();
             $table->longText('description')->nullable();
             $table->timestamps();

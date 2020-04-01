@@ -18,7 +18,7 @@ class CreateStatusTable extends Migration
             $table->uuid('uuid')->index();
             $table->string('code', 60)->index();
             $table->string('name', 60);
-            $table->longText('description');
+            $table->longText('description')->nullable();
             $table->timestamps();
         });
     }
