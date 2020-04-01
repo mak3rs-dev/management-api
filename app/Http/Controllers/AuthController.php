@@ -127,7 +127,7 @@ class AuthController extends Controller
             'province' => 'nullable|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
-            'cp' => 'nullable|string|regex:^[0-9]+$'
+            'cp' => 'nullable|string|regex:/^[0-9]+$/'
         ], [
             'email.required' => 'El email es requerido',
             'email.email' => 'El email no es válido',
