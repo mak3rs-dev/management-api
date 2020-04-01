@@ -123,18 +123,17 @@ class PiecesController extends Controller
                 return $query->select('community_id', 'name', 'uuid', 'picture', 'description', 'created_at');
             },
             'InCommunities' => function ($query) {
-                return $query->select('id', 'community_id')->with([
-                    'StockControl' => function ($query) {
-                        return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
-                    },
-                    'CollectControl' => function ($query) {
-                        return $query->select('id', 'in_community_id')->with([
-                            'CollectPieces' => function ($query) {
-                                return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
-                            }
-                        ]);
+                return $query->select('id', 'community_id');
+            },
+            'StockControl' => function ($query) {
+                return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+            },
+            'CollectControl' => function ($query) {
+                return $query->select('id', 'in_community_id')->with([
+                    'CollectPieces' => function ($query) {
+                        return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
                     }
-                ])->groupBy('community_id');
+                ]);
             },
             'InCommunitiesUser' => function ($query) {
                 return $query->select('id', 'community_id', 'user_id')->with([
