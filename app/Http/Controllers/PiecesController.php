@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Community;
+use App\Models\InCommunity;
 use App\Models\Piece;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -80,6 +81,77 @@ class PiecesController extends Controller
             }
         ])
         ->paginate(15);
+
+        return response()->json($pieces);
+    }
+
+    /**
+     * @OA\GET(
+     *     path="/communities/pieces/{alias}",
+     *     tags={"Pieces"},
+     *     description="Obtenemos todas las piezas de la comunidad",
+     *     @OA\Response(response=200, description="List Pieces"),
+     *     @OA\Response(response=422, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function piecesOfCommunity(Request $request, $alias = null) {
+        // Validate request
+        $validator = Validator::make([
+            'alias' => $alias
+        ], [
+            'alias' => 'required|string'
+        ], [
+            'alias.required' => 'El alias es requerido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $community = Community::where('alias', $alias)->count();
+
+        if ($community == 0) {
+            return response()->json(['errors' => 'No se encuentra la comunidad'], 404);
+        }
+
+        $pieces = Community::select('id')->where('alias', $alias)->with([
+            'Pieces'=> function ($query) {
+                return $query->select('community_id', 'name', 'uuid', 'picture', 'description', 'created_at')->paginate(15);
+            },
+            'InCommunities' => function ($query) {
+                return $query->select('id', 'community_id')->with([
+                    'StockControl' => function ($query) {
+                        return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+                    },
+                    'CollectControl' => function ($query) {
+                        return $query->select('id', 'in_community_id')->with([
+                            'CollectPieces' => function ($query) {
+                                return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
+                            }
+                        ]);
+                    }
+                ]);
+            },
+            'InCommunitiesUser' => function ($query) {
+                return $query->select('id', 'community_id', 'user_id')->with([
+                    'StockControl' => function ($query) {
+                        return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+                    },
+                    'CollectControl' => function ($query) {
+                        return $query->select('id', 'in_community_id')->with([
+                            'CollectPieces' => function ($query) {
+                                return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
+                            }
+                        ]);
+                    }
+                ]);
+            },
+        ])
+        ->get();
 
         return response()->json($pieces);
     }

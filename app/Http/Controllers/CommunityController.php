@@ -216,7 +216,7 @@ class CommunityController extends Controller
         ], [
             'uuid.required' => 'El uuid es requerido',
             'alias.unique' => 'El alias ya existe en la comunidad',
-            'name.required' => 'El nombre es requerido',
+            'name.required' => 'El nombre es requerido'
         ]);
 
         // We check that the validation is correct

@@ -26,4 +26,8 @@ class CollectControl extends Model implements Auditable
     public function Status() {
         return $this->belongsTo(Status::class, 'status_id');
     }
+
+    public function CollectPieces() {
+        return $this->hasMany(CollectPieces::class, 'collect_control_id');
+    }
 }
