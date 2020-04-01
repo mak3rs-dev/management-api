@@ -202,7 +202,7 @@ class AuthController extends Controller
             return response()->json(['errors' => 'No se ha podido validar el email']);
         }
 
-        return redirect()->to(env('APP_URL').'/login?msg=accountactivated');
+        return redirect()->to(env('APP_CLIENT').'/login?msg=accountactivated');
     }
 
     /**
