@@ -125,10 +125,10 @@ class PiecesController extends Controller
             'InCommunities' => function ($query) {
                 return $query->select('id', 'community_id');
             },
-            'StockControl' => function ($query) {
+            'InCommunities.StockControl' => function ($query) {
                 return $query->selectRaw('in_community_id, piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
             },
-            'CollectControl' => function ($query) {
+            'InCommunities.CollectControl' => function ($query) {
                 return $query->select('id', 'in_community_id')->with([
                     'CollectPieces' => function ($query) {
                         return $query->selectRaw('collect_control_id, piece_id, SUM(units) as units')->groupBy('piece_id');
