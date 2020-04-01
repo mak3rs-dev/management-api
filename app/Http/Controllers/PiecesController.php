@@ -134,7 +134,7 @@ class PiecesController extends Controller
                             }
                         ]);
                     }
-                ])->groupBy('id');
+                ])->groupBy('community_id');
             },
             'InCommunitiesUser' => function ($query) {
                 return $query->select('id', 'community_id', 'user_id')->with([
@@ -148,7 +148,7 @@ class PiecesController extends Controller
                             }
                         ]);
                     }
-                ])->groupBy('id');
+                ])->groupBy('community_id');
             },
         ])
         ->get();
