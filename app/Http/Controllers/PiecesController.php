@@ -120,7 +120,7 @@ class PiecesController extends Controller
 
         $pieces = Community::select('id')->where('alias', $alias)->with([
             'Pieces'=> function ($query) {
-                return $query->select('community_id', 'name', 'uuid', 'picture', 'description', 'created_at')->paginate(15);
+                return $query->select('community_id', 'name', 'uuid', 'picture', 'description', 'created_at');
             },
             'InCommunities' => function ($query) {
                 return $query->select('id', 'community_id')->with([
