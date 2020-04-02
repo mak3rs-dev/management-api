@@ -459,7 +459,7 @@
                 }
             }
         },
-        "/communities/ranking/{alias}/{export}": {
+        "/communities/ranking/{alias}/{export?stock}": {
             "get": {
                 "tags": [
                     "Community"

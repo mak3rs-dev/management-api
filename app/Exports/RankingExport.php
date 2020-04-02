@@ -7,6 +7,7 @@ use App\Models\StockControl;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use DB;
 
 class RankingExport implements FromCollection, WithHeadings
 {
@@ -27,6 +28,8 @@ class RankingExport implements FromCollection, WithHeadings
         return [
             'Nombre Mak3r',
             'Piezas fabricadas',
+            'Piezas Entregadas',
+            'Stock',
             'Mak3r alias',
             'Dirección',
             'Localidad',
@@ -42,7 +45,7 @@ class RankingExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        $select = ['u.name as user_name', 'sc.units_manufactured as units_manufactured'];
+        $select = ['u.name as user_name', DB::raw('SUM(sc.units_manufactured) as units_manufactured'), DB::raw('SUM(cp.units) as units'), DB::raw('(units_manufactured - units) as stock')];
 
         if (auth()->check()) {
             array_push($select, 'u.alias as user_alias');
@@ -50,7 +53,7 @@ class RankingExport implements FromCollection, WithHeadings
             $inCommunity = null;
             $inCommunity = InCommunity::where('community_id', $this->community->id)->where('user_id', auth()->user()->id)->first();
 
-            if ($inCommunity != null && $inCommunity->hasRole('MAKER:ADMIN')) {
+            if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
                 array_push($select, 'u.address as user_address');
                 array_push($select, 'u.location as user_location');
                 array_push($select, 'u.province as user_province');
@@ -63,9 +66,12 @@ class RankingExport implements FromCollection, WithHeadings
         $ranking = StockControl::from('stock_control as sc')
             ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
+            ->join('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
+            ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
             ->select($select)
             ->where('ic.community_id', $this->community->id)
-            ->orderBy('sc.units_manufactured', 'desc')
+            ->groupBy('ic.user_id')
+            ->orderBy('stock', 'desc')
             ->get();
 
         return $ranking;

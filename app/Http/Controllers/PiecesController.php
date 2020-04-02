@@ -7,6 +7,7 @@ use App\Models\CollectPieces;
 use App\Models\Community;
 use App\Models\InCommunity;
 use App\Models\Piece;
+use App\Models\Status;
 use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -69,6 +70,9 @@ class PiecesController extends Controller
             $community = Community::where('alias', $request->alias)->first();
         }
 
+        // Status
+        $status = Status::whereIn('code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])->pluck('id')->toArray();
+
         $pieces = Piece::when($request->name != null, function ($query) use ($request) {
             return $query->where('name', 'like', "$request->name%");
         })
@@ -76,11 +80,11 @@ class PiecesController extends Controller
             return $query->where('community_id', $community->id);
         })
         ->with([
-            'StockControl' => function ($query) {
-                return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+            'StockControl' => function ($query) use ($status) {
+                return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->whereIn('status_id', $status)->groupBy('piece_id');
             },
-            'CollectPieces' => function ($query) {
-                return $query->selectRaw('piece_id, SUM(units) as units')->groupBy('piece_id');
+            'CollectPieces' => function ($query) use ($status) {
+                return $query->selectRaw('piece_id, SUM(units) as units')->whereIn('status_id', $status)->groupBy('piece_id');
             }
         ])
         ->paginate(15);
@@ -121,8 +125,12 @@ class PiecesController extends Controller
             return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
 
+        // Status
+        $status = Status::whereIn('code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])->pluck('id')->toArray();
+
         // COMMUNITY
-        $pieces = $community->Pieces()->paginate(15);
+        $pieces = $community->Pieces()
+            ->select('uuid', 'name', 'community_id', 'picture', 'description', 'created_at')->paginate(15);
 
         $inCommunities = $community->InCommunities()->pluck('id')->toArray();
 
@@ -131,7 +139,7 @@ class PiecesController extends Controller
             ->groupBy('piece_id')
             ->get();
 
-        $collectControl = CollectControl::whereIn('in_community_id', $inCommunities)->pluck('id')->toArray();
+        $collectControl = CollectControl::whereIn('in_community_id', $inCommunities)->whereIn('status_id', $status)->pluck('id')->toArray();
 
         $collectPieces = CollectPieces::selectRaw('piece_id, SUM(units) as units')
             ->whereIn('collect_control_id', $collectControl)
@@ -147,7 +155,7 @@ class PiecesController extends Controller
             ->groupBy('piece_id')
             ->get();
 
-        $collectControlUser = CollectControl::whereIn('in_community_id', $inCommunitiesUser)->pluck('id')->toArray();
+        $collectControlUser = CollectControl::whereIn('in_community_id', $inCommunitiesUser)->whereIn('status_id', $status)->pluck('id')->toArray();
 
         $collectPiecesUser = CollectPieces::selectRaw('piece_id, SUM(units) as units')
             ->whereIn('collect_control_id', $collectControlUser)

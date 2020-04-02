@@ -15,7 +15,7 @@ class StatusSeeder extends Seeder
         DB::table('status')->insert(
             [
                 'uuid' => \Illuminate\Support\Str::uuid(),
-                'code' => 'REQUESTED',
+                'code' => 'COLLECT:REQUESTED',
                 'name' => 'Solicitada',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
@@ -25,7 +25,7 @@ class StatusSeeder extends Seeder
         DB::table('status')->insert(
             [
                 'uuid' => \Illuminate\Support\Str::uuid(),
-                'code' => 'DELIVERED',
+                'code' => 'COLLECT:DELIVERED',
                 'name' => 'Entregada',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),
@@ -35,7 +35,7 @@ class StatusSeeder extends Seeder
         DB::table('status')->insert(
             [
                 'uuid' => \Illuminate\Support\Str::uuid(),
-                'code' => 'RECEIVED',
+                'code' => 'COLLECT:RECEIVED',
                 'name' => 'Recibida',
                 'created_at' => \Carbon\Carbon::now(),
                 'updated_at' => \Carbon\Carbon::now(),

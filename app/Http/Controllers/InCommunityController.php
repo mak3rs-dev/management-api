@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Exports\RankingExport;
 use App\Models\Community;
-use App\Models\InCommunity;
 use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
+use DB;
 
 class InCommunityController extends Controller
 {
@@ -19,7 +19,7 @@ class InCommunityController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/ranking/{alias}/{export}",
+     *     path="/communities/ranking/{alias}/{export?stock}",
      *     tags={"Community"},
      *     description="Ranking de la comunidad",
      *     @OA\Response(response=200, description="ok"),
@@ -59,7 +59,7 @@ class InCommunityController extends Controller
             return response()->json(['error' => 'La comunidad no tiene ningún mak3r'], 404);
         }
 
-        $select = ['u.name as user_name', 'sc.units_manufactured as units_manufactured'];
+        $select = ['u.name as user_name', DB::raw('SUM(sc.units_manufactured) as units_manufactured'), DB::raw('SUM(cp.units) as units'), DB::raw('(units_manufactured - units) as stock')];
 
         if (auth()->check()) {
             array_push($select, 'u.uuid as user_uuid');
@@ -79,15 +79,25 @@ class InCommunityController extends Controller
         }
 
         if ($export == "export") {
-            return Excel::download(new RankingExport($community, $select),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
+            return Excel::download(new RankingExport($community),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
         $ranking = StockControl::from('stock_control as sc')
             ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
+            ->join('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
+            ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
             ->select($select)
             ->where('ic.community_id', $community->id)
-            ->orderBy('sc.units_manufactured', 'desc')
+            ->groupBy('ic.user_id')
+            ->when(true, function ($query) use ($export) {
+                if ($export == "stock") {
+                    return $query->orderBy('stock', 'desc');
+
+                } else {
+                    return $query->orderBy('sc.units_manufactured', 'desc');
+                }
+            })
             ->paginate(15);
 
         return response()->json($ranking);
