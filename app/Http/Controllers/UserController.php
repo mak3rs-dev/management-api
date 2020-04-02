@@ -69,17 +69,21 @@ class UserController extends Controller
         }
 
         // Check user join in community
-        $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->count();
+        $inCommunity = $community->InCommunitiesUser()->count();
 
         if ($inCommunity > 0) {
             return response()->json(['error' => 'Ya perteneces a está comundidad'], 500);
         }
+
+        // Calculate last mak3r_num
+        $lastNumMaker = $community->InCommunities()->select('mak3r_num')->orderBy('mak3r_num', 'desc')->first();
 
         $inCommunity = null;
         $inCommunity = new InCommunity();
         $inCommunity->community_id = $community->id;
         $inCommunity->user_id = auth()->user()->id;
         $inCommunity->role_id = Role::where('name', 'MAKER:USER')->first()->id;
+        $inCommunity->mak3r_num = $lastNumMaker == null ? 1 : $lastNumMaker->mak3r_num + 1;
 
         if (!$inCommunity->save()) {
             return response()->json(['error' => 'El usuario no se ha podido unir a la comunidad'], 500);
