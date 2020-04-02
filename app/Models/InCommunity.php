@@ -12,7 +12,7 @@ class InCommunity extends Model implements Auditable
     protected $table = 'in_community';
 
     protected $fillable = [
-        'id', 'user_id', 'community_id', 'role_id', 'disabled_at', 'blockuser_at'
+        'id', 'user_id', 'community_id', 'role_id', 'mak3r_num', 'disabled_at', 'blockuser_at'
     ];
 
     public function Role() {
