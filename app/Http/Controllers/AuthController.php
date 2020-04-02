@@ -52,17 +52,22 @@ class AuthController extends Controller
     {
         // Validate request
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
+            'email' => 'required',
             'password' => 'required|string'
         ], [
             'email.required' => 'El email es requerido',
-            'email.email' => 'El email no es válido',
             'password.required' => 'La contraseña es requerida',
         ]);
 
         // We check that the validation is correct
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::where('alias', $request->email)->first();
+
+        if ($user != null) {
+            $request->email = $user->email;
         }
 
         if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
