@@ -217,7 +217,7 @@ class PiecesController extends Controller
         }
 
         // Check permission USER:ADMIN
-        if (auth()->user()->hasRole('USER:ADMIN')) {
+        if (!auth()->user()->hasRole('USER:ADMIN')) {
             return response()->json(['error' => 'No tienes permisos para crear una pieza &#128532;'], 403);
         }
 
