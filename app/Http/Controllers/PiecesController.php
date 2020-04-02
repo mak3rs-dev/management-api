@@ -203,9 +203,11 @@ class PiecesController extends Controller
     public function create(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
+            'community' => 'required|string',
             'name' => 'required|string',
             'description' => 'nullable|string'
         ], [
+            'community.required' => 'La comunidad es requerida',
             'name.required' => 'El nombre es requerido'
         ]);
 
@@ -219,8 +221,15 @@ class PiecesController extends Controller
             return response()->json(['error' => 'No tienes permisos para crear una pieza &#128532;'], 403);
         }
 
+        $community = Community::where('alias', $request->community)->orWhere('uuid', $request->community)->first();
+
+        if ($community == null) {
+            return response()->json(['error' => 'La comunidad seleccionada no existe!'], 404);
+        }
+
         $piece = new Piece();
         $piece->uuid = Str::uuid();
+        $piece->community_id = $community->id;
         $piece->name = $request->name;
         $piece->description = $request->description;
 
