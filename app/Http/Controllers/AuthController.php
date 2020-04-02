@@ -64,11 +64,11 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $user = User::where('alias', $request->email)->first();
+        /*$user = User::where('alias', $request->email)->first();
 
         if ($user != null) {
             $request->email = $user->email;
-        }
+        }*/
 
         if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
             return response()->json(['error' => 'Unauthorized'], 401);
