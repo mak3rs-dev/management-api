@@ -95,13 +95,13 @@ class CommunityController extends Controller
         $select = [];
 
         if ($checkUser) {
-            $select = ['id', 'uuid', 'alias', 'description', 'created_at', 'user'];
+            $select = ['uuid', 'alias', 'description', 'created_at'];
 
         } else {
-            $select = ['alias', 'description', 'created_at', 'user'];
+            $select = ['alias', 'description', 'created_at'];
         }
 
-        $community = Community::where('alias', $alias)->first();
+        $community = Community::select($select)->where('alias', $alias)->first();
 
         if ($community == null) {
             return response()->json(['error' => 'La comunidad no se encuentra'], 404);
