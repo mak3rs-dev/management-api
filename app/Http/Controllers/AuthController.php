@@ -74,7 +74,6 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
-        return $user;
 
         // We check that the user has validated their email
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
