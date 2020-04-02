@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Validator;
 class StockControlController extends Controller
 {
     /**
+     * StockControlController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('jwt.auth');
+    }
+
+    /**
      * @OA\POST(
      *     path="/communities/piece/add-or-update",
      *     tags={"Community"},

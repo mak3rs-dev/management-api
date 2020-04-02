@@ -7,7 +7,6 @@ use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -75,6 +74,7 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
+        return $user;
 
         // We check that the user has validated their email
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
