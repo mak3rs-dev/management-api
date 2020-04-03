@@ -149,18 +149,23 @@ class PiecesController extends Controller
 
         // USER
         $inCommunitiesUser = $community->InCommunitiesUser();
+        $stockControlUser = [];
+        $collectControlUser = [];
+        $collectPiecesUser = [];
 
-        $stockControlUser = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
-            ->where('in_community_id', $inCommunitiesUser->id)
-            ->groupBy('piece_id')
-            ->get();
+        if ($inCommunitiesUser != null) {
+            $stockControlUser = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
+                ->where('in_community_id', $inCommunitiesUser->id)
+                ->groupBy('piece_id')
+                ->get();
 
-        $collectControlUser = CollectControl::where('in_community_id', $inCommunitiesUser->id)->whereIn('status_id', $status)->pluck('id')->toArray();
+            $collectControlUser = CollectControl::where('in_community_id', $inCommunitiesUser->id)->whereIn('status_id', $status)->pluck('id')->toArray();
 
-        $collectPiecesUser = CollectPieces::selectRaw('piece_id, SUM(units) as units')
-            ->whereIn('collect_control_id', $collectControlUser)
-            ->groupBy('piece_id')
-            ->get();
+            $collectPiecesUser = CollectPieces::selectRaw('piece_id, SUM(units) as units')
+                ->whereIn('collect_control_id', $collectControlUser)
+                ->groupBy('piece_id')
+                ->get();
+        }
         // FIN USER
 
         $result = [
