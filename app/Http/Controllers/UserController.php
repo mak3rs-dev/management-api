@@ -72,7 +72,7 @@ class UserController extends Controller
         $inCommunity = $community->InCommunitiesUser()->count();
 
         if ($inCommunity > 0) {
-            return response()->json(['error' => 'Ya perteneces a está comundidad'], 500);
+            return response()->json(['error' => 'Ya perteneces a está comunidad!!'], 500);
         }
 
         // Calculate last mak3r_num

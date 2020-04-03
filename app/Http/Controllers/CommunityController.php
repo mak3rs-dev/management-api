@@ -111,7 +111,7 @@ class CommunityController extends Controller
         $community->user_admin = false;
 
         if ($checkUser) {
-            $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
+            $inCommunity = $community->InCommunitiesUser();
             if ($inCommunity != null) {
                 $community->user = true;
 

@@ -24,6 +24,6 @@ class Community extends Model implements Auditable
     }
 
     public function InCommunitiesUser() {
-        return $this->hasMany(InCommunity::class, 'community_id')->where('user_id', auth()->user()->id);
+        return $this->belongsTo(InCommunity::class, 'community_id')->where('user_id', auth()->user()->id);
     }
 }
