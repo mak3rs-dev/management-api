@@ -106,8 +106,8 @@ class InCommunityController extends Controller
             })
             ->when($piece_id != null, function ($query) use ($piece_id) {
                 return $query->where([
-                    ['sc.piece_id', '=', $piece_id],
-                    ['cp.piece_id', '=', $piece_id]
+                    ['sc.piece_id', '=', $piece_id->id],
+                    ['cp.piece_id', '=', $piece_id->id]
                 ]);
             })
             ->groupBy('ic.user_id')
