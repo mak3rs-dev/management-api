@@ -87,7 +87,7 @@ class Handler extends ExceptionHandler
                 return Arr::except($trace, ['args']);
             })->all(),
         ] : [
-            'errors' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
+            'error' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
         ];
     }
 }
