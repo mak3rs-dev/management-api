@@ -12,6 +12,7 @@ use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use DB;
 
 class PiecesController extends Controller
 {
@@ -73,21 +74,24 @@ class PiecesController extends Controller
         // Status
         $status = Status::whereIn('code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])->pluck('id')->toArray();
 
-        $pieces = Piece::when($request->name != null, function ($query) use ($request) {
-            return $query->where('name', 'like', "$request->name%");
-        })
-        ->when($community != null, function ($query) use ($community) {
-            return $query->where('community_id', $community->id);
-        })
-        ->with([
-            'StockControl' => function ($query) use ($status) {
-                return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
-            },
-            'CollectPieces' => function ($query) use ($status) {
-                return $query->selectRaw('piece_id, SUM(units) as units')->whereIn('status_id', $status)->groupBy('piece_id');
-            }
-        ])
-        ->paginate(15);
+        $select = ['p.uuid as piece_uuid', 'p.name as piece_name', 'p.picture as piece_picture', 'p.description as piece_description',
+                    DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'), DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
+                    DB::raw('(IFNULL(SUM(sc.units_manufactured), 0) - IFNULL(SUM(cp.units), 0)) as stock')];
+
+        $pieces = Piece::from('pieces as p')
+            ->join('in_community as ic', 'ic.id', '=', 'p.community_id')
+            ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
+            ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+            ->leftJoin('stock_control as sc', 'sc.in_community_id', '=', 'ic.id')
+            ->select($select)
+            ->when($request->name != null, function ($query) use ($request) {
+                return $query->where('p.name', 'like', "$request->name%");
+            })
+            ->when($community != null, function ($query) use ($community) {
+                return $query->where('p.community_id', $community->id);
+            })
+            ->groupBy('cp.piece_id', 'sc.piece_id')
+            ->paginate(15);
 
         return response()->json($pieces);
     }
@@ -130,7 +134,6 @@ class PiecesController extends Controller
 
         // COMMUNITY
         $pieces = $community->Pieces()
-            ->select('id', 'uuid', 'name', 'community_id', 'picture', 'description', 'created_at')
             ->with([
                 'StockControl' => function ($query) use ($status) {
                     return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
