@@ -96,7 +96,7 @@ class CommunityController extends Controller
         $select = [];
 
         if ($checkUser) {
-            $select = ['uuid', 'name', 'alias', 'description', 'created_at'];
+            $select = ['id', 'uuid', 'name', 'alias', 'description', 'created_at'];
 
         } else {
             $select = ['name', 'alias', 'description', 'created_at'];
@@ -108,13 +108,11 @@ class CommunityController extends Controller
             return response()->json(['error' => 'La comunidad no se encuentra'], 404);
         }
 
-        return response()->json($community->InCommunities(), 200);
-
-        //$community->user = false;
-        //$community->user_admin = false;
+        $community->user = false;
+        $community->user_admin = false;
 
         if ($checkUser) {
-            $inCommunity = $community->InCommunities();
+            $inCommunity = InCommunity::where('community_id', $community->id)->where('user_id', auth()->user()->id)->first();
             if ($inCommunity != null) {
                 $community->user = true;
 
