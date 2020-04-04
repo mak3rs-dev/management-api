@@ -61,7 +61,7 @@ class InCommunityController extends Controller
 
         $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
                     DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
-                    DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'u.uuid as user_uuid', 'u.alias as user_alias'];
+                    DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
 
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
