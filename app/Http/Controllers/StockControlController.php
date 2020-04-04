@@ -69,21 +69,21 @@ class StockControlController extends Controller
         }
 
         // Check join Community
-        $inCommunity = $community->InCommunities()->where('community_id', $community->id)->first();
+        $inCommunity = $community->InCommunitiesUser();
 
         if ($inCommunity == null) {
             return response()->json(['error' => 'El usuario no pertenece a esta comunidad!!'], 404);
         }
 
         // Check pieces
-        $piece = $community->Pieces()->where('uuid', $request->uuid_piece)->first();
+        $piece = $community->Pieces->where('uuid', $request->uuid_piece)->first();
 
         if ($piece == null) {
             return response()->json(['error' => 'No se encuentra ninguna pieza!!'], 404);
         }
 
         // Check stock exists
-        $stockControl = $inCommunity->StockControl()->where('piece_id', $piece->id)->first();
+        $stockControl = $inCommunity->StockControl->where('piece_id', $piece->id)->first();
 
         if ($stockControl == null)  {
             // Create Stock
@@ -99,12 +99,11 @@ class StockControlController extends Controller
 
         } else {
             // Update Stock
-            // We check units > 0
             if ($request->units > 0) {
                 $stockControl->units_manufactured += $request->units;
 
             } else {
-                if ($stockControl->units_manufactured < $request->units) {
+                if (($request->units + $stockControl->units_manufactured) < 0) {
                     return response()->json(['error' => 'No puedes descontar stock que no tienes'], 500);
                 }
 
