@@ -35,7 +35,7 @@ class PiecesController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="name", description="", type="string"),
-     *         @OA\Property(property="community", description="Community uuid", type="string"),
+     *         @OA\Property(property="uuid", description="Community uuid", type="string"),
      *         @OA\Property(property="alias", description="Community alias", type="string"),
      *       ),
      *     ),
@@ -51,7 +51,7 @@ class PiecesController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string',
-            'community' => 'nullable|string',
+            'uuid' => 'nullable|string',
             'alias' => 'nullable|string'
         ]);
 
@@ -231,7 +231,7 @@ class PiecesController extends Controller
 
         // Check permission USER:ADMIN
         if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
-            return response()->json(['error' => 'No tienes permisos para crear una pieza &#128532;'], 403);
+            return response()->json(['error' => 'No tienes permisos para crear una pieza'], 403);
         }
 
         if ($community == null) {
