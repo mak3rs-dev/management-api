@@ -322,17 +322,17 @@ class AuthController extends Controller
         $user = User::where('hash_password_verified', $request->hash)->first();
 
         if ($user == null) {
-            return response()->json(['error' => 'El hash no es válido']);
+            return response()->json(['error' => 'El hash no es válido'], 500);
         }
 
         $user->hash_password_verified = null;
         $user->password = bcrypt($request->password);
 
         if (!$user->save()) {
-            return response()->json(['error' => 'No se ha podido actualizar la contraseña']);
+            return response()->json(['error' => 'No se ha podido actualizar la contraseña'], 500);
         }
 
-        return response()->json(['message' => 'La contraseña se ha actualizado correctamente']);
+        return response()->json(['message' => 'La contraseña se ha actualizado correctamente'], 200);
     }
 
     /**
