@@ -226,9 +226,7 @@ class AuthController extends Controller
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="hash", description="",  type="string"),
-     *         @OA\Property(property="password", description="", type="string"),
-     *         @OA\Property(property="password_confirm", description="", type="string")
+     *         @OA\Property(property="email", description="",  type="string")
      *       ),
      *     ),
      *     ),

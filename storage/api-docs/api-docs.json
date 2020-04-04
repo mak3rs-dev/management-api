@@ -154,15 +154,7 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "hash": {
-                                        "description": "",
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "description": "",
-                                        "type": "string"
-                                    },
-                                    "password_confirm": {
+                                    "email": {
                                         "description": "",
                                         "type": "string"
                                     }
