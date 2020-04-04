@@ -53,9 +53,9 @@ class InCommunityController extends Controller
             return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
 
-        $inCommunity = $community->InCommunities()->count();
+        $inCommunity = $community->InCommunities;
 
-        if ($inCommunity == 0) {
+        if (count($inCommunity) == 0) {
             return response()->json(['error' => 'La comunidad no tiene ningún mak3r'], 404);
         }
 
@@ -66,7 +66,7 @@ class InCommunityController extends Controller
             array_push($select, 'u.alias as user_alias');
 
             $inCommunity = null;
-            $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
+            $inCommunity = $community->InCommunitiesUser();
 
             if ($inCommunity != null && $inCommunity->hasRole('MAKER:ADMIN')) {
                 array_push($select, 'u.address as user_address');
@@ -85,8 +85,8 @@ class InCommunityController extends Controller
         $ranking = StockControl::from('stock_control as sc')
             ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
-            ->join('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
-            ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+            ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
+            ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
             ->select($select)
             ->where('ic.community_id', $community->id)
             ->groupBy('ic.user_id')

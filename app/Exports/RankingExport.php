@@ -51,7 +51,7 @@ class RankingExport implements FromCollection, WithHeadings
             array_push($select, 'u.alias as user_alias');
 
             $inCommunity = null;
-            $inCommunity = InCommunity::where('community_id', $this->community->id)->where('user_id', auth()->user()->id)->first();
+            $inCommunity = $this->community->InCommunitiesUser();
 
             if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
                 array_push($select, 'u.address as user_address');
@@ -66,8 +66,8 @@ class RankingExport implements FromCollection, WithHeadings
         $ranking = StockControl::from('stock_control as sc')
             ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
-            ->join('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
-            ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+            ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
+            ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
             ->select($select)
             ->where('ic.community_id', $this->community->id)
             ->groupBy('ic.user_id')

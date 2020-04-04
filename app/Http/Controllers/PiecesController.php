@@ -175,10 +175,6 @@ class PiecesController extends Controller
 
         $result = [
             'pieces' => $pieces,
-            'community' => [
-                'stock_control' => $stockControl,
-                'collect_pieces' => $collectPieces
-            ],
             'user' => [
                 'stock_control' => $stockControlUser,
                 'collect_pieces' => $collectPiecesUser
