@@ -81,7 +81,7 @@ class PiecesController extends Controller
         })
         ->with([
             'StockControl' => function ($query) use ($status) {
-                return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->whereIn('status_id', $status)->groupBy('piece_id');
+                return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
             },
             'CollectPieces' => function ($query) use ($status) {
                 return $query->selectRaw('piece_id, SUM(units) as units')->whereIn('status_id', $status)->groupBy('piece_id');
@@ -136,6 +136,11 @@ class PiecesController extends Controller
 
         $stockControl = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
             ->whereIn('in_community_id', $inCommunities)
+            ->with([
+                'Piece' => function ($query) use ($status) {
+                    return $query->select('community_id', 'name', 'picture', 'description');
+                }
+            ])
             ->groupBy('piece_id')
             ->get();
 
@@ -143,6 +148,11 @@ class PiecesController extends Controller
 
         $collectPieces = CollectPieces::selectRaw('piece_id, SUM(units) as units')
             ->whereIn('collect_control_id', $collectControl)
+            ->with([
+                'Piece' => function ($query) use ($status) {
+                    return $query->select('community_id', 'name', 'picture', 'description');
+                }
+            ])
             ->groupBy('piece_id')
             ->get();
         // FIN COMMUNITY
@@ -156,6 +166,11 @@ class PiecesController extends Controller
         if ($inCommunitiesUser != null) {
             $stockControlUser = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
                 ->where('in_community_id', $inCommunitiesUser->id)
+                ->with([
+                    'Piece' => function ($query) use ($status) {
+                        return $query->select('community_id', 'name', 'picture', 'description');
+                    }
+                ])
                 ->groupBy('piece_id')
                 ->get();
 
@@ -163,6 +178,11 @@ class PiecesController extends Controller
 
             $collectPiecesUser = CollectPieces::selectRaw('piece_id, SUM(units) as units')
                 ->whereIn('collect_control_id', $collectControlUser)
+                ->with([
+                    'Piece' => function ($query) use ($status) {
+                        return $query->select('community_id', 'name', 'picture', 'description');
+                    }
+                ])
                 ->groupBy('piece_id')
                 ->get();
         }
