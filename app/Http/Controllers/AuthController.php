@@ -69,7 +69,7 @@ class AuthController extends Controller
             $request->email = $user->email;
         }*/
 
-        if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
+        if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password], true)) {
             return response()->json(['error' => 'Los datos de inicio de sesión son incorrectos'], 401);
         }
 
