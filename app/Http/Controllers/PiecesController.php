@@ -52,6 +52,7 @@ class PiecesController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'name' => 'nullable|string',
+            'uuid' => 'nullable|string',
             'community' => 'nullable|string',
             'alias' => 'nullable|string'
         ]);
@@ -85,6 +86,9 @@ class PiecesController extends Controller
             })
             ->when($community != null, function ($query) use ($community) {
                 return $query->where('p.community_id', $community->id);
+            })
+            ->when($request->uuid != null, function ($query) use ($request) {
+                return $query->where('p.uuid', $request->id);
             })
             ->paginate(15);
 

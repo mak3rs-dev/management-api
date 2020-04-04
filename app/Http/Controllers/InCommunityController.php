@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\RankingExport;
 use App\Models\Community;
+use App\Models\Piece;
 use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,11 +36,13 @@ class InCommunityController extends Controller
         $validator = Validator::make([
             'alias' => $alias,
             'export' => $export,
-            'user' => $request->user
+            'user' => $request->user,
+            'piece' => $request->piece
         ],[
             'alias' => 'required|string',
             'export' => 'nullable|string',
-            'user' => 'nullable|string'
+            'user' => 'nullable|string',
+            'piece' => 'nullable|string'
         ], [
             'alias.required' => 'El alias es requerido'
         ]);
@@ -59,6 +62,12 @@ class InCommunityController extends Controller
 
         if (count($inCommunity) == 0) {
             return response()->json(['error' => 'La comunidad no tiene ningún mak3r'], 404);
+        }
+
+        $piece_id = null;
+
+        if ($request->piece != null) {
+            $piece_id = Piece::where('uuid', $request->piece)->first();
         }
 
         $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
@@ -91,6 +100,15 @@ class InCommunityController extends Controller
             ->where('ic.community_id', $community->id)
             ->when($request->user != null, function ($query) use ($request) {
                 return $query->where('u.uuid', $request->user);
+            })
+            ->when($request->uuid != null, function ($query) use ($request) {
+                return $query->where('p.uuid', $request->id);
+            })
+            ->when($piece_id != null, function ($query) use ($piece_id) {
+                return $query->where([
+                    ['sc.piece_id', '=', $piece_id],
+                    ['cp.piece_id', '=', $piece_id]
+                ]);
             })
             ->groupBy('ic.user_id')
             ->when(true, function ($query) use ($export) {
