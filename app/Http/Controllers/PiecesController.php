@@ -79,7 +79,7 @@ class PiecesController extends Controller
                     DB::raw('(IFNULL(SUM(sc.units_manufactured), 0) - IFNULL(SUM(cp.units), 0)) as stock')];
 
         $pieces = Piece::from('pieces as p')
-            ->join('in_community as ic', 'ic.id', '=', 'p.community_id')
+            ->join('in_community as ic', 'ic.community_id', '=', 'p.community_id')
             ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
             ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
             ->leftJoin('stock_control as sc', 'sc.in_community_id', '=', 'ic.id')
