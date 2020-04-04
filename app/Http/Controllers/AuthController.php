@@ -79,13 +79,13 @@ class AuthController extends Controller
         // We check that the user has validated their email
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
             auth()->logout();
-            return response()->json(['error' => 'No has verificado el Email!!'], 200);
+            return response()->json(['error' => 'No has verificado el Email!!'], 500);
         }
 
         // Check user not recovery password
         if ($user->hash_password_verified != null) {
             auth()->logout();
-            return response()->json(['error' => 'Has solicitado recuperar tu contraseña, hasta que no indiques tu nueva contraseña no podrás iniciar sesión.'], 200);
+            return response()->json(['error' => 'Has solicitado recuperar tu contraseña, hasta que no indiques tu nueva contraseña no podrás iniciar sesión.'], 500);
         }
 
         return $this->respondWithToken($token);
@@ -257,7 +257,7 @@ class AuthController extends Controller
         $message = 'Si el email es correcto te habrá llegado un correo indicando como recuperar tu contraseña';
 
         if ($user == null) {
-            return response()->json(['message' => $message], 200);
+            return response()->json(['message' => $message], 500);
         }
 
         // Create hash
