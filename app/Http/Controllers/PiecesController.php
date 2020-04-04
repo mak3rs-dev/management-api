@@ -221,12 +221,18 @@ class PiecesController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Check permission USER:ADMIN
-        if (!auth()->user()->hasRole('USER:ADMIN')) {
-            return response()->json(['error' => 'No tienes permisos para crear una pieza &#128532;'], 403);
+        $community = Community::where('alias', $request->community)->orWhere('uuid', $request->community)->first();
+
+        $inCommunity = $community->InCommunitiesUser();
+
+        if ($inCommunity == null) {
+            return response()->json(['error' => 'No perteneces a la comunidad, para poder crear una pieza'], 404);
         }
 
-        $community = Community::where('alias', $request->community)->orWhere('uuid', $request->community)->first();
+        // Check permission USER:ADMIN
+        if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
+            return response()->json(['error' => 'No tienes permisos para crear una pieza &#128532;'], 403);
+        }
 
         if ($community == null) {
             return response()->json(['error' => 'La comunidad seleccionada no existe!'], 404);
