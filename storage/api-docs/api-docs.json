@@ -141,6 +141,91 @@
                 }
             }
         },
+        "/auth/recovery-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Recuperación de contraseña",
+                "operationId": "App\\Http\\Controllers\\AuthController::recoveryPasword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "hash": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password_confirm": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/recovery-hash": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Recuperación de contraseña",
+                "operationId": "App\\Http\\Controllers\\AuthController::recoveryHash",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "hash": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password_confirm": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/auth/me": {
             "get": {
                 "tags": [

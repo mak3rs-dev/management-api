@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\EmailVerified;
+use App\Mail\RecoveryPassword;
 use App\Models\Role;
 use App\Models\User;
 use Carbon\Carbon;
@@ -79,6 +80,12 @@ class AuthController extends Controller
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
             auth()->logout();
             return response()->json(['error' => 'No has verificado el Email!!'], 200);
+        }
+
+        // Check user not recovery password
+        if ($user->hash_password_verified != null) {
+            auth()->logout();
+            return response()->json(['error' => 'Has solicitado recuperar tu contraseña, hasta que no indiques tu nueva contraseña no podrás iniciar sesión.'], 200);
         }
 
         return $this->respondWithToken($token);
@@ -208,6 +215,126 @@ class AuthController extends Controller
         }
 
         return redirect()->to(env('APP_CLIENT').'/login?msg=accountactivated');
+    }
+
+    /**
+     * @OA\POST(
+     *     path="/auth/recovery-password",
+     *     tags={"Auth"},
+     *     description="Recuperación de contraseña",
+     *     @OA\RequestBody(required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="hash", description="",  type="string"),
+     *         @OA\Property(property="password", description="", type="string"),
+     *         @OA\Property(property="password_confirm", description="", type="string")
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description=""),
+     *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function recoveryPasword(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email'
+        ], [
+            'email.required' => 'El email es requerido',
+            'email.email' => 'El email no es válido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        $message = 'Si el email es correcto te habrá llegado un correo indicando como recuperar tu contraseña';
+
+        if ($user == null) {
+            return response()->json(['message' => $message], 200);
+        }
+
+        // Create hash
+        $user->hash_password_verified = Str::uuid();
+
+        if (!$user->save()) {
+            return response()->json(['error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente '], 500);
+        }
+
+        $url = url(env('APP_CLIENT').'/recover/?hash='.$user->hash_password_verified);
+
+        try {
+            Mail::to($user->email)->send(new RecoveryPassword($url));
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $message
+            ], 500);
+        }
+
+        return response()->json(['message' => $message], 200);
+    }
+
+    /**
+     *@OA\POST(
+     *     path="/auth/recovery-hash",
+     *     tags={"Auth"},
+     *     description="Recuperación de contraseña",
+     *     @OA\RequestBody(required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="hash", description="",  type="string"),
+     *         @OA\Property(property="password", description="", type="string"),
+     *         @OA\Property(property="password_confirm", description="", type="string")
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description=""),
+     *     @OA\Response(response=422, description="")
+     * )
+     */
+    public function recoveryHash(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'hash' => 'required|string',
+            'password' => 'required|string|min:8|max:12',
+            'password_confirm' => 'required|string|same:password'
+        ], [
+            'hash.required' => 'El hash es requerido',
+            'password.required' => 'La contraseña es requerida',
+            'password.min' => 'La longitud mínima de la contraseña es de 8 caracteres',
+            'password.max' => 'La longitud máxima de la contraseña es de 12 caracteres',
+            'password_confirm.required' => 'La contraseña de confirmación es requerida',
+            'password_confirm.same' => 'Las contraseñas no son iguales'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::where('hash_password_verified', $request->hash)->first();
+
+        if ($user == null) {
+            return response()->json(['error' => 'El hash no es válido']);
+        }
+
+        $user->hash_password_verified = null;
+        $user->password = bcrypt($request->password);
+
+        if (!$user->save()) {
+            return response()->json(['error' => 'No se ha podido actualizar la contraseña']);
+        }
+
+        return response()->json(['message' => 'La contraseña se ha actualizado correctamente']);
     }
 
     /**

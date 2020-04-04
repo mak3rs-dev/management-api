@@ -79,7 +79,7 @@ class CollectControlController extends Controller
             return response()->json(['errors' => 'La comunidad no existe'], 404);
         }
 
-        $inCommunity = $community->InCommunities()->where('user_id', auth()->user()->id)->first();
+        $inCommunity = $community->InCommunitiesUser();
 
         if ($inCommunity == null) {
             return response()->json(['errors' => 'No perteneces a esta comunidad'], 404);
@@ -181,13 +181,13 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
 
-        $piece = $community->Pieces()->where('uuid_piece', $request->uuid_piece)->first();
+        $piece = $community->Pieces->where('uuid_piece', $request->uuid_piece)->first();
 
         if ($piece == null) {
             return response()->json(['error' => 'La pieza no se encuentra en la comunidad'], 422);
         }
 
-        $inCommunity = $community->InCommunities()->where('user_id', auth()->user->id)->first();
+        $inCommunity = $community->InCommunitiesUser();
 
         if ($inCommunity == null) {
             return response()->json(['error' => 'No perteneces a esta comunidad'], 422);
