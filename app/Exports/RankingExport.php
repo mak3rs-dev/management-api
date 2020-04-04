@@ -45,22 +45,22 @@ class RankingExport implements FromCollection, WithHeadings
      */
     public function collection()
     {
-        $select = ['u.name as user_name',  DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'), DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'), DB::raw('(units_manufactured - IFNULL(units, 0)) as stock')];
+        $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
+            DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
+            DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'user_alias'];
 
-        if (auth()->check()) {
-            array_push($select, 'u.alias as user_alias');
+        array_push($select, 'u.alias as user_alias');
 
-            $inCommunity = null;
-            $inCommunity = $this->community->InCommunitiesUser();
+        $inCommunity = null;
+        $inCommunity = $this->community->InCommunitiesUser();
 
-            if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
-                array_push($select, 'u.address as user_address');
-                array_push($select, 'u.location as user_location');
-                array_push($select, 'u.province as user_province');
-                array_push($select, 'u.state as user_state');
-                array_push($select, 'u.country as user_country');
-                array_push($select, 'u.cp as user_cp');
-            }
+        if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
+            array_push($select, 'u.address as user_address');
+            array_push($select, 'u.location as user_location');
+            array_push($select, 'u.province as user_province');
+            array_push($select, 'u.state as user_state');
+            array_push($select, 'u.country as user_country');
+            array_push($select, 'u.cp as user_cp');
         }
 
         $ranking = StockControl::from('stock_control as sc')
