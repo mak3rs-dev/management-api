@@ -87,7 +87,7 @@ class Handler extends ExceptionHandler
                 return Arr::except($trace, ['args']);
             })->all(),
         ] : [
-            'error' => $this->isHttpException($e) ? $e->getMessage() : 'Server Error',
+            'error' => $this->isHttpException($e) ? $e->getMessage() : 'Se ha producido un error inesperado en el servidor, por favor inténtelo más tarde, o contacte con infor@mak3rs.es',
         ];
     }
 }
