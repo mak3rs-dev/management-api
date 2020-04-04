@@ -47,7 +47,7 @@ class RankingExport implements FromCollection, WithHeadings
     {
         $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
             DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
-            DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'user_alias'];
+            DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'u.alias as user_alias'];
 
         array_push($select, 'u.alias as user_alias');
 
