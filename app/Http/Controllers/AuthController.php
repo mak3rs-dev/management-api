@@ -267,7 +267,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente '], 500);
         }
 
-        $url = url(env('APP_CLIENT').'/recover/?hash='.$user->hash_password_verified);
+        $url = url(env('APP_CLIENT').'/recover?hash='.$user->hash_password_verified);
 
         try {
             Mail::to($user->email)->send(new RecoveryPassword($url));
