@@ -78,7 +78,8 @@ class PiecesController extends Controller
                     DB::raw('IFNULL((SELECT SUM(units_manufactured) FROM stock_control WHERE piece_id = p.id),0) as units_manufactured'),
                     DB::raw('IFNULL((SELECT SUM(units) FROM collect_pieces WHERE piece_id = p.id),0) as units_collected')];
 
-        $pieces = Piece::select($select)
+        $pieces = Piece::from('pieces as p')
+            ->select($select)
             ->when($request->name != null, function ($query) use ($request) {
                 return $query->where('p.name', 'like', "$request->name%");
             })
