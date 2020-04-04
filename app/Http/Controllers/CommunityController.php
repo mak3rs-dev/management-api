@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Community;
 use App\Models\InCommunity;
+use App\Models\Piece;
 use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -107,11 +108,13 @@ class CommunityController extends Controller
             return response()->json(['error' => 'La comunidad no se encuentra'], 404);
         }
 
-        $community->user = false;
-        $community->user_admin = false;
+        return response()->json($community->InCommunities(), 200);
+
+        //$community->user = false;
+        //$community->user_admin = false;
 
         if ($checkUser) {
-            $inCommunity = $community->InCommunitiesUser();
+            $inCommunity = $community->InCommunities();
             if ($inCommunity != null) {
                 $community->user = true;
 

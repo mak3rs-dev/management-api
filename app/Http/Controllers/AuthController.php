@@ -70,7 +70,7 @@ class AuthController extends Controller
         }*/
 
         if (!$token = auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Los datos de inicio de sesión son incorrectos'], 401);
         }
 
         $user = auth()->user();
@@ -78,7 +78,7 @@ class AuthController extends Controller
         // We check that the user has validated their email
         if ($user->email_verified_at == null && $user->hash_email_verified != null) {
             auth()->logout();
-            return response()->json(['error' => 'Email not verified'], 200);
+            return response()->json(['error' => 'No has verificado el Email!!'], 200);
         }
 
         return $this->respondWithToken($token);
