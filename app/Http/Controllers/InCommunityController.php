@@ -105,7 +105,9 @@ class InCommunityController extends Controller
                 return $query->where('p.uuid', $request->id);
             })
             ->when($piece_id != null, function ($query) use ($piece_id) {
-                return $query->where('sc.piece_id', $piece_id->id)->orWhere('cp.piece_id', $piece_id->id);
+                return $query->where(function ($query) use ($piece_id) {
+					return $query->where('sc.piece_id', $piece_id->id)->orWhere('cp.piece_id', $piece_id->id);
+				});
             })
             ->groupBy('ic.user_id')
             ->when(true, function ($query) use ($export) {
