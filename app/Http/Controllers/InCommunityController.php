@@ -89,7 +89,6 @@ class InCommunityController extends Controller
             ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
             ->select($select)
             ->where('ic.community_id', $community->id)
-            ->groupBy('ic.user_id')
             ->when(true, function ($query) use ($export) {
                 if ($export == "stock") {
                     return $query->orderBy('stock', 'desc');
@@ -101,6 +100,7 @@ class InCommunityController extends Controller
             ->when($request->user != null, function ($query) use ($request) {
                 return $query->where('u.uuid', $request->user);
             })
+            ->groupBy('ic.user_id')
             ->paginate(15);
 
         return response()->json($ranking);
