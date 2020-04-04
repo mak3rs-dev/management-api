@@ -55,15 +55,13 @@ class Handler extends ExceptionHandler
             switch (get_class($exception->getPrevious())) {
                 case \Tymon\JWTAuth\Exceptions\TokenExpiredException::class:
                     return response()->json([
-                        'status' => 'error',
-                        'message' => 'Su sesión ha expirado'
+                        'error' => 'Su sesión ha expirado'
                     ], $exception->getStatusCode());
 
                 case \Tymon\JWTAuth\Exceptions\TokenInvalidException::class:
                 case \Tymon\JWTAuth\Exceptions\TokenBlacklistedException::class:
                     return response()->json([
-                        'status' => 'error',
-                        'message' => 'La sesión no es valida'
+                        'error' => 'La sesión no es valida'
                     ], $exception->getStatusCode());
                 default:
                     break;
