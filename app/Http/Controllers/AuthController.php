@@ -142,6 +142,7 @@ class AuthController extends Controller
             'password.required' => 'La contraseña es requerida',
             'password.min' => 'La longitud mínima de la contraseña es de 8 caracteres',
             'password.max' => 'La longitud máxima de la contraseña es de 12 caracteres',
+            'password_confirm.required' => 'La contraseña de confirmación es requerida',
             'password_confirm.same' => 'Las contraseñas no son iguales',
             'cp.regex' => 'El código postal no es correcto, porfavor elimine las letras'
         ]);
