@@ -34,10 +34,12 @@ class InCommunityController extends Controller
         // Validate request
         $validator = Validator::make([
             'alias' => $alias,
-            'export' => $export
+            'export' => $export,
+            'user' => $request->user
         ],[
             'alias' => 'required|string',
             'export' => 'nullable|string',
+            'user' => 'nullable|string'
         ], [
             'alias.required' => 'El alias es requerido'
         ]);
@@ -61,7 +63,8 @@ class InCommunityController extends Controller
 
         $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
                     DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
-                    DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
+                    DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'ic.mak3r_num as mak3r_num',
+                    'u.uuid as user_uuid', 'u.alias as user_alias'];
 
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
@@ -94,6 +97,9 @@ class InCommunityController extends Controller
                 } else {
                     return $query->orderBy('sc.units_manufactured', 'desc');
                 }
+            })
+            ->when($request->user != null, function ($query) use ($request) {
+                return $query->where('u.uuid', $request->user);
             })
             ->paginate(15);
 
