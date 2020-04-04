@@ -23,6 +23,10 @@ class Piece extends Model implements Auditable
         return $this->hasMany(StockControl::class, 'piece_id');
     }
 
+    Public function CollectControl() {
+        return $this->hasMany(CollectControl::class, 'community_id', 'community_id');
+    }
+
     Public function CollectPieces() {
         return $this->hasMany(CollectPieces::class, 'piece_id');
     }

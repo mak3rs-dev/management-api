@@ -130,31 +130,16 @@ class PiecesController extends Controller
 
         // COMMUNITY
         $pieces = $community->Pieces()
-            ->select('uuid', 'name', 'community_id', 'picture', 'description', 'created_at')->paginate(15);
-
-        $inCommunities = $community->InCommunities()->pluck('id')->toArray();
-
-        $stockControl = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
-            ->whereIn('in_community_id', $inCommunities)
+            ->select('id', 'uuid', 'name', 'community_id', 'picture', 'description', 'created_at')
             ->with([
-                'Piece' => function ($query) use ($status) {
-                    return $query->select('community_id', 'name', 'picture', 'description');
+                'StockControl' => function ($query) use ($status) {
+                    return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+                },
+                'CollectControl.CollectPieces' => function ($query) use ($status) {
+                    return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
                 }
             ])
-            ->groupBy('piece_id')
-            ->get();
-
-        $collectControl = CollectControl::whereIn('in_community_id', $inCommunities)->whereIn('status_id', $status)->pluck('id')->toArray();
-
-        $collectPieces = CollectPieces::selectRaw('piece_id, SUM(units) as units')
-            ->whereIn('collect_control_id', $collectControl)
-            ->with([
-                'Piece' => function ($query) use ($status) {
-                    return $query->select('community_id', 'name', 'picture', 'description');
-                }
-            ])
-            ->groupBy('piece_id')
-            ->get();
+            ->paginate(15);
         // FIN COMMUNITY
 
         // USER
@@ -168,7 +153,7 @@ class PiecesController extends Controller
                 ->where('in_community_id', $inCommunitiesUser->id)
                 ->with([
                     'Piece' => function ($query) use ($status) {
-                        return $query->select('community_id', 'name', 'picture', 'description');
+                        return $query->select('id', 'community_id', 'name', 'picture', 'description');
                     }
                 ])
                 ->groupBy('piece_id')
@@ -180,7 +165,7 @@ class PiecesController extends Controller
                 ->whereIn('collect_control_id', $collectControlUser)
                 ->with([
                     'Piece' => function ($query) use ($status) {
-                        return $query->select('community_id', 'name', 'picture', 'description');
+                        return $query->select('id', 'community_id', 'name', 'picture', 'description');
                     }
                 ])
                 ->groupBy('piece_id')
