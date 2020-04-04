@@ -90,7 +90,7 @@ class PiecesController extends Controller
             ->when($community != null, function ($query) use ($community) {
                 return $query->where('p.community_id', $community->id);
             })
-            ->groupBy('p.id', 'cp.piece_id', 'sc.piece_id')
+            ->groupBy('p.id', 'ic.community_id', 'cp.piece_id', 'sc.piece_id')
             ->paginate(15);
 
         return response()->json($pieces);
