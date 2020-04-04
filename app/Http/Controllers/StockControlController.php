@@ -88,7 +88,7 @@ class StockControlController extends Controller
         if ($stockControl == null)  {
             // Create Stock
             if ($request->units < 0) {
-                return response()->json(['error' => 'No puedes añadir piezas que no tienes &#128530;'], 500);
+                return response()->json(['error' => 'No puedes añadir piezas que no tienes'], 500);
             }
 
             $stockControl = null;
@@ -115,6 +115,6 @@ class StockControlController extends Controller
             return response()->json(['error' => 'No se ha podido añadir la pieza a la comunidad'], 500);
         }
 
-        return response()->json(['message' => 'La pieza se ha añadido correctamente a la comunidad &#128521;'], 200);
+        return response()->json(['message' => 'La pieza se ha añadido correctamente a la comunidad'], 200);
     }
 }
