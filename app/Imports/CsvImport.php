@@ -49,6 +49,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                     'phone' => trim($row['phone']) == '' ? null : trim($row['phone']),
                     'address' => trim($row['address']) == '' ? null : trim($row['address']),
                     'cp' => trim($row['cp']) == '' ? null : trim($row['cp']),
+                    'password' => bcrypt(Str::uuid()),
                     'location' => trim($row['location']) == '' ? null : trim($row['location']),
                     'province' => trim($row['province']) == '' ? null : trim($row['province']),
                     'state' => trim($row['state']) == '' ? null : trim($row['state']),
