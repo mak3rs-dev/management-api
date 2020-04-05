@@ -540,6 +540,39 @@
                 }
             }
         },
+        "/converts/img-to-base64": {
+            "post": {
+                "tags": [
+                    "Converts"
+                ],
+                "description": "Conversión",
+                "operationId": "App\\Http\\Controllers\\ImageConvertController::ImgToBase64",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "image": {
+                                        "description": "",
+                                        "type": "binray"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/communities/ranking/{alias}/{export?stock}": {
             "get": {
                 "tags": [
