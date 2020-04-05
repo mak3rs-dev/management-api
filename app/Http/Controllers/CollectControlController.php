@@ -6,7 +6,6 @@ use App\Exports\CollectControlExport;
 use App\Models\CollectControl;
 use App\Models\CollectPieces;
 use App\Models\Community;
-use App\Models\InCommunity;
 use App\Models\Piece;
 use App\Models\Status;
 use App\Models\User;
@@ -148,7 +147,7 @@ class CollectControlController extends Controller
             'community' => 'required|string',
             'user' => 'required|string',
             'status' => 'required|string',
-            'pieces' => 'required|array',
+            'pieces' => 'required|array|min:1',
             'address' => 'nullable|string',
             'location' => 'nullable|string',
             'province' => 'nullable|string',
@@ -161,6 +160,7 @@ class CollectControlController extends Controller
             'status.required' => 'El estado es requerido',
             'pieces.required' => 'Las piezas son requeridas',
             'pieces.array' => 'Las piezas deben de estar en un array',
+            'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
             'cp.regex' => 'El código postal no puede contener letras'
         ]);
 
