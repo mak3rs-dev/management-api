@@ -260,7 +260,7 @@
                 }
             }
         },
-        "/communities/collect-control/{alias?}/{export?}": {
+        "/communities/collect-control/": {
             "get": {
                 "tags": [
                     "Collect Control"
@@ -307,34 +307,38 @@
                 }
             }
         },
-        "/communities/piece/add-collect": {
+        "/communities/collect/add": {
             "post": {
                 "tags": [
                     "Collect Control"
                 ],
                 "description": "Añadimos una pieza a una recogida",
-                "operationId": "App\\Http\\Controllers\\CollectControlController::addPieceCollection",
+                "operationId": "App\\Http\\Controllers\\CollectControlController::add",
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "uuid_piece": {
+                                    "community": {
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "uuid_community": {
+                                    "user": {
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "alias_community": {
+                                    "status": {
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "units": {
+                                    "pieces": {
                                         "description": "",
-                                        "type": "integer"
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     },
                                     "address": {
                                         "description": "",

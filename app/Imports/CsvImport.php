@@ -50,7 +50,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                     'address' => trim($row['address']) == '' ? null : trim($row['address']),
                     'cp' => trim($row['cp']) == '' ? null : trim($row['cp']),
                     'password' => bcrypt(Str::uuid()),
-                    'location' => trim($row['location']) == '' ? null : trim($row['location']),
+                    'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
                     'province' => trim($row['province']) == '' ? null : trim($row['province']),
                     'state' => trim($row['state']) == '' ? null : trim($row['state']),
                     'country' => trim($row['country']) == '' ? null : trim($row['country']),
