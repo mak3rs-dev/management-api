@@ -197,7 +197,7 @@ class CollectControlController extends Controller
         $collectControl->in_community_id = $inCommunity->id;
         $collectControl->community_id = $community->id;
         $collectControl->user_id = auth()->user()->id;
-        $collectControl->status_id = Status::where('code', 'REQUESTED')->first()->id;
+        $collectControl->status_id = Status::where('code', 'COLLECT:REQUESTED')->first()->id;
         $collectControl->address = $request->address;
         $collectControl->location = $request->location;
         $collectControl->province = $request->province;

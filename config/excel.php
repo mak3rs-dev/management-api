@@ -69,7 +69,7 @@ return [
         |
         */
         'csv'         => [
-            'delimiter'              => ';',
+            'delimiter'              => "\t",
             'enclosure'              => '"',
             'escape_character'       => '\\',
             'contiguous'             => false,
