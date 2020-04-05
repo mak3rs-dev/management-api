@@ -263,7 +263,7 @@
         "/communities/collect-control/{alias?}/{export?}": {
             "get": {
                 "tags": [
-                    "Community"
+                    "Collect Control"
                 ],
                 "description": "Obtenemos todas las recogidas",
                 "operationId": "App\\Http\\Controllers\\CollectControlController::getCollectControl",
@@ -310,7 +310,7 @@
         "/communities/piece/add-collect": {
             "post": {
                 "tags": [
-                    "Community"
+                    "Collect Control"
                 ],
                 "description": "Añadimos una pieza a una recogida",
                 "operationId": "App\\Http\\Controllers\\CollectControlController::addPieceCollection",
@@ -651,7 +651,7 @@
         "/communities/piece/add-or-update": {
             "post": {
                 "tags": [
-                    "Community"
+                    "Stock"
                 ],
                 "description": "Cuando un usuario añade o actualiza una pieza a una comunidad",
                 "operationId": "App\\Http\\Controllers\\StockControlController::addOrUpdatePieceStock",

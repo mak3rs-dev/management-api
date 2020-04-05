@@ -23,7 +23,7 @@ class CollectControlController extends Controller
     /**
      * @OA\GET(
      *     path="/communities/collect-control/{alias?}/{export?}",
-     *     tags={"Community"},
+     *     tags={"Collect Control"},
      *     description="Obtenemos todas las recogidas",
      *     @OA\RequestBody( required=true,
      *     @OA\MediaType(
@@ -112,7 +112,7 @@ class CollectControlController extends Controller
     /**
      *  @OA\POST(
      *     path="/communities/piece/add-collect",
-     *     tags={"Community"},
+     *     tags={"Collect Control"},
      *     description="Añadimos una pieza a una recogida",
      *     @OA\RequestBody( required=true,
      *     @OA\MediaType(
@@ -127,8 +127,7 @@ class CollectControlController extends Controller
      *       @OA\Property(property="province", description="", type="string"),
      *       @OA\Property(property="state", description="", type="string"),
      *       @OA\Property(property="country", description="", type="string"),
-     *       @OA\Property(property="cp", description="", type="string"),
-     *
+     *       @OA\Property(property="cp", description="", type="string")
      *       ),
      *     ),
      *     ),

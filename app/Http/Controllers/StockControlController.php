@@ -22,7 +22,7 @@ class StockControlController extends Controller
     /**
      * @OA\POST(
      *     path="/communities/piece/add-or-update",
-     *     tags={"Community"},
+     *     tags={"Stock"},
      *     description="Cuando un usuario añade o actualiza una pieza a una comunidad",
      *     @OA\RequestBody( required=true,
      *     @OA\MediaType(
