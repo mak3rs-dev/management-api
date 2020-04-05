@@ -227,7 +227,7 @@ class CollectControlController extends Controller
             $collectPiece = new CollectPieces();
             $collectPiece->collect_control_id = $collectControl->id;
             $collectPiece->piece_id = $p->id;
-            $collectPiece->units = abs($piece['units']);
+            $collectPiece->units = abs(intval($piece['units']));
 
             if (!$collectPiece->save()) {
                 DB::rollBack();
