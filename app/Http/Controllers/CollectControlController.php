@@ -11,6 +11,7 @@ use App\Models\Status;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 
@@ -205,10 +206,10 @@ class CollectControlController extends Controller
         $collectControl->user_id = $user->id;
         $collectControl->status_id = $status != null ? $status : Status::where('code', 'COLLECT:REQUESTED')->first()->id;
         $collectControl->address = $request->address;
-        $collectControl->location = $request->location;
-        $collectControl->province = $request->province;
-        $collectControl->state = $request->state;
-        $collectControl->country = $request->country;
+        $collectControl->location = $request->location != null ? Str::ucfirst($request->location) : null;
+        $collectControl->province = $request->province != null ? Str::ucfirst($request->province) : null;
+        $collectControl->state = $request->state != null ? Str::ucfirst($request->state) : null;
+        $collectControl->country = $request->country != null ? Str::ucfirst($request->country) : null;
         $collectControl->cp = $request->cp;
 
         if (!$collectControl->save()) {
