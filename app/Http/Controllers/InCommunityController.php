@@ -78,7 +78,7 @@ class InCommunityController extends Controller
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
 
-        if ($inCommunity != null && $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
+        if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
             array_push($select, 'u.address as user_address');
             array_push($select, 'u.location as user_location');
             array_push($select, 'u.province as user_province');
