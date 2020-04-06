@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Exports\RankingExport;
 use App\Models\Community;
+use App\Models\InCommunity;
 use App\Models\Piece;
-use App\Models\StockControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -70,10 +70,7 @@ class InCommunityController extends Controller
             $piece_id = Piece::where('uuid', $request->piece)->first();
         }
 
-        $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
-                    DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
-                    DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'ic.mak3r_num as mak3r_num',
-                    'u.uuid as user_uuid', 'u.alias as user_alias'];
+        $select = ['u.name as user_name', 'ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
 
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
@@ -87,41 +84,54 @@ class InCommunityController extends Controller
             array_push($select, 'u.cp as user_cp');
         }
 
-        if ($export == "export" && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
-            return Excel::download(new RankingExport($community),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
-        }
-
-        $ranking = StockControl::from('stock_control as sc')
-            ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
-            ->join('users as u', 'u.id', '=', 'ic.user_id')
-            ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
-            ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
-            ->leftJoin('status as st', 'st.id', 'cc.status_id')
-            ->select($select)
-            ->where('ic.community_id', $community->id)
-            ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
-            ->when($request->user != null, function ($query) use ($request) {
-                return $query->where('u.uuid', $request->user);
-            })
-            ->when($request->uuid != null, function ($query) use ($request) {
-                return $query->where('p.uuid', $request->id);
-            })
-            ->when($piece_id != null, function ($query) use ($piece_id) {
-                return $query->where(function ($query) use ($piece_id) {
-					return $query->where('sc.piece_id', $piece_id->id)->orWhere('cp.piece_id', $piece_id->id);
-				});
-            })
-            ->groupBy('ic.user_id')
+        $ranking = DB::query()
+            ->selectRaw('a.*, (a.units_manufactured - a.units_collected) as stock')
+            ->fromSub(function ($query) use ($select, $community, $request, $export, $piece_id) {
+                $query->select($select)
+                    ->from('in_community as ic')
+                    ->join('users as u', 'u.id', '=', 'ic.user_id')
+                    ->where('ic.community_id', $community->id)
+                    ->addSelect(
+                        [
+                            'units_manufactured' => function ($query) use ($piece_id) {
+                                return $query->selectRaw('IFNULL(SUM(sc.units_manufactured), 0)')
+                                    ->from('stock_control as sc')
+                                    ->whereColumn('sc.in_community_id', 'ic.id')
+                                    ->when($piece_id != null, function ($query) use ($piece_id) {
+                                        return $query->where('sc.piece_id', $piece_id->id);
+                                    });
+                            },
+                            'units_collected' => function ($query) use ($piece_id) {
+                                return $query->selectRaw('IFNULL(SUM(cp.units), 0)')
+                                    ->from('collect_control as cc')
+                                    ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+                                    ->join('status as st', 'cc.status_id', '=', 'st.id')
+                                    ->whereColumn('cc.in_community_id', 'ic.id')
+                                    ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
+                                    ->when($piece_id != null, function ($query) use ($piece_id) {
+                                        return $query->where('cp.piece_id', $piece_id->id);
+                                    });
+                            }
+                        ]
+                    )
+                    ->when($request->user != null, function ($query) use ($request) {
+                        return $query->where('u.uuid', $request->user);
+                    })
+                    ->groupBy('ic.user_id');
+            }, 'a')
             ->when(true, function ($query) use ($export) {
                 if ($export == "stock") {
                     return $query->orderBy('stock', 'desc');
 
                 } else {
-                    return $query->orderBy('sc.units_manufactured', 'desc');
+                    return $query->orderBy('units_manufactured', 'desc');
                 }
-            })
-            ->paginate(15);
+            });
 
-        return response()->json($ranking);
+        if ($export == "export" && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
+            return Excel::download(new RankingExport($community, $ranking),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return response()->json($ranking->paginate(15));
     }
 }

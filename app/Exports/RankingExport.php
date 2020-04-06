@@ -4,20 +4,23 @@ namespace App\Exports;
 
 use App\Models\InCommunity;
 use App\Models\StockControl;
+use Illuminate\Database\Query\Builder;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use DB;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class RankingExport implements FromCollection, WithHeadings
+class RankingExport implements FromArray, WithHeadings, WithMapping
 {
     use Exportable;
 
     private $community;
+    private $ranking;
 
-    public function __construct($_community)
+    public function __construct($_community, $_ranking)
     {
         $this->community = $_community;
+        $this->ranking = $_ranking;
     }
 
     /**
@@ -44,37 +47,29 @@ class RankingExport implements FromCollection, WithHeadings
     /**
      * @inheritDoc
      */
-    public function collection()
+    public function map($row): array
     {
-        $select = ['u.name as user_name', DB::raw('IFNULL(SUM(sc.units_manufactured), 0) as units_manufactured'),
-            DB::raw('IFNULL(SUM(cp.units), 0) as units_collected'),
-            DB::raw('(units_manufactured - IFNULL(units, 0)) as stock'), 'ic.mak3r_num as mak3r_num', 'u.alias as user_alias'];
+        return  [
+            $row->user_name,
+            $row->units_manufactured,
+            $row->units_collected,
+            $row->stock,
+            $row->mak3r_num,
+            $row->user_alias,
+            $row->user_address,
+            $row->user_location,
+            $row->user_province,
+            $row->user_state,
+            $row->user_country,
+            $row->user_cp
+        ];
+    }
 
-        $inCommunity = null;
-        $inCommunity = $this->community->InCommunitiesUser();
-
-        if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
-            array_push($select, 'u.address as user_address');
-            array_push($select, 'u.location as user_location');
-            array_push($select, 'u.province as user_province');
-            array_push($select, 'u.state as user_state');
-            array_push($select, 'u.country as user_country');
-            array_push($select, 'u.cp as user_cp');
-        }
-
-        $ranking = StockControl::from('stock_control as sc')
-            ->join('in_community as ic', 'sc.in_community_id', '=', 'ic.id')
-            ->join('users as u', 'u.id', '=', 'ic.user_id')
-            ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
-            ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
-            ->leftJoin('status as st', 'st.id', 'cc.status_id')
-            ->select($select)
-            ->where('ic.community_id', $this->community->id)
-            ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
-            ->groupBy('ic.user_id')
-            ->orderBy('stock', 'desc')
-            ->get();
-
-        return $ranking;
+    /**
+     * @inheritDoc
+     */
+    public function array(): array
+    {
+        return $this->ranking->get()->toArray();
     }
 }
