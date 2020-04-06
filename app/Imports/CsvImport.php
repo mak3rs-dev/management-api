@@ -110,7 +110,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                     'uuid' => Str::uuid(),
                     'alias' => trim($row['alias']) == '' ? null : trim($row['alias']),
                     'name' => trim($row['name']),
-                    'email' => trim($row['email']),
+                    'email' => Str::lower(trim($row['email'])),
                     'phone' => trim($row['phone']) == '' ? null : trim($row['phone']),
                     'address' => trim($row['address']) == '' ? null : trim($row['address']),
                     'cp' => trim($row['cp']) == '' ? null : trim($row['cp']),
