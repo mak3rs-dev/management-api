@@ -40,7 +40,7 @@ class ImageConvertController extends Controller
             'image.required' => 'La imagen es requerida',
             'image.image' => 'No has enviado una imagen',
             'image.mimes' => 'La imagen no tiene el formato jpeg o png o jpg',
-            'image.max' => 'El tamaño maximo de la imagen es 2MB (2048KB)'
+            'image.max' => 'El tamaño máximo de la imagen es 2MB (2048KB)'
         ]);
 
         // We check that the validation is correct
