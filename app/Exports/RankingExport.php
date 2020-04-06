@@ -29,12 +29,12 @@ class RankingExport implements FromArray, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
+            'Número Mak3r',
+            'Mak3r alias',
             'Nombre Mak3r',
             'Piezas fabricadas',
             'Piezas Entregadas',
             'Stock',
-            'Número Mak3r',
-            'Mak3r alias',
             'Dirección',
             'Localidad',
             'Provincia',
@@ -50,12 +50,12 @@ class RankingExport implements FromArray, WithHeadings, WithMapping
     public function map($row): array
     {
         return  [
+            $row->mak3r_num,
+            $row->user_alias,
             $row->user_name,
             $row->units_manufactured,
             $row->units_collected,
             $row->stock,
-            $row->mak3r_num,
-            $row->user_alias,
             $row->user_address,
             $row->user_location,
             $row->user_province,
