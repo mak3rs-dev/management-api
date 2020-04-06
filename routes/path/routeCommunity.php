@@ -10,6 +10,6 @@ Route::group(['prefix' => 'communities'], function () {
     Route::post('join', 'UserController@joinCommunity');
     Route::get('pieces/{alias}', 'PiecesController@piecesOfCommunity');
     Route::post('piece/add-or-update', 'StockControlController@addOrUpdatePieceStock');
-    Route::post('piece/add-collect', 'CollectControlController@addPieceCollection');
+    Route::post('collect/add', 'CollectControlController@add');
     Route::get('collect-control/{alias?}/{export?}', 'CollectControlController@getCollectControl');
 });
