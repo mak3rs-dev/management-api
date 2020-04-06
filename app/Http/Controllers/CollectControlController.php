@@ -189,10 +189,27 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'El usuario no pertence a la comunidad'], 422);
         }
 
+        $inCommunityUserAuth = $community->InCommunitiesUser();
+
+        if ($inCommunityUserAuth == null) {
+            return response()->json(['error' => 'Tu no pertences a la comunidad indicada'], 422);
+        }
+
         // Check permissions in community
-        if (!$user->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
+        if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunityUserAuth->hasRole('MAKER:ADMIN')) {
             return response()->json(['error' => 'No tienes permisos para gestionar recogidas'], 403);
         }
+
+        // Check user only collect control
+        $status = Status::where('code', 'COLLECT:REQUESTED')->pluck('id')->toArray();
+        $collectControl = CollectControl::where('in_community_id', $inCommunity->id)->whereIn('status_id', $status)->count();
+
+        if ($collectControl > 0) {
+            return response()->json(['error' => 'El usuario ya tiene una recogida en curso'], 422);
+        }
+
+        $status = null;
+        $collectControl = null;
 
         // Obtains status
         $status = Status::where('code', $request->status)->first();
