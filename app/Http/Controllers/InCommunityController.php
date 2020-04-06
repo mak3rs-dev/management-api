@@ -96,8 +96,10 @@ class InCommunityController extends Controller
             ->join('users as u', 'u.id', '=', 'ic.user_id')
             ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
             ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+            ->leftJoin('status as st', 'st.id', 'cc.status_id')
             ->select($select)
             ->where('ic.community_id', $community->id)
+            ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
             ->when($request->user != null, function ($query) use ($request) {
                 return $query->where('u.uuid', $request->user);
             })

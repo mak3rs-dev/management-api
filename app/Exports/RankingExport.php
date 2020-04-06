@@ -67,8 +67,10 @@ class RankingExport implements FromCollection, WithHeadings
             ->join('users as u', 'u.id', '=', 'ic.user_id')
             ->leftJoin('collect_control as cc', 'cc.in_community_id', '=', 'ic.id')
             ->leftJoin('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+            ->leftJoin('status as st', 'st.id', 'cc.status_id')
             ->select($select)
             ->where('ic.community_id', $this->community->id)
+            ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
             ->groupBy('ic.user_id')
             ->orderBy('stock', 'desc')
             ->get();
