@@ -25,6 +25,7 @@ class CreateCollectControlTable extends Migration
             $table->string('state', 60)->nullable();
             $table->string('country', 60)->nullable();
             $table->string('cp', 8)->nullable();
+            $table->longText('address_description')->nullable();
             $table->timestamps();
         });
 

@@ -111,6 +111,7 @@ class AuthController extends Controller
      *         @OA\Property(property="province", description="Provincia", type="string"),
      *         @OA\Property(property="state", description="Comunidad", type="string"),
      *         @OA\Property(property="country", description="País", type="string"),
+     *         @OA\Property(property="address_description", description="Descripción sobre la dirección", type="string"),
      *         @OA\Property(property="cp", description="Código Postal", type="string")
      *       ),
      *     ),
@@ -138,6 +139,7 @@ class AuthController extends Controller
             'province' => 'nullable|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
+            'address_description' => 'nullable|string',
             'cp' => 'nullable|string|regex:/^[0-9]+$/'
         ], [
             'email.required' => 'El email es requerido',
@@ -170,10 +172,11 @@ class AuthController extends Controller
         $user->hash_email_verified = Str::uuid();
         $user->role_id = Role::where('name', 'USER:COMMON')->first()->id;
         $user->address = $request->address;
-        $user->location = $request->location;
-        $user->province = $request->province;
-        $user->state = $request->state;
-        $user->country = $request->country;
+        $user->location = $request->location != null ? Str::ucfirst($request->location) : null;
+        $user->province = $request->province != null ? Str::ucfirst($request->province) : null;
+        $user->state = $request->state != null ? Str::ucfirst($request->state) : null;
+        $user->country = $request->country != null ? Str::ucfirst($request->country) : null;
+        $user->address_description = $request->address_description;
         $user->cp = $request->cp;
 
         if (!$user->save()) {

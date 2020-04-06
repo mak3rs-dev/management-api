@@ -107,6 +107,10 @@
                                         "description": "País",
                                         "type": "string"
                                     },
+                                    "address_description": {
+                                        "description": "Descripción sobre la dirección",
+                                        "type": "string"
+                                    },
                                     "cp": {
                                         "description": "Código Postal",
                                         "type": "string"
@@ -357,6 +361,10 @@
                                         "type": "string"
                                     },
                                     "country": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "address_description": {
                                         "description": "",
                                         "type": "string"
                                     },

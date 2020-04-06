@@ -129,6 +129,7 @@ class CollectControlController extends Controller
      *       @OA\Property(property="province", description="", type="string"),
      *       @OA\Property(property="state", description="", type="string"),
      *       @OA\Property(property="country", description="", type="string"),
+     *       @OA\Property(property="address_description", description="", type="string"),
      *       @OA\Property(property="cp", description="", type="string")
      *       ),
      *     ),
@@ -154,6 +155,7 @@ class CollectControlController extends Controller
             'province' => 'nullable|string',
             'state' => 'nullable|string',
             'country' => 'nullable|string',
+            'address_description' => 'nullable|string',
             'cp' => 'nullable|string|regex:/^[0-9]+$/'
         ], [
             'community.required' => 'La comunidad es requerida',
@@ -225,6 +227,7 @@ class CollectControlController extends Controller
         $collectControl->province = $request->province != null ? Str::ucfirst($request->province) : null;
         $collectControl->state = $request->state != null ? Str::ucfirst($request->state) : null;
         $collectControl->country = $request->country != null ? Str::ucfirst($request->country) : null;
+        $collectControl->address_description = $request->address_description;
         $collectControl->cp = $request->cp;
 
         if (!$collectControl->save()) {
