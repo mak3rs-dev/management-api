@@ -51,9 +51,9 @@ class CsvImport implements ToCollection, WithHeadingRow
                     'cp' => trim($row['cp']) == '' ? null : trim($row['cp']),
                     'password' => bcrypt(Str::uuid()),
                     'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
-                    'province' => trim($row['province']) == '' ? null : trim($row['province']),
-                    'state' => trim($row['state']) == '' ? null : trim($row['state']),
-                    'country' => trim($row['country']) == '' ? null : trim($row['country']),
+                    'province' => trim($row['province']) == '' ? null : Str::ucfirst(trim($row['province'])),
+                    'state' => trim($row['state']) == '' ? null : Str::ucfirst(trim($row['state'])),
+                    'country' => trim($row['country']) == '' ? null : Str::ucfirst(trim($row['country'])),
                     'role_id' => Role::where('name', 'USER:COMMON')->first()->id
                 ]);
 
