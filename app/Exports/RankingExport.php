@@ -32,7 +32,7 @@ class RankingExport implements FromArray, WithHeadings, WithMapping
             'Número Mak3r',
             'Mak3r alias',
             'Nombre Mak3r',
-            'Piezas fabricadas',
+            'Piezas Fabricadas',
             'Piezas Entregadas',
             'Stock',
             'Dirección',
