@@ -120,7 +120,7 @@ class CollectControlController extends Controller
         $select = ['u.name as user_name', 'ic.mak3r_num as mak3r_num', DB::raw('SUM(cp.units) as units_collected'),
                     'cc.address as collect_address', 'cc.location as collect_location', 'cc.province as collect_province',
                     'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
-                    'cc.address_description as collect_address_description', 'cc.created_at as fecha', 'st.name as status'];
+                    'cc.address_description as collect_address_description', 'cc.created_at as created_at' 'st.name as status'];
 
         $collecControl = CollectControl::select($select)
                         ->from('collect_control as cc')
