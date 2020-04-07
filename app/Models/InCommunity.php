@@ -40,7 +40,7 @@ class InCommunity extends Model implements Auditable
         $aStr = explode('|', $str);
         $count = 0;
         foreach ($aStr as $s) {
-            $count += $role == null ? 0 : trim($role->name) == $s ? 1 : 0;
+            $count += (($role == null) ? 0 : trim($role->name) == $s) ? 1 : 0;
         }
 
         return $count > 0;

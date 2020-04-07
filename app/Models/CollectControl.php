@@ -36,7 +36,7 @@ class CollectControl extends Model implements Auditable
         $aStr = explode('|', $str);
         $count = 0;
         foreach ($aStr as $s) {
-            $count += $status == null ? 0 : $status->code == $s ? 1 : 0;
+            $count += (($status == null) ? 0 : $status->code == $s) ? 1 : 0;
         }
 
         return $count > 0;
