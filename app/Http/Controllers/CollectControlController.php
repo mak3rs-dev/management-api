@@ -130,7 +130,7 @@ class CollectControlController extends Controller
                         ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
                         ->join('status as st', 'st.id', '=', 'cc.status_id')
                         ->join('users as u', 'u.id', '=', 'ic.user_id')
-                        ->when($request->status != null, function ($query) use ($request) {
+                        ->when($request->status_code != null, function ($query) use ($request) {
                             return $query->where('st.code', $request->status_code);
                         })
                         ->when($user != null, function ($query) use ($user) {
