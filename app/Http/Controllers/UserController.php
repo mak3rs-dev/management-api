@@ -73,7 +73,7 @@ class UserController extends Controller
 
         if ($inCommunity == null) {
             // Calculate last mak3r_num
-            $lastNumMaker = $community->InCommunities->select('mak3r_num')->orderBy('mak3r_num', 'desc')->first();
+            $lastNumMaker = $community->InCommunities()->select('mak3r_num')->orderBy('mak3r_num', 'desc')->first();
 
             $inCommunity = null;
             $inCommunity = new InCommunity();
