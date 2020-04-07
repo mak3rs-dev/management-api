@@ -328,7 +328,7 @@
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "status": {
+                                    "status_code": {
                                         "description": "",
                                         "type": "string"
                                     },
@@ -407,7 +407,7 @@
                                         "description": "",
                                         "type": "integer"
                                     },
-                                    "status": {
+                                    "status_code": {
                                         "description": "",
                                         "type": "string"
                                     },

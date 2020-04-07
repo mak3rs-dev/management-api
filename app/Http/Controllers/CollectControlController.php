@@ -120,7 +120,8 @@ class CollectControlController extends Controller
         $select = ['cc.id as id', 'u.name as user_name', 'ic.mak3r_num as mak3r_num', DB::raw('SUM(cp.units) as units_collected'),
                     'cc.address as collect_address', 'cc.location as collect_location', 'cc.province as collect_province',
                     'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
-                    'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'st.name as status', 'st.code as status_code'];
+                    'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'st.name as status',
+                    'st.code as status_code', 'u.uuid as user_uuid'];
 
         $collecControl = CollectControl::select($select)
                         ->from('collect_control as cc')
@@ -145,6 +146,7 @@ class CollectControlController extends Controller
                         ])
                         ->groupBy('cp.collect_control_id')
                         ->orderBy('created_at', 'desc')
+                        ->
                         ->paginate(15);
 
         return response()->json($collecControl, 200);
@@ -161,7 +163,7 @@ class CollectControlController extends Controller
      *       @OA\Schema(
      *         @OA\Property(property="community", description="", type="string"),
      *         @OA\Property(property="user", description="", type="string"),
-     *        @OA\Property(property="status", description="", type="string"),
+     *        @OA\Property(property="status_code", description="", type="string"),
      *       @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
      *       @OA\Property(property="address", description="", type="string"),
      *       @OA\Property(property="location", description="", type="string"),
@@ -187,7 +189,7 @@ class CollectControlController extends Controller
         $validator = Validator::make($request->all(), [
             'community' => 'required|string',
             'user' => 'required|string',
-            'status' => 'required|string',
+            'status_code' => 'required|string',
             'pieces' => 'required|array|min:1',
             'address' => 'nullable|string',
             'location' => 'nullable|string',
@@ -199,7 +201,7 @@ class CollectControlController extends Controller
         ], [
             'community.required' => 'La comunidad es requerida',
             'user.required' => 'El usuario es requerido',
-            'status.required' => 'El estado es requerido',
+            'status_code.required' => 'El estado es requerido',
             'pieces.required' => 'Las piezas son requeridas',
             'pieces.array' => 'Las piezas deben de estar en un array',
             'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
@@ -257,7 +259,7 @@ class CollectControlController extends Controller
         $collectControl = null;
 
         // Obtains status
-        $status = Status::where('code', $request->status)->first();
+        $status = Status::where('code', $request->status_code)->first();
 
         // Create transactions
         DB::beginTransaction();
@@ -314,7 +316,7 @@ class CollectControlController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="collect", description="", type="integer"),
-     *        @OA\Property(property="status", description="", type="string"),
+     *        @OA\Property(property="status_code", description="", type="string"),
      *       @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
      *       @OA\Property(property="address", description="", type="string"),
      *       @OA\Property(property="location", description="", type="string"),
@@ -339,7 +341,7 @@ class CollectControlController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'collect' => 'required|integer',
-            'status' => 'required|string',
+            'status_code' => 'required|string',
             'pieces' => 'required|array|min:1',
             'address' => 'nullable|string',
             'location' => 'nullable|string',
@@ -349,7 +351,7 @@ class CollectControlController extends Controller
             'address_description' => 'nullable|string',
             'cp' => 'nullable|string|regex:/^[0-9]+$/'
         ], [
-            'status.required' => 'El estado es requerido',
+            'status_code.required' => 'El estado es requerido',
             'pieces.required' => 'Las piezas son requeridas',
             'pieces.array' => 'Las piezas deben de estar en un array',
             'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
@@ -412,7 +414,7 @@ class CollectControlController extends Controller
         }
 
         // Obtains status
-        $status = Status::where('code', $request->status)->first();
+        $status = Status::where('code', $request->status_code)->first();
 
         // Create transactions
         DB::beginTransaction();
