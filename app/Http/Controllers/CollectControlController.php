@@ -131,6 +131,9 @@ class CollectControlController extends Controller
                         ->when($request->status != null, function ($query) use ($request) {
                             return $query->where('st.code', $request->status);
                         })
+                        ->when($user != null, function ($query) use ($user) {
+                            return $query->where('u.uuid', $user->uuid);
+                        })
                         ->where('ic.community_id', $community->id)
                         ->groupBy('cp.collect_control_id')
                         ->orderBy('fecha', 'desc')
