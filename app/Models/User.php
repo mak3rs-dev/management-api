@@ -69,6 +69,16 @@ class User extends Authenticatable implements JWTSubject, Auditable
 
     public function hasRole(string $str) {
         $role = $this->Role;
-        return $role == null ? false : trim($role->name) == $str;
+        $aStr = explode('|', $str);
+        $count = 0;
+        foreach ($aStr as $s) {
+            $count += $role == null ? 0 : trim($role->name) == $s ? 1 : 0;
+        }
+
+        return $count > 0;
+    }
+
+    public function InCommunities() {
+        return $this->hasMany(InCommunity::class, 'user_id');
     }
 }

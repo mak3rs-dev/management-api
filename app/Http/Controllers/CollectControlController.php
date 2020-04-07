@@ -117,7 +117,7 @@ class CollectControlController extends Controller
             }
         }
 
-        $select = ['u.name as user_name', 'ic.mak3r_num as mak3r_num', DB::raw('SUM(cp.units) as units_collected'),
+        $select = ['cc.id as id', 'u.name as user_name', 'ic.mak3r_num as mak3r_num', DB::raw('SUM(cp.units) as units_collected'),
                     'cc.address as collect_address', 'cc.location as collect_location', 'cc.province as collect_province',
                     'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
                     'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'st.name as status'];
@@ -270,7 +270,6 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
         }
 
-        $count = 0;
         foreach ($request->pieces as $piece) {
             if (intval($piece['units']) > 0) {
                 $p = Piece::where('uuid', $piece['uuid'])->first();
@@ -289,17 +288,162 @@ class CollectControlController extends Controller
                     DB::rollBack();
                     return response()->json(['error' => 'No se ha podido añadir la pieza a la recogida'], 500);
                 }
-
-                $count++;
             }
-        }
-
-        if ($count == 0) {
-            DB::rollBack();
-            return response()->json(['error' => 'Debe haber al menos una pieza en la recogida'], 422);
         }
 
         DB::commit();
         return response()->json(['message' => 'La recogida se ha creado correctamente'], 200);
+    }
+
+
+    /**
+     * @OA\PUT(
+     *     path="/communities/collect/update",
+     *     tags={"Collect Control"},
+     *     description="Actualizamos unas piezas a una recogida",
+     *     @OA\RequestBody( required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="collect", description="", type="integer"),
+     *        @OA\Property(property="status", description="", type="string"),
+     *       @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
+     *       @OA\Property(property="address", description="", type="string"),
+     *       @OA\Property(property="location", description="", type="string"),
+     *       @OA\Property(property="province", description="", type="string"),
+     *       @OA\Property(property="state", description="", type="string"),
+     *       @OA\Property(property="country", description="", type="string"),
+     *       @OA\Property(property="address_description", description="", type="string"),
+     *       @OA\Property(property="cp", description="", type="string")
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="OK"),
+     *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=404, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'collect' => 'required|integer',
+            'status' => 'required|string',
+            'pieces' => 'required|array|min:1',
+            'address' => 'nullable|string',
+            'location' => 'nullable|string',
+            'province' => 'nullable|string',
+            'state' => 'nullable|string',
+            'country' => 'nullable|string',
+            'address_description' => 'nullable|string',
+            'cp' => 'nullable|string|regex:/^[0-9]+$/'
+        ], [
+            'status.required' => 'El estado es requerido',
+            'pieces.required' => 'Las piezas son requeridas',
+            'pieces.array' => 'Las piezas deben de estar en un array',
+            'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
+            'cp.regex' => 'El código postal no puede contener letras'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if ($request->collect < 0) {
+            return response()->json(['error' => 'El identificador no puede ser inferior a 0'], 422);
+        }
+
+        // Check exist id
+        $collect_control = CollectControl::where('id', $request->collect)->first();
+
+        if ($collect_control == null) {
+            return response()->json(['error' => 'No se encuentra la recogida'], 404);
+        }
+
+        // Check in_community
+        $inCommunity = InCommunity::where('id', $collect_control->in_community_id)->first();
+
+        if ($inCommunity == null) {
+            return response()->json(['error' => 'La recogida no pertenece a ninguna comunidad'], 404);
+        }
+
+        $admin = false;
+
+        if (!auth()->user()->hasRole('USER:ADMIN')) {
+            // Different user in community
+            if (auth()->user()->id != $inCommunity->user_id) {
+                // Check user admin in community
+                $userCommunity = auth()->user()->InCommunities->where('community_id', $inCommunity->id)->first();
+
+                if ($userCommunity == null) {
+                    return response()->json(['error' => 'Tu no perteneces a la comunidad'], 404);
+                }
+
+                if ($userCommunity->hasRole('MAKER:ADMIN')) {
+                    $admin = true;
+
+                } else {
+                    return response()->json(['error' => 'No tienes permisos para gestionar esta recogida'], 403);
+                }
+            }
+
+        } else {
+            $admin = true;
+        }
+
+        if (!$admin && ( $inCommunity->isDisabledUser() || $inCommunity->isBlockUser() )) {
+            return response()->json(['error' => 'No perteneces a esta comunidad o estas bloqueado'], 403);
+        }
+
+        if (!$admin && $collect_control->hasStatus('COLLECT:DELIVERED|COLLECT:RECEIVED')) {
+            return response()->json(['error' => 'La recogida ha sido entregada o recibida, por el cual no se puede modificar'], 422);
+        }
+
+        // Obtains status
+        $status = Status::where('code', $request->status)->first();
+
+        // Create transactions
+        DB::beginTransaction();
+
+        $collect_control->status_id = $status != null ? $status->id : $collect_control->status_id;
+        $collect_control->address = $request->address != null ? $request->address : $collect_control->location;
+        $collect_control->location = $request->location != null ? Str::ucfirst($request->location) :  $collect_control->location;
+        $collect_control->province = $request->province != null ? Str::ucfirst($request->province) : $collect_control->province;
+        $collect_control->state = $request->state != null ? Str::ucfirst($request->state) : $collect_control->state;
+        $collect_control->country = $request->country != null ? Str::ucfirst($request->country) : $collect_control->country;
+        $collect_control->address_description = $request->address_description != null ? $request->address_description : $collect_control->address_description;
+        $collect_control->cp = $request->cp != null ? $request->cp :  $collect_control->cp;
+
+        if (!$collect_control->save()) {
+            DB::rollBack();
+            return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
+        }
+
+        foreach ($collect_control->CollectPieces as $pieceCollect) {
+            foreach ($request->pieces as $piece) {
+                $p = Piece::where('uuid', $piece['uuid'])->first();
+
+                if ($p != null && $p->id == $pieceCollect->piece_id) {
+                    if (intval($piece['units']) > 0) {
+
+                        $pieceCollect->units = intval($piece['units']);
+                        if (!$pieceCollect->save()) {
+                            DB::rollBack();
+                            return response()->json(['error' => 'No se ha podido actualizar la pieza a la recogida'], 500);
+                        }
+
+                    } else {
+                        $pieceCollect->delete();
+                    }
+                }
+            }
+        }
+
+        DB::commit();
+        return response()->json(['message' => 'La recogida se ha actualizado correctamente'], 200);
     }
 }

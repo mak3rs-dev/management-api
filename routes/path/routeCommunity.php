@@ -11,5 +11,6 @@ Route::group(['prefix' => 'communities'], function () {
     Route::get('pieces/{alias}', 'PiecesController@piecesOfCommunity');
     Route::post('piece/add-or-update', 'StockControlController@addOrUpdatePieceStock');
     Route::post('collect/add', 'CollectControlController@add');
+    Route::put('collect/update', 'CollectControlController@update');
     Route::get('collect/{community?}', 'CollectControlController@getCollectControl');
 });

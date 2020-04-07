@@ -30,4 +30,15 @@ class CollectControl extends Model implements Auditable
     public function CollectPieces() {
         return $this->hasMany(CollectPieces::class, 'collect_control_id');
     }
+
+    public function hasStatus(string $str) {
+        $status = $this->Status;
+        $aStr = explode('|', $str);
+        $count = 0;
+        foreach ($aStr as $s) {
+            $count += $status == null ? 0 : $status->code == $s ? 1 : 0;
+        }
+
+        return $count > 0;
+    }
 }

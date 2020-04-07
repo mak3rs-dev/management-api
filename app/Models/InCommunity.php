@@ -37,7 +37,13 @@ class InCommunity extends Model implements Auditable
 
     public function hasRole(string $str) {
         $role = $this->Role;
-        return $role == null ? false : trim($role->name) == $str;
+        $aStr = explode('|', $str);
+        $count = 0;
+        foreach ($aStr as $s) {
+            $count += $role == null ? 0 : trim($role->name) == $s ? 1 : 0;
+        }
+
+        return $count > 0;
     }
 
     public function isDisabledUser() {

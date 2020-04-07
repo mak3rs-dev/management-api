@@ -390,6 +390,85 @@
                 }
             }
         },
+        "/communities/collect/update": {
+            "put": {
+                "tags": [
+                    "Collect Control"
+                ],
+                "description": "Actualizamos unas piezas a una recogida",
+                "operationId": "App\\Http\\Controllers\\CollectControlController::update",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "collect": {
+                                        "description": "",
+                                        "type": "integer"
+                                    },
+                                    "status": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "pieces": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "address": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "address_description": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "cp": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/communities/all": {
             "get": {
                 "tags": [
