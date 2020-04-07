@@ -127,12 +127,13 @@ class CollectControlController extends Controller
                         ->join('in_community as ic', 'cc.in_community_id', '=', 'ic.id')
                         ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
                         ->join('status as st', 'st.id', '=', 'cc.status_id')
-                        ->join('user as u', 'user.id', '=', 'ic.user_id')
+                        ->join('users as u', 'u.id', '=', 'ic.user_id')
                         ->when($request->status != null, function ($query) use ($request) {
                             return $query->where('st.code', $request->status);
                         })
                         ->where('ic.community_id', $community->id)
-                        ->paginate(15);
+                        ->groupBy('cp.collect_control_id')
+                        ->paginate(50);
 
         return response()->json($collecControl, 200);
     }
