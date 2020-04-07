@@ -22,6 +22,8 @@ class CreatePiecesTable extends Migration
             $table->string('name', 60);
             $table->longText('picture')->nullable();
             $table->longText('description')->nullable();
+            $table->boolean('is_piece')->default(true);
+            $table->boolean('is_material')->default(false);
             $table->timestamps();
         });
 
