@@ -264,7 +264,7 @@
                 }
             }
         },
-        "/communities/collect": {
+        "/communities/collect/{communty}": {
             "get": {
                 "tags": [
                     "Collect Control"
@@ -277,10 +277,6 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "community": {
-                                        "description": "",
-                                        "type": "string"
-                                    },
                                     "user": {
                                         "description": "",
                                         "type": "string"
