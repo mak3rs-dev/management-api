@@ -25,14 +25,13 @@ class CollectControlController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/collect",
+     *     path="/communities/collect/{communty}",
      *     tags={"Collect Control"},
      *     description="Obtenemos todas las recogidas",
      *     @OA\RequestBody( required=true,
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="community", description="", type="string"),
      *         @OA\Property(property="user", description="", type="string"),
      *         @OA\Property(property="status", description="export", type="string"),
      *       ),
@@ -73,9 +72,28 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'La comunidad no se encuentra'], 404);
         }
 
+        $status = null;
+
+        if ($request->status != null) {
+            $status = Status::where('code', $request->status)->first();
+        }
+
         $user = null;
+        $inCommunity = null;
 
         if ($request->user != null) {
+            // Check join
+            $inCommunity = $community->InCommunitiesUser();
+
+            if ($inCommunity == null) {
+                return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
+            }
+
+            // Check permissions in community
+            if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
+                return response()->json(['error' => 'No tienes permisos para gestionar recogidas de otros usuarios'], 403);
+            }
+
             $user = User::where('uuid', $request->user)->first();
 
             if ($user == null) {
@@ -89,27 +107,20 @@ class CollectControlController extends Controller
                 return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
             }
 
-            if ($inCommunity->disabled_at != null || $inCommunity->blockuser_at != null) {
+            if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
                 return response()->json(['error' => 'El mak3r en la comunidad esta dado de baja o bloqueado'], 422);
             }
-        }
 
-        // Check join
-        $inCommunity = $community->InCommunitiesUser();
+        } else {
+            $inCommunity = $community->InCommunitiesUser();
 
-        if ($inCommunity == null) {
-            return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
-        }
+            if ($inCommunity == null) {
+                return response()->json(['error' => 'No perteneces a la comunidad'], 422);
+            }
 
-        // Check permissions in community
-        if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
-            return response()->json(['error' => 'No tienes permisos para gestionar recogidas'], 403);
-        }
-
-        $status = null;
-
-        if ($request->status != null) {
-            $status = Status::where('code', $request->status)->first();
+            if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
+                return response()->json(['error' => 'Estás dado de baja o bloqueado'], 422);
+            }
         }
 
         $collecControl = CollectControl::selectRaw('cc.*, SUM(cp.units) as units_collected')
@@ -118,6 +129,7 @@ class CollectControlController extends Controller
                         ->when($status != null, function ($query) use ($status) {
                             return $query->where('status_id', $status->id);
                         })
+                        ->where('cc.in_community_id', $inCommunity->id)
                         ->paginate(15);
 
         return response()->json($collecControl, 200);
