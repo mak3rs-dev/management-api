@@ -132,6 +132,6 @@ class InCommunityController extends Controller
             return Excel::download(new RankingExport($community, $ranking),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
-        return response()->json($ranking->paginate(15));
+        return response()->json($ranking->paginate(50));
     }
 }

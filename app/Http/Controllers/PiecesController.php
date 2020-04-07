@@ -150,9 +150,8 @@ class PiecesController extends Controller
         $collectControlUser = [];
         $collectPiecesUser = [];
 
-        if ($inCommunitiesUser != null) {
-            $stockControlUser = StockControl::selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
-                ->where('in_community_id', $inCommunitiesUser->id)
+        if ($inCommunitiesUser != null && !$inCommunitiesUser->isDisabledUser() && !$inCommunitiesUser->isBlockUser()) {
+            $stockControlUser = $inCommunitiesUser->StockControl->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
                 ->with([
                     'Piece' => function ($query) use ($status) {
                         return $query->select('id', 'community_id', 'name', 'picture', 'description');
@@ -161,7 +160,7 @@ class PiecesController extends Controller
                 ->groupBy('piece_id')
                 ->get();
 
-            $collectControlUser = CollectControl::where('in_community_id', $inCommunitiesUser->id)->whereIn('status_id', $status)->pluck('id')->toArray();
+            $collectControlUser = $inCommunitiesUser->CollectControl->whereIn('status_id', $status)->pluck('id')->toArray();
 
             $collectPiecesUser = CollectPieces::selectRaw('piece_id, SUM(units) as units')
                 ->whereIn('collect_control_id', $collectControlUser)
@@ -226,6 +225,10 @@ class PiecesController extends Controller
 
         $community = Community::where('alias', $request->community)->orWhere('uuid', $request->community)->first();
 
+        if ($community == null) {
+            return response()->json(['error' => 'La comunidad seleccionada no existe!'], 404);
+        }
+
         $inCommunity = $community->InCommunitiesUser();
 
         if ($inCommunity == null) {
@@ -235,10 +238,6 @@ class PiecesController extends Controller
         // Check permission USER:ADMIN
         if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
             return response()->json(['error' => 'No tienes permisos para crear una pieza'], 403);
-        }
-
-        if ($community == null) {
-            return response()->json(['error' => 'La comunidad seleccionada no existe!'], 404);
         }
 
         $piece = new Piece();

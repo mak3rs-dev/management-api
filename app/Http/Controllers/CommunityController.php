@@ -93,13 +93,11 @@ class CommunityController extends Controller
         }
 
         $checkUser = auth()->check();
-        $select = [];
+        $select = ['name', 'alias', 'picture', 'description', 'created_at'];
 
         if ($checkUser) {
-            $select = ['id', 'uuid', 'name', 'alias', 'picture', 'description', 'created_at'];
-
-        } else {
-            $select = ['name', 'alias', 'picture', 'description', 'created_at'];
+            array_push($select, 'id');
+            array_push($select, 'uuid');
         }
 
         $community = Community::select($select)->where('alias', $alias)->first();

@@ -264,7 +264,7 @@
                 }
             }
         },
-        "/communities/collect-control/": {
+        "/communities/collect": {
             "get": {
                 "tags": [
                     "Collect Control"
@@ -277,15 +277,15 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "alias_community": {
+                                    "community": {
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "uuid_community": {
+                                    "user": {
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "export": {
+                                    "status": {
                                         "description": "export",
                                         "type": "string"
                                     }

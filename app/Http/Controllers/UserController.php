@@ -71,25 +71,35 @@ class UserController extends Controller
         // Check user join in community
         $inCommunity = $community->InCommunitiesUser();
 
-        if ($inCommunity != null) {
-            return response()->json(['error' => 'Ya perteneces a esta comunidad!!'], 500);
+        if ($inCommunity == null) {
+            // Calculate last mak3r_num
+            $lastNumMaker = $community->InCommunities()->select('mak3r_num')->orderBy('mak3r_num', 'desc')->first();
+
+            $inCommunity = null;
+            $inCommunity = new InCommunity();
+            $inCommunity->community_id = $community->id;
+            $inCommunity->user_id = auth()->user()->id;
+            $inCommunity->role_id = Role::where('name', 'MAKER:USER')->first()->id;
+            $inCommunity->mak3r_num = $lastNumMaker == null ? 1 : $lastNumMaker->mak3r_num + 1;
+
+            if (!$inCommunity->save()) {
+                return response()->json(['error' => 'El usuario no se ha podido unir a la comunidad'], 500);
+            }
+
+            return response()->json(['message' => 'El usuario se ha añadido a la comunidad correctamente'], 200);
+
+        } else {
+            if ($inCommunity->isBlockUser()) {
+                return response()->json(['error' => 'Estas bloquedado en esta comunidad, por el cual no te puedes unir'], 500);
+            }
+
+            if (!$inCommunity->isDisabledUser()) {
+                return response()->json(['error' => 'Ya perteneces a esta comunidad!!'], 500);
+            }
+
+            $inCommunity->disabled_at = null;
+            return response()->json(['message' => 'Te has reunido a la comunidad correctamente'], 200);
         }
-
-        // Calculate last mak3r_num
-        $lastNumMaker = $community->InCommunities()->select('mak3r_num')->orderBy('mak3r_num', 'desc')->first();
-
-        $inCommunity = null;
-        $inCommunity = new InCommunity();
-        $inCommunity->community_id = $community->id;
-        $inCommunity->user_id = auth()->user()->id;
-        $inCommunity->role_id = Role::where('name', 'MAKER:USER')->first()->id;
-        $inCommunity->mak3r_num = $lastNumMaker == null ? 1 : $lastNumMaker->mak3r_num + 1;
-
-        if (!$inCommunity->save()) {
-            return response()->json(['error' => 'El usuario no se ha podido unir a la comunidad'], 500);
-        }
-
-        return response()->json(['message' => 'El usuario se ha añadido a la comunidad correctamente'], 200);
     }
 
     /**
@@ -139,7 +149,13 @@ class UserController extends Controller
         }
 
         // Check user join comminities
-        $inCommunity = InCommunity::select('community_id')->where('user_id', $user->id)->get()->toArray();
+        $inCommunity = InCommunity::select('community_id')
+                        ->where('user_id', $user->id)
+                        ->where([
+                            ['disabled_at', '=', null],
+                            ['blockuser_at', '=', null]
+                        ])
+                        ->get()->toArray();
 
         if (count($inCommunity) == 0) {
             return response()->json(['error' => 'No perteneces a ninguna comunidad!!'], 404);

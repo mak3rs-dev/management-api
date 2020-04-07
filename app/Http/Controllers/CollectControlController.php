@@ -6,6 +6,7 @@ use App\Exports\CollectControlExport;
 use App\Models\CollectControl;
 use App\Models\CollectPieces;
 use App\Models\Community;
+use App\Models\InCommunity;
 use App\Models\Piece;
 use App\Models\Status;
 use App\Models\User;
@@ -24,16 +25,16 @@ class CollectControlController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/collect-control/",
+     *     path="/communities/collect",
      *     tags={"Collect Control"},
      *     description="Obtenemos todas las recogidas",
      *     @OA\RequestBody( required=true,
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="alias_community", description="", type="string"),
-     *         @OA\Property(property="uuid_community", description="", type="string"),
-     *         @OA\Property(property="export", description="export", type="string"),
+     *         @OA\Property(property="community", description="", type="string"),
+     *         @OA\Property(property="user", description="", type="string"),
+     *         @OA\Property(property="status", description="export", type="string"),
      *       ),
      *     ),
      *     ),
@@ -47,21 +48,18 @@ class CollectControlController extends Controller
      * @param null $export
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function getCollectControl(Request $request, $alias = null, $export = null) {
+    public function getCollectControl(Request $request, $alias = null) {
         // Validate request
-        $validator = Validator::make($request->all(), [
-            'uuid_community' => 'nullable|string',
-            'alias_community' => 'nullable|string',
-            'export' => 'nullable|string'
+        $validator = Validator::make([
+            'community' => $alias,
+            'user' => $request->user,
+            'status' => $request->status
+        ], [
+            'community' => 'required|string',
+            'user' => 'nullable|string',
+        ], [
+            'community.required' => 'La comunidad es requerida'
         ]);
-
-        if ($request->uuid == null && $request->alias == null) {
-            return response()->json(['errors' => 'No se ha recibido ningún parámetro'], 422);
-        }
-
-        if ($alias != null && $request->alias == null) {
-            $request->alias = $alias;
-        }
 
         // We check that the validation is correct
         if ($validator->fails()) {
@@ -69,46 +67,60 @@ class CollectControlController extends Controller
         }
 
         // Check community
-        $community = Community::when($request->uuid != null, function ($query) use ($request) {
-           return $query->where('uuid', $request->uuid);
-        })
-        ->when($request->alias != null, function ($query) use ($request) {
-            return $query->where('alias', $request->alias);
-        })
-        ->first();
+        $community = Community::where('alias', $alias)->first();
 
         if ($community == null) {
-            return response()->json(['errors' => 'La comunidad no existe'], 404);
+            return response()->json(['error' => 'La comunidad no se encuentra'], 404);
         }
 
+        $user = null;
+
+        if ($request->user != null) {
+            $user = User::where('uuid', $request->user)->first();
+
+            if ($user == null) {
+                return response()->json(['error' => 'El mak3r introducido no se encuentra'], 404);
+            }
+
+            // Check join
+            $inCommunity = $community->InCommunities->where('uuid', $user->uuid)->first();
+
+            if ($inCommunity == null) {
+                return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
+            }
+
+            if ($inCommunity->disabled_at != null || $inCommunity->blockuser_at != null) {
+                return response()->json(['error' => 'El mak3r en la comunidad esta dado de baja o bloqueado'], 422);
+            }
+        }
+
+        // Check join
         $inCommunity = $community->InCommunitiesUser();
 
         if ($inCommunity == null) {
-            return response()->json(['errors' => 'No perteneces a esta comunidad'], 404);
+            return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
         }
 
-        if ($export == 'export' || ($request->export != null && $request->export == 'export')) {
-            return Excel::download(new CollectControlExport($inCommunity),'collect_control.csv', \Maatwebsite\Excel\Excel::CSV);
+        // Check permissions in community
+        if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
+            return response()->json(['error' => 'No tienes permisos para gestionar recogidas'], 403);
         }
 
-        $select = ['u.name as name_user', 'u.alias as  alias_user', 'p.name as piece_name',
-                    'pc.units as cantidad', 'cc.address as address', 'cc.location as location',
-                    'cc.province as province', 'cc.state as state', 'cc.country as country',
-                    'cc.cp as cp'];
+        $status = null;
 
-        $CollectControl = CollectControl::from('collect_control as cc')
-            ->join('collect_pieces as pc', 'pc.collect_control_id', '=', 'cc.id')
-            ->join('pieces as p', 'p.id', '=', 'pc.piece_id')
-            ->join('status as st', 'st.id', '=', 'cc.status_id')
-            ->join('users as u', 'u.id', '=', 'cc.user_id')
-            ->select($select)
-            ->when(!$inCommunity->hasRole('MAKER:ADMIN'), function ($query) {
-                return $query->where('user_id', auth()->user()->id);
-            })
-            ->where('cc.community_id', $community->id)
-            ->paginate(15);
+        if ($request->status != null) {
+            $status = Status::where('code', $request->status)->first();
+        }
 
-        return response()->json($CollectControl, 200);
+        $collecControl = CollectControl::selectRaw('cc.*, SUM(cp.units) as units_collected')
+                        ->from('collect_control as cc')
+                        ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+                        ->when($status != null, function ($query) use ($status) {
+                            return $query->where('status_id', $status->id);
+                        })
+                        ->paginate(15);
+
+        return response()->json($collecControl, 200);
     }
 
     /**
@@ -191,6 +203,10 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'El usuario no pertence a la comunidad'], 422);
         }
 
+        if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
+            return response()->json(['error' => 'El mak3r en la comunidad está dado de baja o bloqueado'], 422);
+        }
+
         $inCommunityUserAuth = $community->InCommunitiesUser();
 
         if ($inCommunityUserAuth == null) {
@@ -235,23 +251,33 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
         }
 
+        $count = 0;
         foreach ($request->pieces as $piece) {
-            $p = Piece::where('uuid', $piece['uuid'])->first();
+            if (intval($piece['units']) > 0) {
+                $p = Piece::where('uuid', $piece['uuid'])->first();
 
-            if ($p == null) {
-                DB::rollBack();
-                return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado una pieza'], 500);
+                if ($p == null) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado una pieza'], 500);
+                }
+
+                $collectPiece = new CollectPieces();
+                $collectPiece->collect_control_id = $collectControl->id;
+                $collectPiece->piece_id = $p->id;
+                $collectPiece->units = intval($piece['units']);
+
+                if (!$collectPiece->save()) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'No se ha podido añadir la pieza a la recogida'], 500);
+                }
+
+                $count++;
             }
+        }
 
-            $collectPiece = new CollectPieces();
-            $collectPiece->collect_control_id = $collectControl->id;
-            $collectPiece->piece_id = $p->id;
-            $collectPiece->units = abs(intval($piece['units']));
-
-            if (!$collectPiece->save()) {
-                DB::rollBack();
-                return response()->json(['error' => 'No se ha podido añadir la pieza a la recogida'], 500);
-            }
+        if ($count == 0) {
+            DB::rollBack();
+            return response()->json(['error' => 'Debe haber al menos una pieza en la recogida'], 422);
         }
 
         DB::commit();

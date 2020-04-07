@@ -75,6 +75,10 @@ class StockControlController extends Controller
             return response()->json(['error' => 'El usuario no pertenece a esta comunidad!!'], 404);
         }
 
+        if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
+            return response()->json(['error' => 'Estás dado de baja o bloqueado en la comunidad'], 422);
+        }
+
         // Check pieces
         $piece = $community->Pieces->where('uuid', $request->uuid_piece)->first();
 
