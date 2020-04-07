@@ -33,7 +33,7 @@ class CollectControlController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="user", description="", type="string"),
-     *         @OA\Property(property="status", description="export", type="string"),
+     *         @OA\Property(property="status_code", description="export", type="string"),
      *       ),
      *     ),
      *     ),
@@ -52,7 +52,7 @@ class CollectControlController extends Controller
         $validator = Validator::make([
             'community' => $alias,
             'user' => $request->user,
-            'status' => $request->status
+            'status_code' => $request->status
         ], [
             'community' => 'required|string',
             'user' => 'nullable|string',
@@ -130,7 +130,7 @@ class CollectControlController extends Controller
                         ->join('status as st', 'st.id', '=', 'cc.status_id')
                         ->join('users as u', 'u.id', '=', 'ic.user_id')
                         ->when($request->status != null, function ($query) use ($request) {
-                            return $query->where('st.code', $request->status);
+                            return $query->where('st.code', $request->status_code);
                         })
                         ->when($user != null, function ($query) use ($user) {
                             return $query->where('u.uuid', $user->uuid);

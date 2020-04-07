@@ -281,7 +281,7 @@
                                         "description": "",
                                         "type": "string"
                                     },
-                                    "status": {
+                                    "status_code": {
                                         "description": "export",
                                         "type": "string"
                                     }
