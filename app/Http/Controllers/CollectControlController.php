@@ -147,7 +147,6 @@ class CollectControlController extends Controller
                         ])
                         ->groupBy('cp.collect_control_id')
                         ->orderBy('created_at', 'desc')
-                        ->
                         ->paginate(15);
 
         return response()->json($collecControl, 200);
