@@ -86,7 +86,7 @@ class InCommunityController extends Controller
         }
 
         $ranking = DB::query()
-            ->selectRaw('a.*, CAST((a.units_manufactured - a.units_collected) AS INTEGER) as stock')
+            ->selectRaw('a.*, (a.units_manufactured - a.units_collected) as stock')
             ->fromSub(function ($query) use ($select, $community, $request, $export, $piece_id) {
                 $query->select($select)
                     ->from('in_community as ic')
