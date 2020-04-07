@@ -137,7 +137,7 @@ class CollectControlController extends Controller
                         ->where('ic.community_id', $community->id)
                         ->groupBy('cp.collect_control_id')
                         ->orderBy('created_at', 'desc')
-                        ->paginate(50);
+                        ->paginate(15);
 
         return response()->json($collecControl, 200);
     }
