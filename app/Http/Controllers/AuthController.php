@@ -164,7 +164,7 @@ class AuthController extends Controller
         // Create user
         $user = new User();
         $user->uuid = Str::uuid();
-        $user->email = $request->email;
+        $user->email = Str::lower($request->email);
         $user->password = bcrypt($request->password);
         $user->name = $request->name;
         $user->alias = $request->alias;
