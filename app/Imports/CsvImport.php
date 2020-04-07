@@ -146,7 +146,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                         $collect = CollectControl::create([
                             'in_community_id' => $inCommunity->id,
                             'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id,
-                            'validated_at' => trim(intval($row['validated'])) == 1 ? Carbon::now() : null
+                            'validated_at' => intval($row['validated']) == 1 ? Carbon::now() : null
                         ]);
 
                         if ($collect != null) {
