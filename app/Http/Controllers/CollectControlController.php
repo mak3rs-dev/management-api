@@ -72,12 +72,6 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'La comunidad no se encuentra'], 404);
         }
 
-        $status = null;
-
-        if ($request->status != null) {
-            $status = Status::where('code', $request->status)->first();
-        }
-
         $user = null;
         $inCommunity = null;
 
@@ -123,13 +117,21 @@ class CollectControlController extends Controller
             }
         }
 
-        $collecControl = CollectControl::selectRaw('cc.*, SUM(cp.units) as units_collected')
+        $select = ['u.name as user_name', 'ic.mak3r_num as mak3r_um', DB::raw('SUM(cp.units) as units_collected'),
+                    'cc.address as collect_address', 'cc.location as collect_location', 'cc.province as collect_province',
+                    'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
+                    'cc.address_description as collect_address_description', 'cc.created_at as fecha', 'st.name as status'];
+
+        $collecControl = CollectControl::select($select)
                         ->from('collect_control as cc')
+                        ->join('in_community as ic', 'cc.in_community_id', '=', 'ic.id')
                         ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
-                        ->when($status != null, function ($query) use ($status) {
-                            return $query->where('status_id', $status->id);
+                        ->join('status as st', 'st.id', '=', 'cc.status_id')
+                        ->join('user as u', 'user.id', '=', 'ic.user_id')
+                        ->when($request->status != null, function ($query) use ($request) {
+                            return $query->where('st.code', $request->status);
                         })
-                        ->where('cc.in_community_id', $inCommunity->id)
+                        ->where('ic.community_id', $community->id)
                         ->paginate(15);
 
         return response()->json($collecControl, 200);
