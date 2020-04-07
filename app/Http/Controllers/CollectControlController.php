@@ -95,7 +95,7 @@ class CollectControlController extends Controller
             }
 
             // Check join
-            $inCommunity = $community->InCommunities->where('uuid', $user->uuid)->first();
+            $inCommunity = $community->InCommunities->where('user_id', $user->id)->first();
 
             if ($inCommunity == null) {
                 return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
