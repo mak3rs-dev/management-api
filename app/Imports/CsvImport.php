@@ -146,7 +146,14 @@ class CsvImport implements ToCollection, WithHeadingRow
                         // Import Collected
                         $collect = CollectControl::create([
                             'in_community_id' => $inCommunity->id,
-                            'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id
+                            'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id,
+                            'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
+                            'province' => trim($row['province']) == '' ? null : Str::ucfirst(trim($row['province'])),
+                            'state' => trim($row['state']) == '' ? null : Str::ucfirst(trim($row['state'])),
+                            'country' => trim($row['country']) == '' ? null : Str::ucfirst(trim($row['country'])),
+                            'address_description' => trim($row['address_comments']) == '' ? null : Str::ucfirst(trim($row['address_comments'])),
+                            'address' => trim($row['address']) == '' ? null : trim($row['address']),
+                            'cp' => trim($row['cp']) == '' ? null : trim($row['cp'])
                         ]);
 
                         if ($collect != null) {
