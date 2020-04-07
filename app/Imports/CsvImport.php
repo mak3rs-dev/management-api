@@ -110,18 +110,18 @@ class CsvImport implements ToCollection, WithHeadingRow
                 // Import User
                 $user = User::create([
                     'uuid' => Str::uuid(),
-                    'alias' => (trim($row['alias']) == '') ? null : trim($row['alias']),
+                    'alias' => trim($row['alias']) == '' ? null : trim($row['alias']),
                     'name' => trim($row['name']),
                     'email' => Str::lower(trim($row['email'])),
-                    'phone' => (trim($row['phone']) == '') ? null : trim($row['phone']),
-                    'address' => (trim($row['address']) == '') ? null : trim($row['address']),
-                    'cp' => (trim($row['cp']) == '') ? null : trim($row['cp']),
+                    'phone' => trim($row['phone']) == '' ? null : trim($row['phone']),
+                    'address' => trim($row['address']) == '' ? null : trim($row['address']),
+                    'cp' => trim($row['cp']) == '' ? null : trim($row['cp']),
                     'password' => bcrypt(Str::uuid()),
-                    'location' => (trim($row['location']) == '') ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
-                    'province' => (trim($row['province']) == '') ? null : Str::ucfirst(trim($row['province'])),
-                    'state' => (trim($row['state']) == '') ? null : Str::ucfirst(trim($row['state'])),
-                    'country' => (trim($row['country']) == '') ? null : Str::ucfirst(trim($row['country'])),
-                    'address_description' => (trim($row['address_comments']) == '') ? null : Str::ucfirst(trim($row['address_comments'])),
+                    'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
+                    'province' => trim($row['province']) == '' ? null : Str::ucfirst(trim($row['province'])),
+                    'state' => trim($row['state']) == '' ? null : Str::ucfirst(trim($row['state'])),
+                    'country' => trim($row['country']) == '' ? null : Str::ucfirst(trim($row['country'])),
+                    'address_description' => trim($row['address_comments']) == '' ? null : Str::ucfirst(trim($row['address_comments'])),
                     'role_id' => Role::where('name', 'USER:COMMON')->first()->id
                 ]);
 
@@ -139,14 +139,14 @@ class CsvImport implements ToCollection, WithHeadingRow
                         $stock = StockControl::create([
                             'in_community_id' => $inCommunity->id,
                             'piece_id' => $piece->id,
-                            'units_manufactured' => intval($row['units_manufactured'])
+                            'units_manufactured' => intval($row['units_manufactured']),
+                            'validated_at' => intval($row['validated']) == 1 ? Carbon::now() : null
                         ]);
 
                         // Import Collected
                         $collect = CollectControl::create([
                             'in_community_id' => $inCommunity->id,
-                            'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id,
-                            'validated_at' => (intval($row['validated']) == 1) ? Carbon::now() : null
+                            'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id
                         ]);
 
                         if ($collect != null) {
