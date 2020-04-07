@@ -11,6 +11,7 @@ use App\Models\Role;
 use App\Models\Status;
 use App\Models\StockControl;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -143,7 +144,8 @@ class CsvImport implements ToCollection, WithHeadingRow
                         // Import Collected
                         $collect = CollectControl::create([
                             'in_community_id' => $inCommunity->id,
-                            'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id
+                            'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id,
+                            'validated_at' => trim(intval($row['validated'])) == 1 ? Carbon::now() : null
                         ]);
 
                         if ($collect != null) {
