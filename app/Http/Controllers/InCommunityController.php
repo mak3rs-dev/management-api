@@ -82,7 +82,7 @@ class InCommunityController extends Controller
             array_push($select, 'u.state as user_state');
             array_push($select, 'u.country as user_country');
             array_push($select, 'u.cp as user_cp');
-            array_push($select, 'u.address_description as address_description');
+            array_push($select, 'u.address_description as user_address_description');
         }
 
         $ranking = DB::query()
