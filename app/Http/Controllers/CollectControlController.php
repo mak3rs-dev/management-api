@@ -56,6 +56,7 @@ class CollectControlController extends Controller
         ], [
             'community' => 'required|string',
             'user' => 'nullable|string',
+            'status_code' => 'nullable|string'
         ], [
             'community.required' => 'La comunidad es requerida'
         ]);
