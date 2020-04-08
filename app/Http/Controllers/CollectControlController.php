@@ -142,7 +142,7 @@ class CollectControlController extends Controller
                                 return $query->select('collect_control_id', 'units', 'piece_id');
                             },
                             'Pieces.Piece' => function ($query) {
-                                return $query->select('id', 'uuid', 'name', 'is_material', 'picture', 'description');
+                                return $query->select('id', 'uuid', 'name', 'picture', 'description');
                             }
                         ])
                         ->groupBy('cp.collect_control_id')
