@@ -32,7 +32,7 @@ class CollectControl extends Model implements Auditable
     }
 
     // To rename CollectPiece
-    public function Piece() {
+    public function Pieces() {
         return $this->CollectPieces();
     }
 
