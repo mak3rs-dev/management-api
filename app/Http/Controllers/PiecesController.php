@@ -76,16 +76,16 @@ class PiecesController extends Controller
             $community = Community::where('alias', $request->alias)->first();
         }
 
-        $user = $community != null ? $community->inCommunitiesUser() : null;
+        $inCommunity = $community != null ? $community->inCommunities() : null;
 
-        if ($user == null) {
+        if ($inCommunity == null) {
             return response()->json(['error' => 'Tu no perteneces a la comunidad'], 422);
         }
 
         // Status
         $status = Status::whereIn('code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])->pluck('id')->toArray();
-        $CollectControl = CollectControl::whereIn('in_community_id', $user->pluck('id')->toArray())->whereIn('status_id', $status)->pluck('id')->toArray();
-        $sql = '(SELECT IFNULL(SUM(units), 0) FROM collect_pieces WHERE piece_id = p.id and collect_control_id in('.implode(",", $CollectControl).')) as units_collected';
+        $sql = '(SELECT IFNULL(SUM(cp.units), 0) FROM collect_pieces as cp INNER JOIN collect_control as cc on cp.collect_control_id = cc.id WHERE cp.piece_id = p.id
+                and cc.status_id in ('.implode(',', $status).')) as units_collected';
 
         $select = ['p.uuid', 'p.name', 'p.picture', 'p.description',
                     DB::raw('(SELECT IFNULL(SUM(units_manufactured), 0) FROM stock_control WHERE piece_id = p.id) as units_manufactured'),
