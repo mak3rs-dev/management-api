@@ -71,10 +71,11 @@ class InCommunityController extends Controller
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
 
+        if ($request->piece != null) {
+            $piece_id = Piece::where('uuid', $request->piece)->first();
+        }
+
         if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
-            if ($request->piece != null) {
-                $piece_id = Piece::where('uuid', $request->piece)->first();
-            }
 
             array_push($select, 'u.address as user_address');
             array_push($select, 'u.location as user_location');
