@@ -136,7 +136,7 @@ class CollectControlController extends Controller
                         ->when($user != null, function ($query) use ($user) {
                             return $query->where('u.uuid', $user->uuid);
                         })
-                        ->where('ic.community_id', $community->id)
+                        ->whereIn('ic.id', $inCommunity->pluck('id')->toArray())
                         ->with([
                             'Pieces' => function ($query) {
                                 return $query->select('collect_control_id', 'units', 'piece_id');
