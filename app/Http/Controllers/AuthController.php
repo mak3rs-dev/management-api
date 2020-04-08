@@ -273,7 +273,13 @@ class AuthController extends Controller
         $url = url(env('APP_CLIENT').'/recover?hash='.$user->hash_password_verified);
 
         try {
-            Mail::to($user->email)->send(new RecoveryPassword($url));
+            if ($user->hash_email_verified != null) {
+                Mail::to($user->email)->send(new EmailVerified(route('verified_hash', $user->hash_email_verified)));
+
+            } else {
+                Mail::to($user->email)->send(new RecoveryPassword($url));
+            }
+
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $message
