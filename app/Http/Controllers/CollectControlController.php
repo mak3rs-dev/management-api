@@ -111,7 +111,7 @@ class CollectControlController extends Controller
             $inCommunity = $community->InCommunitiesUser();
 
             // Check permissions in community
-            if (auth()->user()->hasRole('USER:ADMIN') && $inCommunity->hasRole('MAKER:ADMIN')) {
+            if (auth()->user()->hasRole('USER:ADMIN') || $inCommunity->hasRole('MAKER:ADMIN')) {
                 $admin = true;
             }
 
@@ -142,11 +142,11 @@ class CollectControlController extends Controller
                         ->when($user != null, function ($query) use ($user) {
                             return $query->where('u.uuid', $user->uuid);
                         })
-                        ->when(!$admin, function ($query) use ($inCommunity)  {
-                            return $query->where('ic.id', $inCommunity->id);
-                        })
                         ->when($admin, function ($query) use ($community)  {
                             return $query->where('ic.community_id', $community->id);
+                        })
+                        ->when(!$admin, function ($query) use ($inCommunity)  {
+                            return $query->where('ic.id', $inCommunity->id);
                         })
                         ->with([
                             'Pieces' => function ($query) {
