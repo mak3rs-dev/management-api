@@ -76,7 +76,7 @@ class PiecesController extends Controller
             $community = Community::where('alias', $request->alias)->first();
         }
 
-        $user = $community->inCommunitiesUser();
+        $user = $community != null ? $community->inCommunitiesUser() : null;
 
         if ($user == null) {
             return response()->json(['error' => 'Tu no perteneces a la comunidad'], 422);
