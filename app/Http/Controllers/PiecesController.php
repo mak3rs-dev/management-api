@@ -36,13 +36,16 @@ class PiecesController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="name", description="", type="string"),
+     *         @OA\Property(property="uuid", description="Piece uuid", type="string"),
      *         @OA\Property(property="community", description="Community uuid", type="string"),
      *         @OA\Property(property="alias", description="Community alias", type="string"),
+     *         @OA\Property(property="type_piece", description="Tipo de pieza {piece|material}", type="string"),
      *       ),
      *     ),
      *     ),
      *     @OA\Response(response=200, description="List Pieces"),
      *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=403, description=""),
      * )
      *
      * @param Request $request
@@ -54,7 +57,8 @@ class PiecesController extends Controller
             'name' => 'nullable|string',
             'uuid' => 'nullable|string',
             'community' => 'nullable|string',
-            'alias' => 'nullable|string'
+            'alias' => 'nullable|string',
+            'type_piece' => 'nullable|string'
         ]);
 
         // We check that the validation is correct
@@ -70,6 +74,12 @@ class PiecesController extends Controller
 
         if ($request->alias != null) {
             $community = Community::where('alias', $request->alias)->first();
+        }
+
+        $user = $community->inCommunitiesUser();
+
+        if ($user == null) {
+            return response()->json(['error' => 'Tu no perteneces a la comunidad'], 422);
         }
 
         // Status
@@ -89,6 +99,12 @@ class PiecesController extends Controller
             })
             ->when($request->uuid != null, function ($query) use ($request) {
                 return $query->where('p.uuid', $request->id);
+            })
+            ->when($request->type_piece != 'piece', function ($query) use ($request) {
+                return $query->where('is_piece', 1)->where('is_material', 0);
+            })
+            ->when($request->type_piece != 'material', function ($query) use ($request) {
+                return $query->where('is_piece', 0)->where('is_material', 1);
             })
             ->paginate(15);
 
@@ -132,15 +148,17 @@ class PiecesController extends Controller
         $status = Status::whereIn('code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])->pluck('id')->toArray();
 
         // COMMUNITY
-        $pieces = $community->Pieces()
+        $pieces = $community->InCommunities()
+                    ->join('stock_control as sc', 'sc.in_community_id', '=', 'ic')
             ->with([
                 'StockControl' => function ($query) use ($status) {
                     return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
                 },
                 'CollectControl.CollectPieces' => function ($query) use ($status) {
-                    return $query->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')->groupBy('piece_id');
+                    return $query->selectRaw('piece_id, SUM(units) as units')->groupBy('piece_id');
                 }
             ])
+            ->groupBy('stock_control.piece_id')
             ->paginate(15);
         // FIN COMMUNITY
 
@@ -151,7 +169,7 @@ class PiecesController extends Controller
         $collectPiecesUser = [];
 
         if ($inCommunitiesUser != null && !$inCommunitiesUser->isDisabledUser() && !$inCommunitiesUser->isBlockUser()) {
-            $stockControlUser = $inCommunitiesUser->StockControl->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
+            $stockControlUser = $inCommunitiesUser->StockControl()->selectRaw('piece_id, SUM(units_manufactured) as units_manufactured')
                 ->with([
                     'Piece' => function ($query) use ($status) {
                         return $query->select('id', 'community_id', 'name', 'picture', 'description');
