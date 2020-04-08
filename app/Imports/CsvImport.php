@@ -28,7 +28,7 @@ class CsvImport implements ToCollection, WithHeadingRow
         $community = Community::create([
             'uuid' => Str::uuid(),
             'name' => 'Cv19CórdobaMAK3RS',
-            'alias' => '@Cv19CórdobaMAK3RS',
+            'alias' => '@Cv19CordobaMAK3RS',
             'description' => '!!!¡¡¡Leer Anclado!!! https://t.me/Cv19CordobaMAK3RS
 
                             No se han suministrado más bobinas para envíos rápidos, así que reflejarlo en excel y ya se irá entregando por los medios de logística habilitados hasta ahora. 
