@@ -728,7 +728,6 @@
                     "Pieces"
                 ],
                 "description": "Obtenemos todas las piezas de la comunidad",
-                "operationId": "App\\Http\\Controllers\\PiecesController::piecesOfCommunity",
                 "responses": {
                     "200": {
                         "description": "List Pieces"

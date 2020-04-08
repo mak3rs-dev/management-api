@@ -123,7 +123,7 @@ class PiecesController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function piecesOfCommunity(Request $request, $alias = null) {
+    /*public function piecesOfCommunity(Request $request, $alias = null) {
         // Validate request
         $validator = Validator::make([
             'alias' => $alias
@@ -201,7 +201,7 @@ class PiecesController extends Controller
         ];
 
         return response()->json($result);
-    }
+    }*/
 
     /**
      * @OA\POST(
