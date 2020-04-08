@@ -100,10 +100,10 @@ class PiecesController extends Controller
             ->when($request->uuid != null, function ($query) use ($request) {
                 return $query->where('p.uuid', $request->id);
             })
-            ->when($request->type_piece != 'piece', function ($query) use ($request) {
+            ->when($request->type_piece == 'piece', function ($query) use ($request) {
                 return $query->where('p.is_piece', 1)->where('p.is_material', 0);
             })
-            ->when($request->type_piece != 'material', function ($query) use ($request) {
+            ->when($request->type_piece == 'material', function ($query) use ($request) {
                 return $query->where('p.is_piece', 0)->where('p.is_material', 1);
             })
             ->paginate(15);
