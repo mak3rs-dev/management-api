@@ -146,7 +146,7 @@ class CollectControlController extends Controller
                             return $query->where('ic.id', $inCommunity->id);
                         })
                         ->when($admin, function ($query) use ($inCommunity)  {
-                            return $query->where('ic.community_id', $inCommunity->community_id);
+                            return $query->where('ic.community_id', $community->community_id);
                         })
                         ->with([
                             'Pieces' => function ($query) {
