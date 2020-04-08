@@ -263,22 +263,29 @@ class AuthController extends Controller
             return response()->json(['message' => $message], 500);
         }
 
+        try {
+            if ($user->hash_email_verified != null) {
+                Mail::to($user->email)->send(new EmailVerified(route('verified_hash', $user->hash_email_verified)));
+                return response()->json(['message' => $message], 200);
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente'
+            ], 500);
+        }
+
         // Create hash
         $user->hash_password_verified = Str::uuid();
 
         if (!$user->save()) {
-            return response()->json(['error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente '], 500);
+            return response()->json(['error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente'], 500);
         }
 
         $url = url(env('APP_CLIENT').'/recover?hash='.$user->hash_password_verified);
 
         try {
-            if ($user->hash_email_verified != null) {
-                Mail::to($user->email)->send(new EmailVerified(route('verified_hash', $user->hash_email_verified)));
-
-            } else {
-                Mail::to($user->email)->send(new RecoveryPassword($url));
-            }
+            Mail::to($user->email)->send(new RecoveryPassword($url));
 
         } catch (\Exception $e) {
             return response()->json([
