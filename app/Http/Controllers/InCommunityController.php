@@ -73,6 +73,9 @@ class InCommunityController extends Controller
 
         if ($request->piece != null) {
             $piece_id = Piece::where('uuid', $request->piece)->first();
+            if ($piece_id == null) {
+                return response()->json(['error' => 'No se encuentra la pieza'], 404);
+            }
         }
 
         if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
