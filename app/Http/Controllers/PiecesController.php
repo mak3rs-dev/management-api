@@ -84,10 +84,12 @@ class PiecesController extends Controller
 
         // Status
         $status = Status::whereIn('code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])->pluck('id')->toArray();
+        $CollectControl = CollectControl::whereIn('in_community_id', $user->pluck('id')->toArray())->whereIn('status_id', $status)->pluck('id')->toArray();
+        $sql = '(SELECT IFNULL(SUM(units), 0) FROM collect_pieces WHERE piece_id = p.id and collect_control_id in('.implode(",", $CollectControl).')) as units_collected';
 
         $select = ['p.uuid', 'p.name', 'p.picture', 'p.description',
-                    DB::raw('IFNULL((SELECT SUM(units_manufactured) FROM stock_control WHERE piece_id = p.id),0) as units_manufactured'),
-                    DB::raw('IFNULL((SELECT SUM(units) FROM collect_pieces WHERE piece_id = p.id),0) as units_collected')];
+                    DB::raw('(SELECT IFNULL(SUM(units_manufactured), 0) FROM stock_control WHERE piece_id = p.id) as units_manufactured'),
+                    DB::raw($sql)];
 
         $pieces = Piece::from('pieces as p')
             ->select($select)
