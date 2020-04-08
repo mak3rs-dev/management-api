@@ -138,11 +138,11 @@ class CollectControlController extends Controller
                         })
                         ->where('ic.community_id', $community->id)
                         ->with([
-                            'CollectPieces' => function ($query) {
+                            'piece' => function ($query) {
                                 return $query->select('collect_control_id', 'units', 'piece_id');
                             },
-                            'CollectPieces.Piece' => function ($query) {
-                                return $query->select('id', 'name', 'is_material', 'picture', 'description');
+                            'piece.Piece' => function ($query) {
+                                return $query->select('id', 'uuid', 'name', 'is_material', 'picture', 'description');
                             }
                         ])
                         ->groupBy('cp.collect_control_id')
