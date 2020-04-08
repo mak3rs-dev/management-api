@@ -75,6 +75,7 @@ class CollectControlController extends Controller
 
         $user = null;
         $inCommunity = null;
+        $admin = false;
 
         if ($request->user != null) {
             // Check join
@@ -109,6 +110,11 @@ class CollectControlController extends Controller
         } else {
             $inCommunity = $community->InCommunitiesUser();
 
+            // Check permissions in community
+            if (auth()->user()->hasRole('USER:ADMIN') && $inCommunity->hasRole('MAKER:ADMIN')) {
+                $admin = true;
+            }
+
             if ($inCommunity == null) {
                 return response()->json(['error' => 'No perteneces a la comunidad'], 422);
             }
@@ -136,7 +142,12 @@ class CollectControlController extends Controller
                         ->when($user != null, function ($query) use ($user) {
                             return $query->where('u.uuid', $user->uuid);
                         })
-                        ->whereIn('ic.id', $inCommunity->pluck('id')->toArray())
+                        ->when(!$admin, function ($query) use ($inCommunity)  {
+                            return $query->where('ic.id', $inCommunity->id);
+                        })
+                        ->when($admin, function ($query) use ($inCommunity)  {
+                            return $query->where('ic.community_id', $inCommunity->community_id);
+                        })
                         ->with([
                             'Pieces' => function ($query) {
                                 return $query->select('collect_control_id', 'units', 'piece_id');
