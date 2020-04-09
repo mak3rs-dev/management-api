@@ -9,6 +9,7 @@ use App\Models\InCommunity;
 use App\Models\Piece;
 use App\Models\Status;
 use App\Models\StockControl;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -58,7 +59,8 @@ class PiecesController extends Controller
             'uuid' => 'nullable|string',
             'community' => 'nullable|string',
             'alias' => 'nullable|string',
-            'type_piece' => 'nullable|string'
+            'type_piece' => 'nullable|string',
+            'user' => 'nullable|string'
         ]);
 
         // We check that the validation is correct
@@ -76,7 +78,11 @@ class PiecesController extends Controller
             $community = Community::where('alias', $request->alias)->first();
         }
 
-        $inCommunity = $community != null ? $community->inCommunities() : null;
+        if ($community == null) {
+            return response()->json(['error' => 'La comunidad no se encuentra'], 404);
+        }
+
+        $inCommunity = $community->inCommunities();
 
         if ($inCommunity == null) {
             return response()->json(['error' => 'Tu no perteneces a la comunidad'], 422);
@@ -87,13 +93,22 @@ class PiecesController extends Controller
         $sql = '(SELECT IFNULL(SUM(cp.units), 0) FROM collect_pieces as cp INNER JOIN collect_control as cc on cp.collect_control_id = cc.id WHERE cp.piece_id = p.id
                 and cc.status_id in ('.implode(',', $status).')) as units_collected';
 
-        $select = ['p.uuid', 'p.name', 'p.picture', 'p.description', 'st.validated_at',
-                    DB::raw('IFNULL(SUM(st.units_manufactured), 0) as units_manufactured'),
+        $select = ['p.uuid', 'p.name', 'p.picture', 'p.description',
+                    DB::raw('(SELECT IFNULL(SUM(units_manufactured), 0) FROM stock_control WHERE piece_id = p.id) as units_manufactured'),
                     DB::raw($sql)];
+
+        if ($request->user != null) {
+            $user = User::where('uuid', $request->user)->first();
+            if ($user != null) {
+                $inCommunityUser = $community->InCommunities->where('user_id', $user->id)->first();
+                if ($inCommunityUser != null) {
+                    array_push($select, DB::raw("(SELECT validated_at FROM stock_control WHERE piece_id = p.id and in_community_id = $inCommunityUser->id) as validated_at"));
+                }
+            }
+        }
 
         $pieces = Piece::from('pieces as p')
             ->select($select)
-            ->leftJoin('stock_control as st', 'st.id', '=', 'p.id')
             ->when($request->name != null, function ($query) use ($request) {
                 return $query->where('p.name', 'like', "$request->name%");
             })
@@ -109,7 +124,6 @@ class PiecesController extends Controller
             ->when($request->type_piece == 'material', function ($query) use ($request) {
                 return $query->where('p.is_piece', 0)->where('p.is_material', 1);
             })
-            ->groupBy('p.id')
             ->paginate(15);
 
         return response()->json($pieces);
