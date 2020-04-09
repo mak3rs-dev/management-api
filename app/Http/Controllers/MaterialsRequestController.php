@@ -114,7 +114,7 @@ class MaterialsRequestController extends Controller
         }
 
         $materialsRequest = MaterialRequest::from('material_requests as mr')
-            ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request', DB::raw('SUM(cm.units_delivered) as units_delivered'))
+            ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request', DB::raw('IFNULL(SUM(cm.units_delivered), 0) as units_delivered'))
             ->join('pieces as p', 'p.id', '=', 'mr.piece_id')
             ->join('in_community as ic', 'mr.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
