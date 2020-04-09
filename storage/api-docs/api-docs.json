@@ -1,0 +1,983 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API MAK3RS DOCUMENTATION",
+        "description": "",
+        "contact": {
+            "email": "info@mak3rs.tk"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Logueo",
+                "operationId": "App\\Http\\Controllers\\AuthController::login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "401": {
+                        "description": "Unauthorized; Email not verified"
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Registro",
+                "operationId": "App\\Http\\Controllers\\AuthController::register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password_confirm": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "phone": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "address": {
+                                        "description": "Dirección",
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "description": "Localidad",
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "description": "Provincia",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "Comunidad",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "País",
+                                        "type": "string"
+                                    },
+                                    "address_description": {
+                                        "description": "Descripción sobre la dirección",
+                                        "type": "string"
+                                    },
+                                    "cp": {
+                                        "description": "Código Postal",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Registrado correctamente"
+                    },
+                    "500": {
+                        "description": "El usuario no se ha podido registrar correctamente"
+                    }
+                }
+            }
+        },
+        "/auth/verified-hash/{hash}": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Validación del hash",
+                "operationId": "App\\Http\\Controllers\\AuthController::verifiedHash",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/recovery-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Recuperación de contraseña",
+                "operationId": "App\\Http\\Controllers\\AuthController::recoveryPasword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/recovery-hash": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Recuperación de contraseña",
+                "operationId": "App\\Http\\Controllers\\AuthController::recoveryHash",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "hash": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "password_confirm": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Obtener información de mi",
+                "operationId": "App\\Http\\Controllers\\AuthController::me",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Desloguear mi usuario",
+                "operationId": "App\\Http\\Controllers\\AuthController::logout",
+                "responses": {
+                    "200": {
+                        "description": "Desconectado correctamente"
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Actualizar mi token",
+                "operationId": "App\\Http\\Controllers\\AuthController::refresh",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/collect/{communty}": {
+            "get": {
+                "tags": [
+                    "Collect Control"
+                ],
+                "description": "Obtenemos todas las recogidas",
+                "operationId": "App\\Http\\Controllers\\CollectControlController::getCollectControl",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "status_code": {
+                                        "description": "export",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/collect/add": {
+            "post": {
+                "tags": [
+                    "Collect Control"
+                ],
+                "description": "Añadimos una pieza a una recogida",
+                "operationId": "App\\Http\\Controllers\\CollectControlController::add",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "community": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "user": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "status_code": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "pieces": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "address": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "address_description": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "cp": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/collect/update": {
+            "put": {
+                "tags": [
+                    "Collect Control"
+                ],
+                "description": "Actualizamos unas piezas a una recogida",
+                "operationId": "App\\Http\\Controllers\\CollectControlController::update",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "collect": {
+                                        "description": "",
+                                        "type": "integer"
+                                    },
+                                    "status_code": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "pieces": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "address": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "address_description": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "cp": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/all": {
+            "get": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Obtenemos todas las comunidades",
+                "operationId": "App\\Http\\Controllers\\CommunityController::communities",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List Communities"
+                    }
+                }
+            }
+        },
+        "/communities/alias/{alias}": {
+            "get": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Obtenemos la comunidad por su alias",
+                "operationId": "App\\Http\\Controllers\\CommunityController::alias",
+                "responses": {
+                    "200": {
+                        "description": "Object Community or null"
+                    }
+                }
+            }
+        },
+        "/communities/create": {
+            "post": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Creamos la comunidad",
+                "operationId": "App\\Http\\Controllers\\CommunityController::create",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Object Community or null"
+                    }
+                }
+            }
+        },
+        "/communities/update": {
+            "put": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Actualizamos la comunidad",
+                "operationId": "App\\Http\\Controllers\\CommunityController::update",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Object Community or null"
+                    }
+                }
+            }
+        },
+        "/communities/delete": {
+            "delete": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Borramos la comunidad",
+                "operationId": "App\\Http\\Controllers\\CommunityController::delete",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "ok"
+                    }
+                }
+            }
+        },
+        "/converts/img-to-base64": {
+            "post": {
+                "tags": [
+                    "Converts"
+                ],
+                "description": "Conversión",
+                "operationId": "App\\Http\\Controllers\\ImageConvertController::ImgToBase64",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "image": {
+                                        "description": "",
+                                        "type": "binray"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/ranking/{alias}/{export?stock}": {
+            "get": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Ranking de la comunidad",
+                "operationId": "App\\Http\\Controllers\\InCommunityController::ranking",
+                "responses": {
+                    "200": {
+                        "description": "ok"
+                    }
+                }
+            }
+        },
+        "/communities/materials/{alias}": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "description": "Listado de materiales pedidos por el usuario",
+                "operationId": "App\\Http\\Controllers\\MaterialsRequestController::get",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "piece": {
+                                        "description": "Piece uuid",
+                                        "type": "string"
+                                    },
+                                    "user": {
+                                        "description": "User uuid",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/materials/add-or-update": {
+            "post": {
+                "tags": [
+                    "Materials"
+                ],
+                "description": "Cuando un usuario realiza o actualiza una pedido a una comunidad",
+                "operationId": "App\\Http\\Controllers\\MaterialsRequestController::addOrUpdate",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid_community": {
+                                        "description": "Community",
+                                        "type": "string"
+                                    },
+                                    "uuid_piece": {
+                                        "description": "Piece",
+                                        "type": "string"
+                                    },
+                                    "units": {
+                                        "description": "",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/pieces/all": {
+            "get": {
+                "tags": [
+                    "Pieces"
+                ],
+                "description": "Obtenemos todas las piezas",
+                "operationId": "App\\Http\\Controllers\\PiecesController::pieces",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "uuid": {
+                                        "description": "Piece uuid",
+                                        "type": "string"
+                                    },
+                                    "community": {
+                                        "description": "Community uuid",
+                                        "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "Community alias",
+                                        "type": "string"
+                                    },
+                                    "type_piece": {
+                                        "description": "Tipo de pieza {piece|material}",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List Pieces"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "403": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/pieces/create": {
+            "post": {
+                "tags": [
+                    "Pieces"
+                ],
+                "description": "Creamos una pieza",
+                "operationId": "App\\Http\\Controllers\\PiecesController::create",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Piece"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/piece/add-or-update": {
+            "post": {
+                "tags": [
+                    "Stock"
+                ],
+                "description": "Cuando un usuario añade o actualiza una pieza a una comunidad",
+                "operationId": "App\\Http\\Controllers\\StockControlController::addOrUpdatePieceStock",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid_community": {
+                                        "description": "Community",
+                                        "type": "string"
+                                    },
+                                    "uuid_piece": {
+                                        "description": "Piece",
+                                        "type": "string"
+                                    },
+                                    "units": {
+                                        "description": "",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/join": {
+            "post": {
+                "tags": [
+                    "Community"
+                ],
+                "description": "Cuando un usuario se quiere añadir a una comunidad",
+                "operationId": "App\\Http\\Controllers\\UserController::joinCommunity",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "community": {
+                                        "description": "Community",
+                                        "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "Community",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/users/communities": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "description": "Listado de comunidades a las que pertenece el usuario",
+                "operationId": "App\\Http\\Controllers\\UserController::communities",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "uuid": {
+                                        "description": "User",
+                                        "type": "string"
+                                    },
+                                    "alias": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    }
+}
