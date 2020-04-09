@@ -148,7 +148,7 @@ class CollectControlController extends Controller
                                         }
                                     ]);
                             },
-                            'CollectMaterial' => function ($query) {
+                            'Materials' => function ($query) {
                                 return $query->select('collect_control_id', 'material_requests_id', 'units_delivered')
                                         ->with([
                                             'MaterialRequest' => function ($query) {
