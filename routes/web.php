@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return response()->json(['API MAK3RS']);
 });
-
-// Put this inside either the POST route '/<token>/webhook' closure (see below) or
-// whatever Controller is handling your POST route
-$updates = Telegram::getWebhookUpdates();
 
 // Example of POST Route:
 Route::post('/<token>/webhook', function () {
