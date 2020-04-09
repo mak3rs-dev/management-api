@@ -311,10 +311,20 @@ class CollectControlController extends Controller
                     return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado una pieza'], 500);
                 }
 
+                $units = intval($piece['units']);
+
+                // Check stock
+                $stock = $inCommunity->StockControl->where('piece_id', $p->id)->sum('units_manufactured') < $units;
+
+                if ($stock) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Has pedido más piezas de las que tienes en stock'], 500);
+                }
+
                 $collectPiece = new CollectPieces();
                 $collectPiece->collect_control_id = $collectControl->id;
                 $collectPiece->piece_id = $p->id;
-                $collectPiece->units = intval($piece['units']);
+                $collectPiece->units = $units;
 
                 if (!$collectPiece->save()) {
                     DB::rollBack();
@@ -341,10 +351,17 @@ class CollectControlController extends Controller
                         return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
                     }
 
+                    $units = intval($material['units']);
+
+                    if ($materialRequest->units_request < $units) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'Has solicitado más material del que habías pedido previamente'], 500);
+                    }
+
                     $collectMaterial = new CollectMaterial();
                     $collectMaterial->material_requests_id = $materialRequest->id;
                     $collectMaterial->collect_control_id = $collectControl->id;
-                    $collectMaterial->units_delivered = intval($material['units']);
+                    $collectMaterial->units_delivered = $units;
 
                     if (!$collectMaterial->save()) {
                         DB::rollBack();
@@ -495,6 +512,14 @@ class CollectControlController extends Controller
             $p = Piece::where('uuid', $piece['uuid'])->first();
 
             $units = intval($piece['units']);
+
+            // Check stock
+            $stock = $inCommunity->StockControl->where('piece_id', $p->id)->sum('units_manufactured') < $units;
+
+            if ($stock) {
+                DB::rollBack();
+                return response()->json(['error' => 'Has pedido más piezas de las que tienes en stock'], 500);
+            }
 
             $collect = $collect_control->CollectPieces;
 
