@@ -38,7 +38,7 @@ class BotWebHook extends Command
      */
     public function handle()
     {
-        $updates = Telegram::getWebhookUpdate();
+        $updates = Telegram::getUpdates();
         $this->info(var_dump($updates));
     }
 }
