@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Console\Command;
-use Telegram\Bot\Api;
 
 class BotWebHook extends Command
 {
@@ -38,8 +37,7 @@ class BotWebHook extends Command
     public function handle()
     {
         $url = env('APP_URL') . '/' . env('TELEGRAM_BOT_TOKEN') . '/webhook';
-        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
-        $response = $telegram->setWebhook(['url' => $url]);
+        $response = Telegram::setWebhook(['url' => $url]);
         $this->info(($response == true ? 'Se ha actualizado el WebHook correctamente' : 'No se ha podido actualizar el WebHook correctamente')."URL => $url");
     }
 }

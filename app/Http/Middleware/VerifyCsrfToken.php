@@ -18,8 +18,9 @@ class VerifyCsrfToken extends Middleware
     public function __construct()
     {
         $this->except = [
-            ''.env('TELEGRAM_BOT_TOKEN').'/webhook'
+            env('TELEGRAM_BOT_TOKEN', '').'/webhook'
         ];
+
         parent::__construct();
     }
 }
