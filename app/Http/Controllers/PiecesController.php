@@ -93,7 +93,7 @@ class PiecesController extends Controller
 
         $pieces = Piece::from('pieces as p')
             ->select($select)
-            ->join('stock_control as st', 'st.id', '=', 'p.id')
+            ->leftJoin('stock_control as st', 'st.id', '=', 'p.id')
             ->when($request->name != null, function ($query) use ($request) {
                 return $query->where('p.name', 'like', "$request->name%");
             })
