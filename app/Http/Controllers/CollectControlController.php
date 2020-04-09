@@ -150,7 +150,7 @@ class CollectControlController extends Controller
                                 return $query->select('collect_control_id', 'material_requests_id', 'units_delivered');
                             },
                             'CollectMaterials.MaterialRequest' => function ($query) {
-                                return $query->select('id', 'piece_id');
+                                return $query->select('id', 'piece_id', 'units_request');
                             },
                             'MaterialRequest.Piece' => function ($query) {
                                 return $query->select('id', 'uuid', 'name', 'picture', 'description');
