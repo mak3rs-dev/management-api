@@ -161,7 +161,7 @@ class MaterialsRequestController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function addOrupdate(Request $request) {
+    public function addOrUpdate(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
             'uuid_community' => 'required|string',
@@ -214,7 +214,7 @@ class MaterialsRequestController extends Controller
             }
 
             $materialsRequest = null;
-            $materialsRequest = new MaterialsRequest();
+            $materialsRequest = new MaterialRequest();
             $materialsRequest->in_community_id = $inCommunity->id;
             $materialsRequest->piece_id = $piece->id;
             $materialsRequest->units_request = $request->units;
