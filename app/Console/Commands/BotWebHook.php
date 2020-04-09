@@ -37,7 +37,7 @@ class BotWebHook extends Command
      */
     public function handle()
     {
-        $url = env('APP_CLIENT') . env('TELEGRAM_BOT_TOKEN') . '/webhook';
+        $url = env('APP_CLIENT') . '/' . env('TELEGRAM_BOT_TOKEN') . '/webhook';
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $response = $telegram->setWebhook(['url' => $url]);
         $this->info(var_dump($response));
