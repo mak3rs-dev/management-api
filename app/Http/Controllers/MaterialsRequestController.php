@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Community;
 use App\Models\MaterialRequest;
+use App\Models\Piece;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -24,7 +25,7 @@ class MaterialsRequestController extends Controller
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="community", description="Community alias", type="string"),
+     *         @OA\Property(property="piece", description="Piece uuid", type="string"),
      *         @OA\Property(property="user", description="User uuid", type="string"),
      *       ),
      *     ),
@@ -42,9 +43,11 @@ class MaterialsRequestController extends Controller
         // Validate request
         $validator = Validator::make([
             'community' => $alias,
+            'piece' => $request->piece,
             'user' => $request->user
         ], [
             'community' => 'required|string',
+            'piece' => 'nullable|string',
             'user' => 'nullable|string'
         ], [
             'community.required' => 'El identificador de la comunidad es requerido'
@@ -103,6 +106,12 @@ class MaterialsRequestController extends Controller
             }
         }
 
+        $piece = null;
+
+        if ($request->piece != null) {
+            $piece = Piece::where('uuid', $request->piece)->where('is_material', 1)->first();
+        }
+
         $materialsRequest = MaterialRequest::from('materials_requests as mr')
             ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request')
             ->join('pieces as p', 'p.id', '=', 'mr.pieces_id')
@@ -110,6 +119,9 @@ class MaterialsRequestController extends Controller
             ->join('users as u', 'u.id', '=', 'ic.user_id')
             ->when($user != null, function ($query) use ($user) {
                 return $query->where('u.uuid', $user->uuid);
+            })
+            ->when($piece != null, function ($query) use ($piece) {
+                return $query->where('p.uuid', $piece->uuid);
             })
             ->when($admin, function ($query) use ($community)  {
                 return $query->where('ic.community_id', $community->id);
