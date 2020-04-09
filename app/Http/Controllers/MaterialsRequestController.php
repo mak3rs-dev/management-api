@@ -8,6 +8,7 @@ use App\Models\Piece;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use DB;
 
 class MaterialsRequestController extends Controller
 {
@@ -113,10 +114,11 @@ class MaterialsRequestController extends Controller
         }
 
         $materialsRequest = MaterialRequest::from('material_requests as mr')
-            ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request')
+            ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request', DB::raw('SUM(cm.units_delivered) as units_delivered'))
             ->join('pieces as p', 'p.id', '=', 'mr.piece_id')
             ->join('in_community as ic', 'mr.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
+            ->leftJoin('collect_materials as cm', 'cm.material_requests_id', '=', 'mr.id')
             ->when($user != null, function ($query) use ($user) {
                 return $query->where('u.uuid', $user->uuid);
             })
@@ -129,6 +131,7 @@ class MaterialsRequestController extends Controller
             ->when(!$admin, function ($query) use ($inCommunity)  {
                 return $query->where('ic.id', $inCommunity->id);
             })
+            ->groupBy('cm.material_requests_id')
             ->paginate(15);
 
         return response()->json($materialsRequest, 200);
