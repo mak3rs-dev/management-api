@@ -675,7 +675,7 @@
                 "tags": [
                     "Materials"
                 ],
-                "description": "Cuando un usuario realiza o actualiza una pedido a una comunidad",
+                "description": "Listado de materiales pedidos por el usuario",
                 "operationId": "App\\Http\\Controllers\\MaterialsRequestController::get",
                 "requestBody": {
                     "required": true,
@@ -683,17 +683,13 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "uuid_community": {
-                                        "description": "Community",
+                                    "community": {
+                                        "description": "Community alias",
                                         "type": "string"
                                     },
-                                    "uuid_piece": {
-                                        "description": "Piece",
+                                    "user": {
+                                        "description": "User uuid",
                                         "type": "string"
-                                    },
-                                    "units": {
-                                        "description": "",
-                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"

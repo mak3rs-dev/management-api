@@ -19,14 +19,13 @@ class MaterialsRequestController extends Controller
      *  @OA\GET(
      *     path="/communities/materials",
      *     tags={"Materials"},
-     *     description="Cuando un usuario realiza o actualiza una pedido a una comunidad",
+     *     description="Listado de materiales pedidos por el usuario",
      *     @OA\RequestBody( required=true,
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="uuid_community", description="Community", type="string"),
-     *         @OA\Property(property="uuid_piece", description="Piece", type="string"),
-     *        @OA\Property(property="units", description="", type="integer"),
+     *         @OA\Property(property="community", description="Community alias", type="string"),
+     *         @OA\Property(property="user", description="User uuid", type="string"),
      *       ),
      *     ),
      *     ),
