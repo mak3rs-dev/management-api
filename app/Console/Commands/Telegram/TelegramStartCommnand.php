@@ -22,16 +22,6 @@ class TelegramStartCommnand extends Command
     protected $description = 'Start Command to get you started';
 
     /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return mixed
