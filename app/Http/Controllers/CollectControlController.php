@@ -163,10 +163,11 @@ class CollectControlController extends Controller
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         @OA\Property(property="community", description="", type="string"),
-     *         @OA\Property(property="user", description="", type="string"),
-     *        @OA\Property(property="status_code", description="", type="string"),
+     *       @OA\Property(property="community", description="", type="string"),
+     *       @OA\Property(property="user", description="", type="string"),
+     *       @OA\Property(property="status_code", description="", type="string"),
      *       @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
+     *       @OA\Property(property="materials", description="", type="array", @OA\Items(type="string", format="binary")),
      *       @OA\Property(property="address", description="", type="string"),
      *       @OA\Property(property="location", description="", type="string"),
      *       @OA\Property(property="province", description="", type="string"),
@@ -193,6 +194,7 @@ class CollectControlController extends Controller
             'user' => 'required|string',
             'status_code' => 'required|string',
             'pieces' => 'required|array|min:1',
+            'materials' => 'nullable|array|min:1',
             'address' => 'nullable|string',
             'location' => 'nullable|string',
             'province' => 'nullable|string',
@@ -207,6 +209,8 @@ class CollectControlController extends Controller
             'pieces.required' => 'Las piezas son requeridas',
             'pieces.array' => 'Las piezas deben de estar en un array',
             'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
+            'materials.array' => 'Los materiales deben de estar en un array',
+            'materials.min' => 'La colleción de materiales tiene que tener al menos una pieza',
             'cp.regex' => 'El código postal no puede contener letras'
         ]);
 
@@ -299,6 +303,37 @@ class CollectControlController extends Controller
                 if (!$collectPiece->save()) {
                     DB::rollBack();
                     return response()->json(['error' => 'No se ha podido añadir la pieza a la recogida'], 500);
+                }
+            }
+        }
+
+        if ($request->materials != null) {
+            foreach ($request->materials as $material) {
+                if (intval($material['units']) > 0) {
+                    $p = Piece::where('uuid', $material['uuid'])->where('is_material', 1)->first();
+
+                    if ($p == null) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado los materiales indicados'], 500);
+                    }
+
+                    // Obtains MaterialsRequest
+                    $materialRequest = $inCommunity->MaterialsRequest->where('piece_id', $p->id)->first();
+
+                    if ($materialRequest == null) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
+                    }
+
+                    $collectMaterial = new CollectMaterial();
+                    $collectMaterial->material_requests_id = $materialRequest->id;
+                    $collectMaterial->collect_control_id = $collectControl->id;
+                    $collectMaterial->units_delivered = intval($material['units']);
+
+                    if (!$collectMaterial->save()) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'No se ha podido añadir el material a la recogida'], 500);
+                    }
                 }
             }
         }
