@@ -31,6 +31,10 @@ class CollectControl extends Model implements Auditable
         return $this->hasMany(CollectPieces::class, 'collect_control_id');
     }
 
+    public function CollectMaterials() {
+        return $this->hasMany(CollectMaterial::class, 'collect_control_id');
+    }
+
     // To rename CollectPiece
     public function Pieces() {
         return $this->CollectPieces();
