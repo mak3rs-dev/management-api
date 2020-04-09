@@ -58,7 +58,7 @@ class MaterialsRequestController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $community = Community::where('uuid', $alias)->first();
+        $community = Community::where('alias', $alias)->first();
 
         if ($community == null) {
             return response()->json(['error' => 'No se encuentra ninguna comunidad!!'], 404);
