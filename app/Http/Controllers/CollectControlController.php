@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CollectControlExport;
 use App\Models\CollectControl;
+use App\Models\CollectMaterial;
 use App\Models\CollectPieces;
 use App\Models\Community;
 use App\Models\InCommunity;
