@@ -113,7 +113,7 @@ class MaterialsRequestController extends Controller
             $piece = Piece::where('uuid', $request->piece)->where('is_material', 1)->first();
         }
 
-        //$adminQueryUnits = !$admin && $request->user == null ? 'mr.units_request' : DB::raw('IFNULL(SUM(mr.units_request), 0) as units_request');
+        $adminQueryUnits = !$admin && $request->user == null && $piece == null ? 'mr.units_request' : DB::raw('IFNULL(SUM(mr.units_request), 0) as units_request');
 
         $materialsRequest = MaterialRequest::from('material_requests as mr')
             ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request', DB::raw('IFNULL(SUM(cm.units_delivered), 0) as units_delivered'))
@@ -133,7 +133,7 @@ class MaterialsRequestController extends Controller
             ->when(!$admin, function ($query) use ($inCommunity)  {
                 return $query->where('ic.id', $inCommunity->id);
             })
-            ->groupBy('mr.piece_id', 'cm.material_requests_id')
+            ->groupBy('cm.material_requests_id')
             ->paginate(15);
 
         return response()->json($materialsRequest, 200);
