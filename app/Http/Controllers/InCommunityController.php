@@ -99,7 +99,7 @@ class InCommunityController extends Controller
                     ->addSelect(
                         [
                             'units_manufactured' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('CAST(IFNULL(SUM(sc.units_manufactured), 0) AS INTEGER)')
+                                return $query->selectRaw('IFNULL(SUM(sc.units_manufactured), 0)')
                                     ->from('stock_control as sc')
                                     ->whereColumn('sc.in_community_id', 'ic.id')
                                     ->when($piece_id != null, function ($query) use ($piece_id) {
@@ -107,7 +107,7 @@ class InCommunityController extends Controller
                                     });
                             },
                             'units_collected' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('CAST(IFNULL(SUM(cp.units), 0) AS INTEGER)')
+                                return $query->selectRaw('IFNULL(SUM(cp.units), 0)')
                                     ->from('collect_control as cc')
                                     ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
                                     ->join('status as st', 'cc.status_id', '=', 'st.id')

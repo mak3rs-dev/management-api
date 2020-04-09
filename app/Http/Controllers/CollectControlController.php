@@ -48,7 +48,7 @@ class CollectControlController extends Controller
      * @param null $export
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function getCollectControl(Request $request, $alias = null) {
+    public function   getCollectControl(Request $request, $alias = null) {
         // Validate request
         $validator = Validator::make([
             'community' => $alias,
@@ -179,18 +179,18 @@ class CollectControlController extends Controller
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *       @OA\Property(property="community", description="", type="string"),
-     *       @OA\Property(property="user", description="", type="string"),
-     *       @OA\Property(property="status_code", description="", type="string"),
-     *       @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
-     *       @OA\Property(property="materials", description="", type="array", @OA\Items(type="string", format="binary")),
-     *       @OA\Property(property="address", description="", type="string"),
-     *       @OA\Property(property="location", description="", type="string"),
-     *       @OA\Property(property="province", description="", type="string"),
-     *       @OA\Property(property="state", description="", type="string"),
-     *       @OA\Property(property="country", description="", type="string"),
-     *       @OA\Property(property="address_description", description="", type="string"),
-     *       @OA\Property(property="cp", description="", type="string")
+     *         @OA\Property(property="community", description="", type="string"),
+     *         @OA\Property(property="user", description="", type="string"),
+     *         @OA\Property(property="status_code", description="", type="string"),
+     *         @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
+     *         @OA\Property(property="materials", description="", type="array", @OA\Items(type="string", format="binary")),
+     *         @OA\Property(property="address", description="", type="string"),
+     *         @OA\Property(property="location", description="", type="string"),
+     *         @OA\Property(property="province", description="", type="string"),
+     *         @OA\Property(property="state", description="", type="string"),
+     *         @OA\Property(property="country", description="", type="string"),
+     *         @OA\Property(property="address_description", description="", type="string"),
+     *         @OA\Property(property="cp", description="", type="string")
      *       ),
      *     ),
      *     ),
@@ -369,15 +369,16 @@ class CollectControlController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="collect", description="", type="integer"),
-     *        @OA\Property(property="status_code", description="", type="string"),
-     *       @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
-     *       @OA\Property(property="address", description="", type="string"),
-     *       @OA\Property(property="location", description="", type="string"),
-     *       @OA\Property(property="province", description="", type="string"),
-     *       @OA\Property(property="state", description="", type="string"),
-     *       @OA\Property(property="country", description="", type="string"),
-     *       @OA\Property(property="address_description", description="", type="string"),
-     *       @OA\Property(property="cp", description="", type="string")
+     *         @OA\Property(property="status_code", description="", type="string"),
+     *         @OA\Property(property="pieces", description="", type="array", @OA\Items(type="string", format="binary")),
+     *         @OA\Property(property="materials", description="", type="array", @OA\Items(type="string", format="binary")),
+     *         @OA\Property(property="address", description="", type="string"),
+     *         @OA\Property(property="location", description="", type="string"),
+     *         @OA\Property(property="province", description="", type="string"),
+     *         @OA\Property(property="state", description="", type="string"),
+     *         @OA\Property(property="country", description="", type="string"),
+     *         @OA\Property(property="address_description", description="", type="string"),
+     *         @OA\Property(property="cp", description="", type="string")
      *       ),
      *     ),
      *     ),
@@ -396,6 +397,7 @@ class CollectControlController extends Controller
             'collect' => 'required|integer',
             'status_code' => 'required|string',
             'pieces' => 'required|array|min:1',
+            'materials' => 'nullable|array|min:1',
             'address' => 'nullable|string',
             'location' => 'nullable|string',
             'province' => 'nullable|string',
@@ -408,6 +410,8 @@ class CollectControlController extends Controller
             'pieces.required' => 'Las piezas son requeridas',
             'pieces.array' => 'Las piezas deben de estar en un array',
             'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
+            'materials.array' => 'Los materiales deben de estar en un array',
+            'materials.min' => 'La colleción de materiales tiene que tener al menos una pieza',
             'cp.regex' => 'El código postal no puede contener letras'
         ]);
 
@@ -501,6 +505,39 @@ class CollectControlController extends Controller
 
                     } else {
                         $pieceCollect->delete();
+                    }
+                }
+            }
+        }
+
+        foreach ($collect_control->CollectMaterial as $materialCollect) {
+            foreach ($request->materials as $material) {
+                $p = Piece::where('uuid', $material['uuid'])->where('is_material', 1)->first();
+
+                if ($p == null) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado los materiales indicados'], 500);
+                }
+
+                // Obtains MaterialsRequest
+                $materialRequest = $inCommunity->MaterialsRequest->where('piece_id', $p->id)->first();
+
+                if ($materialRequest == null) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
+                }
+
+                if ($p != null && $p->id == $materialRequest->piece_id) {
+                    if (intval($material['units']) > 0) {
+                        $materialCollect->units_delivered = intval($material['units']);
+
+                        if (!$materialCollect->save()) {
+                            DB::rollBack();
+                            return response()->json(['error' => 'No se ha podido añadir el material a la recogida'], 500);
+                        }
+
+                    } else {
+                        $materialCollect->delete();
                     }
                 }
             }
