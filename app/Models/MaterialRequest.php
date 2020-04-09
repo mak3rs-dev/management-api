@@ -11,4 +11,16 @@ class MaterialRequest extends Model
     protected $fillable = [
         'id', 'in_community_id', 'piece_id', 'units_request'
     ];
+
+    public function InCommunity() {
+        return $this->belongsTo(InCommunity::class, 'in_community_id');
+    }
+
+    public function Piece() {
+        return $this->belongsTo(Piece::class, 'piece_id');
+    }
+
+    public function CollectMaterials() {
+        return $this->hasMany(CollectMaterial::class, 'material_requests_id');
+    }
 }
