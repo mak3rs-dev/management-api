@@ -109,6 +109,7 @@ class PiecesController extends Controller
             ->when($request->type_piece == 'material', function ($query) use ($request) {
                 return $query->where('p.is_piece', 0)->where('p.is_material', 1);
             })
+            ->groupBy('p.id')
             ->paginate(15);
 
         return response()->json($pieces);
