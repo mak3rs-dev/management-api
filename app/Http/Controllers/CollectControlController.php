@@ -48,7 +48,7 @@ class CollectControlController extends Controller
      * @param null $export
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function   getCollectControl(Request $request, $alias = null) {
+    public function getCollectControl(Request $request, $alias = null) {
         // Validate request
         $validator = Validator::make([
             'community' => $alias,
@@ -509,7 +509,13 @@ class CollectControlController extends Controller
                         }
 
                     } else {
-                        $pieceCollect->delete();
+                        if (count($request->pieces) > 1) {
+                            $pieceCollect->delete();
+
+                        } else {
+                            DB::rollBack();
+                            return response()->json(['error' => 'La recogida no se puede quedar sin piezas'], 500);
+                        }
                     }
 
                 } else {
@@ -583,6 +589,10 @@ class CollectControlController extends Controller
                         return response()->json(['error' => 'No se ha podido añadir el material a la recogida'], 500);
                     }
                 }
+
+            } else {
+                DB::rollBack();
+                return response()->json(['error' => 'Has indicado más materiales de los que has solicitado'], 500);
             }
 
         }
