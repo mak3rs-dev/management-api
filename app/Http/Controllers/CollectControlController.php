@@ -414,7 +414,7 @@ class CollectControlController extends Controller
             'collect' => 'required|integer',
             'status_code' => 'required|string',
             'pieces' => 'required|array|min:1',
-            'materials' => 'nullable|array|min:1',
+            'materials' => 'nullable|array',
             'address' => 'nullable|string',
             'location' => 'nullable|string',
             'province' => 'nullable|string',
@@ -428,7 +428,6 @@ class CollectControlController extends Controller
             'pieces.array' => 'Las piezas deben de estar en un array',
             'pieces.min' => 'La colleción de piezas tiene que tener al menos una pieza',
             'materials.array' => 'Los materiales deben de estar en un array',
-            'materials.min' => 'La colleción de materiales tiene que tener al menos una pieza',
             'cp.regex' => 'El código postal no puede contener letras'
         ]);
 
