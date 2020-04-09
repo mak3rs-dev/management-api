@@ -719,7 +719,7 @@
                     "Materials"
                 ],
                 "description": "Cuando un usuario realiza o actualiza una pedido a una comunidad",
-                "operationId": "App\\Http\\Controllers\\MaterialsRequestController::addOrupdate",
+                "operationId": "App\\Http\\Controllers\\MaterialsRequestController::addOrUpdate",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -807,23 +807,6 @@
                         "description": ""
                     },
                     "403": {
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/communities/pieces/{alias}": {
-            "get": {
-                "tags": [
-                    "Pieces"
-                ],
-                "description": "Obtenemos todas las piezas de la comunidad",
-                "operationId": "App\\Http\\Controllers\\PiecesController::piecesOfCommunity",
-                "responses": {
-                    "200": {
-                        "description": "List Pieces"
-                    },
-                    "422": {
                         "description": ""
                     }
                 }
