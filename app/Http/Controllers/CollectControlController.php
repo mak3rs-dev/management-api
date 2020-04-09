@@ -150,10 +150,10 @@ class CollectControlController extends Controller
                                     ]);
                             },
                             'Materials' => function ($query) {
-                                return $query->select('collect_control_id', 'material_requests_id', 'units_delivered')
+                                return $query->select('collect_control_id', 'material_requests_id', DB::raw('CAST(units_delivered AS INTEGER) AS units_delivered'))
                                         ->with([
                                             'MaterialRequest' => function ($query) {
-                                                return $query->select('id', 'piece_id', 'units_request')
+                                                return $query->select('id', 'piece_id', DB::raw('CAST(units_request AS INTEGER) AS units_request'))
                                                     ->with([
                                                         'Piece' => function ($query) {
                                                             return $query->select('id', 'uuid', 'name', 'picture', 'description');
