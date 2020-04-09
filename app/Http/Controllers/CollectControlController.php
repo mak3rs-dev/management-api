@@ -134,7 +134,7 @@ class CollectControlController extends Controller
                         ->when($user != null, function ($query) use ($user) {
                             return $query->where('u.uuid', $user->uuid);
                         })
-                        ->when($admin, function ($query) use ($community)  {
+                        ->when($admin && $user == null, function ($query) use ($community)  {
                             return $query->where('ic.community_id', $community->id);
                         })
                         ->when(!$admin, function ($query) use ($inCommunity)  {
