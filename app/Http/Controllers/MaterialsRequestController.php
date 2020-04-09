@@ -17,7 +17,7 @@ class MaterialsRequestController extends Controller
 
     /**
      *  @OA\GET(
-     *     path="/communities/materials",
+     *     path="/communities/materials/{alias}",
      *     tags={"Materials"},
      *     description="Listado de materiales pedidos por el usuario",
      *     @OA\RequestBody( required=true,
