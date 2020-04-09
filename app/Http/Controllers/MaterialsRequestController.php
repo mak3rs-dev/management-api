@@ -127,7 +127,7 @@ class MaterialsRequestController extends Controller
             ->when($piece != null, function ($query) use ($piece) {
                 return $query->where('p.uuid', $piece->uuid);
             })
-            ->when($admin && $user == null, function ($query) use ($community)  {
+            ->when($admin && $request->user == null, function ($query) use ($community)  {
                 return $query->where('ic.community_id', $community->id);
             })
             ->when(!$admin, function ($query) use ($inCommunity)  {
