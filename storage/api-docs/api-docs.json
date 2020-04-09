@@ -670,7 +670,7 @@
                 }
             }
         },
-        "/communities/materials": {
+        "/communities/materials/{alias}": {
             "get": {
                 "tags": [
                     "Materials"
