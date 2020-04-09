@@ -112,9 +112,9 @@ class MaterialsRequestController extends Controller
             $piece = Piece::where('uuid', $request->piece)->where('is_material', 1)->first();
         }
 
-        $materialsRequest = MaterialRequest::from('materials_requests as mr')
+        $materialsRequest = MaterialRequest::from('material_requests as mr')
             ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request')
-            ->join('pieces as p', 'p.id', '=', 'mr.pieces_id')
+            ->join('pieces as p', 'p.id', '=', 'mr.piece_id')
             ->join('in_community as ic', 'mr.in_community_id', '=', 'ic.id')
             ->join('users as u', 'u.id', '=', 'ic.user_id')
             ->when($user != null, function ($query) use ($user) {
