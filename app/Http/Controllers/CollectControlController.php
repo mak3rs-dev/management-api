@@ -74,19 +74,26 @@ class CollectControlController extends Controller
         }
 
         $user = null;
-        $inCommunity = null;
         $admin = false;
 
+        $inCommunity = $community->InCommunitiesUser();
+
+        // Check permissions in community
+        if (auth()->user()->hasRole('USER:ADMIN') || $inCommunity->hasRole('MAKER:ADMIN')) {
+            $admin = true;
+        }
+
+        if ($inCommunity == null) {
+            return response()->json(['error' => 'No perteneces a la comunidad'], 422);
+        }
+
+        if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
+            return response()->json(['error' => 'Estás dado de baja o bloqueado'], 422);
+        }
+
         if ($request->user != null) {
-            // Check join
-            $inCommunity = $community->InCommunitiesUser();
-
-            if ($inCommunity == null) {
-                return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
-            }
-
             // Check permissions in community
-            if (!auth()->user()->hasRole('USER:ADMIN') && !$inCommunity->hasRole('MAKER:ADMIN')) {
+            if (!$admin) {
                 return response()->json(['error' => 'No tienes permisos para gestionar recogidas de otros usuarios'], 403);
             }
 
@@ -105,22 +112,6 @@ class CollectControlController extends Controller
 
             if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
                 return response()->json(['error' => 'El mak3r en la comunidad esta dado de baja o bloqueado'], 422);
-            }
-
-        } else {
-            $inCommunity = $community->InCommunitiesUser();
-
-            // Check permissions in community
-            if (auth()->user()->hasRole('USER:ADMIN') || $inCommunity->hasRole('MAKER:ADMIN')) {
-                $admin = true;
-            }
-
-            if ($inCommunity == null) {
-                return response()->json(['error' => 'No perteneces a la comunidad'], 422);
-            }
-
-            if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
-                return response()->json(['error' => 'Estás dado de baja o bloqueado'], 422);
             }
         }
 

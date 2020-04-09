@@ -12,5 +12,9 @@ Route::group(['prefix' => 'communities'], function () {
     Route::post('piece/add-or-update', 'StockControlController@addOrUpdatePieceStock');
     Route::post('collect/add', 'CollectControlController@add');
     Route::put('collect/update', 'CollectControlController@update');
-    Route::get('collect/{community?}', 'CollectControlController@getCollectControl');
+    Route::get('collect/{community}', 'CollectControlController@getCollectControl');
+    Route::post('collect/add', 'CollectControlController@add');
+    Route::put('collect/update', 'CollectControlController@update');
+    Route::get('materials/{community}', 'MaterialsRequestController@get');
+    Route::post('materials/add-or-update', 'MaterialsRequestController@addOrupdate');
 });

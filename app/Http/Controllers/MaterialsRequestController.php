@@ -3,11 +3,126 @@
 namespace App\Http\Controllers;
 
 use App\Models\Community;
+use App\Models\MaterialRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class MaterialsRequestController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('jwt.auth');
+    }
+
+    /**
+     *  @OA\GET(
+     *     path="/communities/materials",
+     *     tags={"Materials"},
+     *     description="Cuando un usuario realiza o actualiza una pedido a una comunidad",
+     *     @OA\RequestBody( required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="uuid_community", description="Community", type="string"),
+     *         @OA\Property(property="uuid_piece", description="Piece", type="string"),
+     *        @OA\Property(property="units", description="", type="integer"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="OK"),
+     *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=404, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function get(Request $request, $alias = null) {
+        // Validate request
+        $validator = Validator::make([
+            'community' => $alias,
+            'user' => $request->user
+        ], [
+            'community' => 'required|string',
+            'user' => 'nullable|string'
+        ], [
+            'community.required' => 'El identificador de la comunidad es requerido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $community = Community::where('uuid', $alias)->first();
+
+        if ($community == null) {
+            return response()->json(['error' => 'No se encuentra ninguna comunidad!!'], 404);
+        }
+
+        $user = null;
+        $admin = false;
+
+        // Check join Community
+        $inCommunity = $community->InCommunitiesUser();
+
+        if ($inCommunity == null) {
+            return response()->json(['error' => 'El usuario no pertenece a esta comunidad!!'], 404);
+        }
+
+        if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
+            return response()->json(['error' => 'Estás dado de baja o bloqueado en la comunidad'], 422);
+        }
+
+        // Check permissions in community
+        if (auth()->user()->hasRole('USER:ADMIN') || $inCommunity->hasRole('MAKER:ADMIN')) {
+            $admin = true;
+        }
+
+        if ($request->user != null) {
+            if (!$admin) {
+                return response()->json(['error' => 'No tienes permisos para poder gestionar materiales'], 403);
+            }
+
+            $user = User::where('uuid', $request->user)->first();
+
+            if ($user == null) {
+                return response()->json(['error' => 'El mak3r introducido no se encuentra'], 404);
+            }
+
+            // Check join
+            $inCommunity = $community->InCommunities->where('user_id', $user->id)->first();
+
+            if ($inCommunity == null) {
+                return response()->json(['error' => 'El mak3r introducido no pertenece a la comunidad'], 422);
+            }
+
+            if ($inCommunity->isDisabledUser() || $inCommunity->isBlockUser()) {
+                return response()->json(['error' => 'El mak3r en la comunidad esta dado de baja o bloqueado'], 422);
+            }
+        }
+
+        $materialsRequest = MaterialRequest::from('materials_requests as mr')
+            ->select('p.uuid', 'p.name', 'p.picture', 'mr.units_request')
+            ->join('pieces as p', 'p.id', '=', 'mr.pieces_id')
+            ->join('in_community as ic', 'mr.in_community_id', '=', 'ic.id')
+            ->join('users as u', 'u.id', '=', 'ic.user_id')
+            ->when($user != null, function ($query) use ($user) {
+                return $query->where('u.uuid', $user->uuid);
+            })
+            ->when($admin, function ($query) use ($community)  {
+                return $query->where('ic.community_id', $community->id);
+            })
+            ->when(!$admin, function ($query) use ($inCommunity)  {
+                return $query->where('ic.id', $inCommunity->id);
+            })
+            ->paginate(15);
+
+        return response()->json($materialsRequest, 200);
+    }
+
     /**
      * @OA\POST(
      *     path="/communities/materials/add-or-update",
@@ -32,7 +147,7 @@ class MaterialsRequestController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function add(Request $request) {
+    public function addOrupdate(Request $request) {
         // Validate request
         $validator = Validator::make($request->all(), [
             'uuid_community' => 'required|string',
