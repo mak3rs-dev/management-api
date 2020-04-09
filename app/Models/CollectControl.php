@@ -40,6 +40,11 @@ class CollectControl extends Model implements Auditable
         return $this->CollectPieces();
     }
 
+    // To rename CollectMaterial
+    public function Materials() {
+        return $this->CollectMaterial();
+    }
+
     public function hasStatus(string $str) {
         $status = $this->Status;
         $aStr = explode('|', $str);
