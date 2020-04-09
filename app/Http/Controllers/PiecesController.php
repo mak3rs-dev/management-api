@@ -93,7 +93,7 @@ class PiecesController extends Controller
         $sql = '(SELECT IFNULL(SUM(cp.units), 0) FROM collect_pieces as cp INNER JOIN collect_control as cc on cp.collect_control_id = cc.id WHERE cp.piece_id = p.id
                 and cc.status_id in ('.implode(',', $status).')) as units_collected';
 
-        $select = ['p.uuid', 'p.name', 'p.picture', 'p.description',
+        $select = ['p.uuid', 'p.name', 'p.picture', 'p.description', 'p.is_piece', 'p.is_material',
                     DB::raw('(SELECT IFNULL(SUM(units_manufactured), 0) FROM stock_control WHERE piece_id = p.id) as units_manufactured'),
                     DB::raw($sql)];
 
