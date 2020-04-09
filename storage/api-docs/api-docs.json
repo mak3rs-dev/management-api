@@ -683,8 +683,8 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "community": {
-                                        "description": "Community alias",
+                                    "piece": {
+                                        "description": "Piece uuid",
                                         "type": "string"
                                     },
                                     "user": {
