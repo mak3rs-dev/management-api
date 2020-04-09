@@ -19,7 +19,7 @@ Route::get('/', function () {
 });
 
 // Example of POST Route:
-Route::post('/'.env('TELEGRAM_BOT_TOKEN').'/webhook', function () {
+Route::post(env('TELEGRAM_BOT_TOKEN', '').'/webhook', function () {
     $update = Telegram::commandsHandler(true);
     $updates = Telegram::getWebhookUpdates();
 

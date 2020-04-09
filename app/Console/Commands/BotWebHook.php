@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Console\Command;
+use Telegram\Bot\Api;
 
 class BotWebHook extends Command
 {
@@ -32,13 +33,13 @@ class BotWebHook extends Command
     }
 
     /**
-     * Execute the console command.
-     *
-     * @return mixed
+     * @throws \Telegram\Bot\Exceptions\TelegramSDKException
      */
     public function handle()
     {
-        $updates = Telegram::getUpdates();
-        $this->info(var_dump($updates));
+        $url = env('APP_CLIENT') . env('TELEGRAM_BOT_TOKEN') . '/webhook';
+        $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
+        $response = $telegram->setWebhook(['url' => $url]);
+        $this->info(var_dump($response));
     }
 }
