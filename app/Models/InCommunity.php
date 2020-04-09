@@ -35,6 +35,10 @@ class InCommunity extends Model implements Auditable
         return $this->hasMany(CollectControl::class, 'in_community_id');
     }
 
+    public function MaterialsRequest() {
+        return $this->hasMany(MaterialRequest::class, 'in_community_id');
+    }
+
     public function hasRole(string $str) {
         $role = $this->Role;
         $aStr = explode('|', $str);
