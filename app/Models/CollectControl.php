@@ -31,7 +31,7 @@ class CollectControl extends Model implements Auditable
         return $this->hasMany(CollectPieces::class, 'collect_control_id');
     }
 
-    public function CollectMaterials() {
+    public function CollectMaterial() {
         return $this->hasMany(CollectMaterial::class, 'collect_control_id');
     }
 
