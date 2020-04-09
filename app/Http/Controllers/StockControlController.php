@@ -80,7 +80,7 @@ class StockControlController extends Controller
         }
 
         // Check pieces
-        $piece = $community->Pieces->where('uuid', $request->uuid_piece)->first();
+        $piece = $community->Pieces->where('uuid', $request->uuid_piece)->where('is_piece', 1)->first();
 
         if ($piece == null) {
             return response()->json(['error' => 'No se encuentra ninguna pieza!!'], 404);
