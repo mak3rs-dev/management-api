@@ -133,7 +133,7 @@ class MaterialsRequestController extends Controller
             ->when(!$admin, function ($query) use ($inCommunity)  {
                 return $query->where('ic.id', $inCommunity->id);
             })
-            ->groupBy('cm.material_requests_id')
+            ->groupBy('mr.piece_id', 'cm.material_requests_id')
             ->paginate(15);
 
         return response()->json($materialsRequest, 200);
