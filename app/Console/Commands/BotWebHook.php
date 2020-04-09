@@ -37,7 +37,7 @@ class BotWebHook extends Command
      */
     public function handle()
     {
-        $url = env('APP_CLIENT') . '/' . env('TELEGRAM_BOT_TOKEN') . '/webhook';
+        $url = env('APP_URL') . '/' . env('TELEGRAM_BOT_TOKEN') . '/webhook';
         $telegram = new Api(env('TELEGRAM_BOT_TOKEN'));
         $response = $telegram->setWebhook(['url' => $url]);
         $this->info(($response == true ? 'Se ha actualizado el WebHook correctamente' : 'No se ha podido actualizar el WebHook correctamente')."URL => $url");
