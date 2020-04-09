@@ -527,9 +527,11 @@ class CollectControlController extends Controller
                     return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
                 }
 
-                if ($p != null && $p->id == $materialRequest->piece_id) {
+                $units = intval($material['units']);
+
+                if ($p != null && $p->id == $materialRequest->piece_id && $materialRequest->units_request >= $units) {
                     if (intval($material['units']) > 0) {
-                        $materialCollect->units_delivered = intval($material['units']);
+                        $materialCollect->units_delivered = $units;
 
                         if (!$materialCollect->save()) {
                             DB::rollBack();
