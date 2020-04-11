@@ -49,7 +49,7 @@ class ImageConvertController extends Controller
         }
 
         // Add headers base64 img
-        $base64_image = "data:image/jpeg;base64, ";
+        $base64_image = "data:image/jpeg;base64,";
 
         // Convert Img to base64
         $base64_image .= base64_encode(file_get_contents($request->file('image')));

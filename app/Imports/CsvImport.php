@@ -63,7 +63,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                             Postprocesado: vamos a intentar ayudar un poco antes de enviar las viseras. Aquí algunas técnicas: https://t.me/c/1444234935/7754
                             
                             Donaciones exclusivamente aquí: https://www.smartmaterials3d.com/smartfil-pla-covid-19#/111-donar_al_proyecto_-imibic',
-            'picture' => 'data:image/jpeg;base64, '.base64_encode(file_get_contents(Storage::path('img_community.jpg')))
+            'picture' => 'data:image/jpeg;base64,'.base64_encode(file_get_contents(Storage::path('img_community.jpg')))
         ]);
 
         if ($community != null) {
@@ -105,7 +105,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                                 5 inferiores
                                 Relleno de tipo REJILLA
                                 Material exclusivamente PLA o PETG (no nocivos).',
-                'picture' => 'data:image/jpeg;base64, '.base64_encode(file_get_contents(Storage::path('piece.jpeg'))),
+                'picture' => 'data:image/jpeg;base64,'.base64_encode(file_get_contents(Storage::path('piece.jpeg'))),
                 'is_piece' => 1,
                 'is_material' => 0,
                 'community_id' => $community->id
@@ -115,7 +115,7 @@ class CsvImport implements ToCollection, WithHeadingRow
             $material = Piece::create([
                 'uuid' => Str::uuid(),
                 'name' => 'PLA',
-                'description' => 'data:image/jpeg;base64, '.base64_encode(file_get_contents(Storage::path('material.jpeg'))),
+                'description' => 'data:image/jpeg;base64,'.base64_encode(file_get_contents(Storage::path('material.jpeg'))),
                 'picture' => '',
                 'is_material' => 1,
                 'is_piece' => 0,
