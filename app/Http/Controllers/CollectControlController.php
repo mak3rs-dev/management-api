@@ -511,7 +511,6 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
         }
 
-        $count = 0;
         foreach ($request->pieces as $piece) {
             $p = Piece::where('uuid', $piece['uuid'])->first();
 
@@ -532,6 +531,7 @@ class CollectControlController extends Controller
 
             $collect = $collect_control->CollectPieces;
 
+            $count = 0;
             foreach ($collect as $pieceCollect) {
                 if ($p != null && $p->id == $pieceCollect->piece_id) {
                     if ($units > 0) {
@@ -571,7 +571,6 @@ class CollectControlController extends Controller
         }
 
         if ($admin) {
-            $count = 0;
             foreach ($request->materials as $material) {
                 $p = Piece::where('uuid', $material['uuid'])->where('is_material', 1)->first();
 
@@ -590,8 +589,8 @@ class CollectControlController extends Controller
 
                 $units = intval($material['units']);
 
-                if ($p != null && $p->id == $materialRequest->piece_id && $materialRequest->units_request >= $units) {
-
+                if ($materialRequest->units_request >= $units) {
+                    $count = 0;
                     $collect = $collect_control->CollectMaterial;
                     foreach ($collect as $materialCollect) {
 
