@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\CollectControl;
+use App\Models\User;
 use Illuminate\Console\Command;
 
 class FixLocationCollectControl extends Command
