@@ -118,7 +118,7 @@ class InCommunityController extends Controller
                                     });
                             },
                             'units_delivered' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('IFNULL(SUM(cp.units_delivered), 0)')
+                                return $query->selectRaw('IFNULL(SUM(cm.units_delivered), 0)')
                                     ->from('collect_control as cc')
                                     ->join('collect_materials as cm', 'cm.collect_control_id', '=', 'cc.id')
                                     ->join('material_requests as mr', 'mr.id', '=', 'cm.material_requests_id')
