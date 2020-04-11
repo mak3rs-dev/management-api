@@ -179,6 +179,7 @@ class AuthController extends Controller
         $user->country = $request->country != null ? Str::ucfirst($request->country) : null;
         $user->address_description = $request->address_description;
         $user->cp = $request->cp;
+        $user->privacy_policy_accepted_at = Carbon::now();
 
         if (!$user->save()) {
             return response()->json(['error' => 'El usuario no se ha podido registrar correctamente'], 500);
