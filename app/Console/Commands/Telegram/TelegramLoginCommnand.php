@@ -5,21 +5,21 @@ namespace App\Console\Commands\Telegram;
 use Telegram\Bot\Actions;
 use Telegram\Bot\Commands\Command;
 
-class TelegramStartCommnand extends Command
+class TelegramLoginCommnand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'start';
+    protected $name = 'login';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Start Command to get you started';
+    protected $description = 'Login Command to get you started';
 
     /**
      * Execute the console command.
