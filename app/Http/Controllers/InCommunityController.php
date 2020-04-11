@@ -117,6 +117,14 @@ class InCommunityController extends Controller
                                         return $query->where('cp.piece_id', $piece_id->id);
                                     });
                             },
+                            'units_request' => function ($query) use ($piece_id) {
+                                return $query->selectRaw('IFNULL(SUM(mr.units_request), 0)')
+                                    ->from('material_requests as mr')
+                                    ->whereColumn('mr.in_community_id', 'ic.id')
+                                    ->when($piece_id != null, function ($query) use ($piece_id) {
+                                        return $query->where('mr.piece_id', $piece_id->id);
+                                    });
+                            },
                             'units_delivered' => function ($query) use ($piece_id) {
                                 return $query->selectRaw('IFNULL(SUM(cm.units_delivered), 0)')
                                     ->from('collect_control as cc')
