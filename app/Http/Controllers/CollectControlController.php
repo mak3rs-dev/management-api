@@ -482,7 +482,7 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No perteneces a esta comunidad o estas bloqueado'], 403);
         }
 
-        if (!$admin && $request->status_code != null) {
+        if (!$admin && $request->status_code != 'COLLECT:DELIVERED') {
             return response()->json(['error' => 'No tienes permisos para cambiar el estado de la recogida'], 422);
         }
 
