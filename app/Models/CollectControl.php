@@ -10,9 +10,8 @@ class CollectControl extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $table = 'collect_control';
-
     protected $fillable = [
-        'id', 'in_community_id', 'status_id', 'address', 'province', 'state', 'country', 'cp', 'address_description', 'created_at', 'updated_at'
+        'id', 'in_community_id', 'status_id', 'address', 'province', 'state', 'location', 'country', 'cp', 'address_description', 'created_at', 'updated_at'
     ];
 
     public function InCommunity() {

@@ -135,7 +135,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                         'address' => trim($row['address']) == '' ? null : trim($row['address']),
                         'cp' => trim($row['cp']) == '' ? null : trim($row['cp']),
                         'password' => bcrypt(Str::uuid()),
-                        'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
+                        'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])),
                         'province' => trim($row['province']) == '' ? null : Str::ucfirst(trim($row['province'])),
                         'state' => trim($row['state']) == '' ? null : Str::ucfirst(trim($row['state'])),
                         'country' => trim($row['country']) == '' ? null : Str::ucfirst(trim($row['country'])),
@@ -178,7 +178,7 @@ class CsvImport implements ToCollection, WithHeadingRow
                                 $collect = CollectControl::create([
                                     'in_community_id' => $inCommunity->id,
                                     'status_id' => Status::where('code', 'COLLECT:RECEIVED')->first()->id,
-                                    'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])), // UPPER First string
+                                    'location' => trim($row['location']) == '' ? null : Str::ucfirst(trim($row['location'])),
                                     'province' => trim($row['province']) == '' ? null : Str::ucfirst(trim($row['province'])),
                                     'state' => trim($row['state']) == '' ? null : Str::ucfirst(trim($row['state'])),
                                     'country' => trim($row['country']) == '' ? null : Str::ucfirst(trim($row['country'])),
