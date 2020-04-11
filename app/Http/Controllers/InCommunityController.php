@@ -37,12 +37,14 @@ class InCommunityController extends Controller
             'alias' => $alias,
             'export' => $export,
             'user' => $request->user,
-            'piece' => $request->piece
+            'piece' => $request->piece,
+            'mak3r_num' => $request->mak3r_num
         ],[
             'alias' => 'required|string',
             'export' => 'nullable|string',
             'user' => 'nullable|string',
-            'piece' => 'nullable|string'
+            'piece' => 'nullable|string',
+            'mak3r_num' => 'nullable|integer'
         ], [
             'alias.required' => 'El alias es requerido'
         ]);
@@ -145,6 +147,9 @@ class InCommunityController extends Controller
                     )
                     ->when($request->user != null, function ($query) use ($request) {
                         return $query->where('u.uuid', $request->user);
+                    })
+                    ->when($request->mak3r_num != null, function ($query) use ($request) {
+                        return $query->where('ic.mak3r_num', $request->mak3r_num);
                     })
                     ->groupBy('ic.user_id');
             }, 'a')
