@@ -115,8 +115,8 @@ class CsvImport implements ToCollection, WithHeadingRow
             $material = Piece::create([
                 'uuid' => Str::uuid(),
                 'name' => 'PLA',
-                'description' => 'data:image/jpeg;base64,'.base64_encode(file_get_contents(Storage::path('material.jpeg'))),
-                'picture' => '',
+                'description' => '',
+                'picture' => 'data:image/jpeg;base64,'.base64_encode(file_get_contents(Storage::path('material.jpeg'))),
                 'is_material' => 1,
                 'is_piece' => 0,
                 'community_id' => $community->id
