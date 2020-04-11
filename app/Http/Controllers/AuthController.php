@@ -345,6 +345,10 @@ class AuthController extends Controller
         $user->hash_password_verified = null;
         $user->password = bcrypt($request->password);
 
+        if ($user->email_verified_at == null) {
+            $user->email_verified_at = Carbon::now();
+        }
+
         if (!$user->save()) {
             return response()->json(['error' => 'No se ha podido actualizar la contraseña'], 500);
         }
