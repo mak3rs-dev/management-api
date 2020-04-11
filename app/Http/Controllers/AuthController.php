@@ -262,7 +262,7 @@ class AuthController extends Controller
         $message = 'Si el email es correcto te habrá llegado un correo indicando como recuperar tu contraseña';
 
         if ($user == null) {
-            return response()->json(['message' => $message], 500);
+            return response()->json(['error' => $message], 500);
         }
 
         try {
@@ -274,7 +274,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente'
-            ], 200);
+            ], 500);
         }
 
         // Create hash
