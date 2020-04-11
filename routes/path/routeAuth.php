@@ -9,12 +9,13 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('me', 'AuthController@me');
     Route::get('logout', 'AuthController@logout');
     Route::get('refresh', 'AuthController@refresh');
+    Route::patch('policy', 'AuthController@updatePolicy');
 
     Route::get('not-login', function () {
-        return response()->json(['errors' => 'Tienes que loguearte'], 500);
+        return response()->json(['error' => 'Tienes que loguearte'], 500);
     })->name('not-login');
 
     Route::get('not-policy', function () {
-        return response()->json(['errors' => 'Tienes que aceptar las politicas de privacidad'], 500);
+        return response()->json(['error' => 'Tienes que aceptar las politicas de privacidad'], 500);
     })->name('not-policy');
 });

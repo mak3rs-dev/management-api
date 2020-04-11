@@ -236,6 +236,23 @@
                 }
             }
         },
+        "/auth/policy": {
+            "patch": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "Actualizar las politcas de privacidad",
+                "operationId": "App\\Http\\Controllers\\AuthController::updatePolicy",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/auth/logout": {
             "get": {
                 "tags": [
@@ -340,6 +357,14 @@
                                             "format": "binary"
                                         }
                                     },
+                                    "materials": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
                                     "address": {
                                         "description": "",
                                         "type": "string"
@@ -412,6 +437,14 @@
                                         "type": "string"
                                     },
                                     "pieces": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    },
+                                    "materials": {
                                         "description": "",
                                         "type": "array",
                                         "items": {

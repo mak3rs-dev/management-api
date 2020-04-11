@@ -371,6 +371,31 @@ class AuthController extends Controller
     }
 
     /**
+     *@OA\PATCH(
+     *     path="/auth/policy",
+     *     tags={"Auth"},
+     *     description="Actualizar las politcas de privacidad",
+     *     @OA\Response(response=200, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updatePolicy()
+    {
+        $user = auth()->user();
+        $user->privacy_policy_accepted_at = Carbon::now();
+
+        if (!$user->save()) {
+            return response()->json(['error' => 'Las politicas de privacidad no se han podido actualizar!!'], 500);
+        }
+
+        return response()->json(['message' => 'Las politicas de privacidad se han podido actualizar correctamente'], 200);
+    }
+
+    /**
      * @OA\GET(
      *     path="/auth/logout",
      *     tags={"Auth"},
