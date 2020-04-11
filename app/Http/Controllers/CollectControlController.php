@@ -165,6 +165,7 @@ class CollectControlController extends Controller
                                         ]);
                             }
                         ])
+                        ->groupBy('cc.in_community_id')
                         ->orderBy('created_at', 'desc')
                         ->paginate(15);
 
