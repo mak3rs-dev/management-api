@@ -66,7 +66,7 @@ class InCommunityController extends Controller
 
         $piece_id = null;
 
-        $select = ['u.name as user_name', 'ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
+        $select = [DB::raw('SUBSTRING_INDEX(u.name," ",1) as user_name'), 'ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
 
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
