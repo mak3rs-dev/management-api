@@ -17,7 +17,7 @@ class CheckUserPrivacyPolicy
     public function handle($request, Closure $next)
     {
         if (auth()->check()) {
-            if (auth()->user()->privacy_policy_accepted_at == Carbon::parse('1970-01-01')) {
+            if (Carbon::parse(auth()->user()->privacy_policy_accepted_at) < Carbon::parse(env('POLICY_AT'))) {
                 return redirect()->route('not-policy');
             }
         }
