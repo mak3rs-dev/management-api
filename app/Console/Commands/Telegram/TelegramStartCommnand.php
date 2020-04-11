@@ -34,6 +34,9 @@ class TelegramStartCommnand extends Command
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
+        ob_start(); var_dump($arguments); $text= ob_get_clean();
+        $this->replyWithMessage(['text' => $text]);
+
         /// This will update the chat status to typing...
         //$this->replyWithChatAction(['action' => Actions::TYPING]);
 
