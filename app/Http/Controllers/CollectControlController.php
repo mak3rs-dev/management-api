@@ -482,6 +482,10 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No perteneces a esta comunidad o estas bloqueado'], 403);
         }
 
+        if (!$admin && $request->status_code != null) {
+            return response()->json(['error' => 'No tienes permisos para cambiar el estado de la recogida'], 422);
+        }
+
         if (!$admin && $collect_control->hasStatus('COLLECT:DELIVERED|COLLECT:RECEIVED')) {
             return response()->json(['error' => 'La recogida ha sido entregada o recibida, por el cual no se puede modificar'], 422);
         }
@@ -560,29 +564,30 @@ class CollectControlController extends Controller
             }
         }
 
-        $count = 0;
-        foreach ($request->materials as $material) {
-            $p = Piece::where('uuid', $material['uuid'])->where('is_material', 1)->first();
+        if ($admin) {
+            $count = 0;
+            foreach ($request->materials as $material) {
+                $p = Piece::where('uuid', $material['uuid'])->where('is_material', 1)->first();
 
-            if ($p == null) {
-                DB::rollBack();
-                return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado los materiales indicados'], 500);
-            }
+                if ($p == null) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado los materiales indicados'], 500);
+                }
 
-            // Obtains MaterialsRequest
-            $materialRequest = $inCommunity->MaterialsRequest->where('piece_id', $p->id)->first();
+                // Obtains MaterialsRequest
+                $materialRequest = $inCommunity->MaterialsRequest->where('piece_id', $p->id)->first();
 
-            if ($materialRequest == null) {
-                DB::rollBack();
-                return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
-            }
+                if ($materialRequest == null) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
+                }
 
-            $units = intval($material['units']);
+                $units = intval($material['units']);
 
-            if ($p != null && $p->id == $materialRequest->piece_id && $materialRequest->units_request >= $units) {
+                if ($p != null && $p->id == $materialRequest->piece_id && $materialRequest->units_request >= $units) {
 
-                $collect = $collect_control->CollectMaterial;
-                foreach ($collect as $materialCollect) {
+                    $collect = $collect_control->CollectMaterial;
+                    foreach ($collect as $materialCollect) {
 
                         if ($materialRequest->id == $materialCollect->material_requests_id) {
                             if ($units > 0) {
@@ -600,25 +605,26 @@ class CollectControlController extends Controller
                         } else {
                             $count++;
                         }
-                }
-
-                if (count($collect) == $count) {
-                    $collectMaterial = new CollectMaterial();
-                    $collectMaterial->material_requests_id = $materialRequest->id;
-                    $collectMaterial->collect_control_id = $collect_control->id;
-                    $collectMaterial->units_delivered = $units;
-
-                    if (!$collectMaterial->save()) {
-                        DB::rollBack();
-                        return response()->json(['error' => 'No se ha podido añadir el material a la recogida'], 500);
                     }
+
+                    if (count($collect) == $count) {
+                        $collectMaterial = new CollectMaterial();
+                        $collectMaterial->material_requests_id = $materialRequest->id;
+                        $collectMaterial->collect_control_id = $collect_control->id;
+                        $collectMaterial->units_delivered = $units;
+
+                        if (!$collectMaterial->save()) {
+                            DB::rollBack();
+                            return response()->json(['error' => 'No se ha podido añadir el material a la recogida'], 500);
+                        }
+                    }
+
+                } else {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Has indicado más materiales de los que has solicitado'], 500);
                 }
 
-            } else {
-                DB::rollBack();
-                return response()->json(['error' => 'Has indicado más materiales de los que has solicitado'], 500);
             }
-
         }
 
         DB::commit();

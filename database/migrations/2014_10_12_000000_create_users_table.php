@@ -35,6 +35,8 @@ class CreateUsersTable extends Migration
             $table->string('country', 60)->nullable();
             $table->string('cp', 8)->nullable();
             $table->longText('address_description')->nullable();
+            $table->json('telegram_data')->nullable();
+            $table->timestamp('privacy_policy_accepted_at')->default('1970-01-01');
             $table->rememberToken();
             $table->timestamps();
         });

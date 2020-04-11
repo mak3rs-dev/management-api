@@ -12,7 +12,7 @@ class Community extends Model implements Auditable
     protected $table = 'community';
 
     protected $fillable = [
-        'uuid', 'alias', 'name', 'picture', 'description'
+        'uuid', 'alias', 'name', 'picture', 'description', 'telegram_data'
     ];
 
     public function Pieces() {
