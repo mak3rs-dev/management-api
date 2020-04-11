@@ -8,6 +8,7 @@ use App\Models\CollectMaterial;
 use App\Models\CollectPieces;
 use App\Models\Community;
 use App\Models\InCommunity;
+use App\Models\MaterialRequest;
 use App\Models\Piece;
 use App\Models\Status;
 use App\Models\User;
@@ -347,12 +348,19 @@ class CollectControlController extends Controller
                     // Obtains MaterialsRequest
                     $materialRequest = $inCommunity->MaterialsRequest->where('piece_id', $p->id)->first();
 
-                    if ($materialRequest == null) {
-                        DB::rollBack();
-                        return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
-                    }
-
                     $units = intval($material['units']);
+
+                    if ($materialRequest == null) {
+                        $materialRequest = new MaterialRequest();
+                        $materialRequest->in_community_id = $inCommunity->id;
+                        $materialRequest->piece_id = $p->id;
+                        $materialRequest->units_request = $units;
+
+                        if (!$materialRequest->save()) {
+                            DB::rollBack();
+                            return response()->json(['error' => 'No se ha podido crear una entrega de un material'], 500);
+                        }
+                    }
 
                     if ($materialRequest->units_request < $units) {
                         DB::rollBack();
@@ -582,12 +590,19 @@ class CollectControlController extends Controller
                 // Obtains MaterialsRequest
                 $materialRequest = $inCommunity->MaterialsRequest->where('piece_id', $p->id)->first();
 
-                if ($materialRequest == null) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'El material solicitado no esta creado como pedido de material'], 500);
-                }
-
                 $units = intval($material['units']);
+
+                if ($materialRequest == null) {
+                    $materialRequest = new MaterialRequest();
+                    $materialRequest->in_community_id = $inCommunity->id;
+                    $materialRequest->piece_id = $p->id;
+                    $materialRequest->units_request = $units;
+
+                    if (!$materialRequest->save()) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'No se ha podido crear una entrega de un material'], 500);
+                    }
+                }
 
                 if ($materialRequest->units_request >= $units) {
                     $count = 0;
