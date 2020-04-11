@@ -16,6 +16,9 @@ Route::group(['prefix' => 'auth'], function () {
     })->name('not-login');
 
     Route::get('not-policy', function () {
-        return response()->json(['error' => 'Tienes que aceptar las politicas de privacidad'], -100);
+        return response()->json([
+            'error' => 'Tienes que aceptar las politicas de privacidad',
+            'code' => -100
+        ], 500);
     })->name('not-policy');
 });
