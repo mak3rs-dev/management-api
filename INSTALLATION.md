@@ -19,6 +19,8 @@ database/seeds/DatabaseSeeder.php:15
 Then, exec from php:
 ```php
 composer install
+php artisan key:generate
+php artisan jwt:secret
 php artisan migrate
 php artisan db:seed
 ```
