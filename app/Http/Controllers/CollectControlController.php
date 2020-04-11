@@ -515,6 +515,11 @@ class CollectControlController extends Controller
         foreach ($request->pieces as $piece) {
             $p = Piece::where('uuid', $piece['uuid'])->first();
 
+            if ($p == null) {
+                DB::rollBack();
+                return response()->json(['error' => 'No se ha podido crear la recogida, por que no se ha encontrado las piezas indicadas'], 500);
+            }
+
             $units = intval($piece['units']);
 
             // Check stock
