@@ -66,7 +66,7 @@ class InCommunityController extends Controller
 
         $piece_id = null;
 
-        $select = [DB::raw('SUBSTRING_INDEX(u.name," ",1) as user_name'), 'ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
+        $select = ['ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
 
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
@@ -80,6 +80,7 @@ class InCommunityController extends Controller
 
         if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
 
+            array_push($select, DB::raw('SUBSTRING_INDEX(u.name," ",1) as user_name'));
             array_push($select, 'u.address as user_address');
             array_push($select, 'u.location as user_location');
             array_push($select, 'u.province as user_province');
@@ -87,6 +88,9 @@ class InCommunityController extends Controller
             array_push($select, 'u.country as user_country');
             array_push($select, 'u.cp as user_cp');
             array_push($select, 'u.address_description as user_address_description');
+
+        } else {
+            array_push($select, 'u.name as user_name');
         }
 
         $ranking = DB::query()
