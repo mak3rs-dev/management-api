@@ -12,7 +12,7 @@ class TelegramStartCommnand extends Command
      *
      * @var string
      */
-    protected $signature = 'start';
+    protected $name = 'start';
 
     /**
      * The console command description.
@@ -35,7 +35,7 @@ class TelegramStartCommnand extends Command
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
         /// This will update the chat status to typing...
-        $this->replyWithChatAction(['action' => Actions::TYPING]);
+        //$this->replyWithChatAction(['action' => Actions::TYPING]);
 
         /*// This will prepare a list of available commands and send the user.
         // First, Get an array of all registered commands
