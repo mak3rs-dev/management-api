@@ -20,7 +20,7 @@ class CreateCommunityTable extends Migration
             $table->string('name', 120);
             $table->longText('picture')->nullable();
             $table->longText('description')->nullable();
-            $table->longText('telegram_data')->nullable();
+            $table->json('telegram_data')->nullable();
             $table->timestamps();
         });
     }
