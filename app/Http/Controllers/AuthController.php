@@ -23,7 +23,7 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('jwt.auth', ['except' => ['login', 'register', 'verifiedHash', 'recoveryPasword', 'recoveryHash']]);
-        $this->middleware('privacy.policy', ['except' => ['login', 'register', 'verifiedHash', 'recoveryPasword', 'recoveryHash', 'me']]);
+        $this->middleware('privacy.policy', ['except' => ['login', 'register', 'verifiedHash', 'recoveryPasword', 'recoveryHash', 'me', 'updatePolicy', 'logout']]);
     }
 
     /**
