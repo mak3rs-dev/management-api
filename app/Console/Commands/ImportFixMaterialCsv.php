@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Imports\CsvImport;
+use App\Imports\UsersFixMaterialsImport;
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
 use Storage;
@@ -43,7 +43,7 @@ class ImportFixMaterialCsv extends Command
         $this->info('Starting Import...');
 
         try {
-            Excel::import(new ImportFixMaterialCsv(), Storage::path('ImportFixMaterialCsv.csv'), null, \Maatwebsite\Excel\Excel::CSV);
+            Excel::import(new UsersFixMaterialsImport(), Storage::path('UsersFixMaterialsImport.csv'), null, \Maatwebsite\Excel\Excel::CSV);
 
         } catch (\Exception $e) {
             $this->error('The import has failed --> '.$e->getMessage());

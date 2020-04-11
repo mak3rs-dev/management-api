@@ -41,11 +41,19 @@ class UsersFixMaterialsImport implements ToCollection, WithHeadingRow
                         }
 
                         if (intval($row['units_delivered']) > 0) {
-                            $materialsRequest = MaterialRequest::create([
-                                'in_community_id' => $inCommunity->id,
-                                'piece_id' => $material->id,
-                                'units_request' => intval($row['units_delivered'])
-                            ]);
+                            $materialsRequest = $inCommunity->MaterialsRequest->where('piece_id', $material->id)->first();
+
+                            if ($materialsRequest == null) {
+                                $materialsRequest = MaterialRequest::create([
+                                    'in_community_id' => $inCommunity->id,
+                                    'piece_id' => $material->id,
+                                    'units_request' => intval($row['units_delivered'])
+                                ]);
+
+                            } else {
+                                $materialsRequest->units_request = intval($row['units_delivered']);
+                                $materialsRequest->save();
+                            }
 
                            if ($materialsRequest != null) {
                                // Import Collect Pieces
