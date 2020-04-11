@@ -80,7 +80,7 @@ class InCommunityController extends Controller
 
         if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
 
-            array_push($select, DB::raw('SUBSTRING_INDEX(u.name," ",1) as user_name'));
+            array_push($select, 'u.name as user_name');
             array_push($select, 'u.address as user_address');
             array_push($select, 'u.location as user_location');
             array_push($select, 'u.province as user_province');
@@ -90,7 +90,7 @@ class InCommunityController extends Controller
             array_push($select, 'u.address_description as user_address_description');
 
         } else {
-            array_push($select, 'u.name as user_name');
+            array_push($select, DB::raw('SUBSTRING_INDEX(u.name," ",1) as user_name'));
         }
 
         $ranking = DB::query()
