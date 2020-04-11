@@ -274,7 +274,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente'
-            ], 500);
+            ], 200);
         }
 
         // Create hash
