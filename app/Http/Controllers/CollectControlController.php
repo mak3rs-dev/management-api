@@ -117,8 +117,8 @@ class CollectControlController extends Controller
         }
 
         $select = ['cc.id as id', 'u.name as user_name', 'ic.mak3r_num as mak3r_num', DB::raw('SUM(cp.units) as units_collected'),
-                    'cc.address as collect_address', 'cc.location as collect_location', 'cc.province as collect_province',
-                    'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
+                    DB::raw('SUM(cm.units_delivered) as units_delivered'), 'cc.address as collect_address', 'cc.location as collect_location',
+                    'cc.province as collect_province', 'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
                     'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'st.name as status',
                     'st.code as status_code', 'u.uuid as user_uuid'];
 
@@ -126,6 +126,7 @@ class CollectControlController extends Controller
                         ->from('collect_control as cc')
                         ->join('in_community as ic', 'cc.in_community_id', '=', 'ic.id')
                         ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+                        ->leftJoin('collect_materials as cm', 'cm.collect_control_id', '=', 'cc.id')
                         ->join('status as st', 'st.id', '=', 'cc.status_id')
                         ->join('users as u', 'u.id', '=', 'ic.user_id')
                         ->when($request->status_code != null, function ($query) use ($request) {
