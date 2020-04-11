@@ -165,7 +165,6 @@ class CollectControlController extends Controller
                                         ]);
                             }
                         ])
-                        ->groupBy('cp.collect_control_id')
                         ->orderBy('created_at', 'desc')
                         ->paginate(15);
 
