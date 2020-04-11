@@ -19,7 +19,7 @@ class CommunityController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt.auth', ['except' => ['communities', 'alias']]);
+        $this->middleware(['jwt.auth', 'privacy.policy'], ['except' => ['communities', 'alias']]);
     }
 
     /**

@@ -124,7 +124,8 @@ class CsvImport implements ToCollection, WithHeadingRow
                         'state' => trim($row['state']) == '' ? null : Str::ucfirst(trim($row['state'])),
                         'country' => trim($row['country']) == '' ? null : Str::ucfirst(trim($row['country'])),
                         'address_description' => trim($row['address_comments']) == '' ? null : Str::ucfirst(trim($row['address_comments'])),
-                        'role_id' => Role::where('name', 'USER:COMMON')->first()->id
+                        'role_id' => Role::where('name', 'USER:COMMON')->first()->id,
+                        'privacy_policy_accepted_at' => Carbon::parse('1970-01-01')
                     ]);
 
                     if ($user != null) {

@@ -16,7 +16,7 @@ class StockControlController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt.auth');
+        $this->middleware(['jwt.auth', 'privacy.policy']);
     }
 
     /**

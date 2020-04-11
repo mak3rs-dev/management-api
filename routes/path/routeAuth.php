@@ -11,6 +11,10 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('refresh', 'AuthController@refresh');
 
     Route::get('not-login', function () {
-        return response()->json(['errors' => 'Tienes que loguearte']);
+        return response()->json(['errors' => 'Tienes que loguearte'], 500);
     })->name('not-login');
+
+    Route::get('not-policy', function () {
+        return response()->json(['errors' => 'Tienes que aceptar las politicas de privacidad'], 500);
+    })->name('not-policy');
 });
