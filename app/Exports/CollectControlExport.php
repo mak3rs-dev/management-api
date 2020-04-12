@@ -26,6 +26,7 @@ class CollectControlExport implements FromArray, WithHeadings
             'Número Mak3r',
             'Nombre Mak3r',
             'Mak3r alias',
+            'Teléfono',
             'Dirección',
             'Localidad',
             'Provincia',
@@ -53,6 +54,7 @@ class CollectControlExport implements FromArray, WithHeadings
             $array[$count][] = $item->mak3r_num;
             $array[$count][] = $item->user_name;
             $array[$count][] = $item->user_alias;
+            $array[$count][] = $item->phone;
             $array[$count][] = $item->collect_address;
             $array[$count][] = $item->collect_location;
             $array[$count][] = $item->collect_province;
