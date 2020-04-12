@@ -158,8 +158,8 @@ class InCommunityController extends Controller
                     })
                     ->groupBy('ic.user_id');
             }, 'a')
-            ->when(true && $admin, function ($query) use ($export) {
-                if ($export == "stock") {
+            ->when(true, function ($query) use ($export, $admin) {
+                if ($export == "stock" && $admin) {
                     return $query->orderBy('stock', 'desc');
 
                 } else {
