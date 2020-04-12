@@ -281,7 +281,7 @@
                 }
             }
         },
-        "/communities/collect/{communty}": {
+        "/communities/collect/{communty}/{export?}": {
             "get": {
                 "tags": [
                     "Collect Control"
@@ -877,6 +877,53 @@
                         "description": "Piece"
                     },
                     "422": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/pieces/validate": {
+            "patch": {
+                "tags": [
+                    "Pieces"
+                ],
+                "description": "Validamos una pieza para el usuario",
+                "operationId": "App\\Http\\Controllers\\PiecesController::validatePiece",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "piece": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "validate": {
+                                        "description": "",
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
                         "description": ""
                     },
                     "500": {

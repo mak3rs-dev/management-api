@@ -10,6 +10,7 @@ use App\Models\Piece;
 use App\Models\Status;
 use App\Models\StockControl;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -198,5 +199,89 @@ class PiecesController extends Controller
             'piece' => $piece,
             'message' => 'La pieza se ha creado correctamente'
         ], 200);
+    }
+
+    /**
+     * @OA\PATCH(
+     *     path="/pieces/validate",
+     *     tags={"Pieces"},
+     *     description="Validamos una pieza para el usuario",
+     *     @OA\RequestBody( required=true,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="user", description="", type="string"),
+     *         @OA\Property(property="piece", description="", type="string"),
+     *         @OA\Property(property="validate", description="", type="boolean"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description=""),
+     *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=404, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validatePiece(Request $request) {
+        // Validate request
+        $validator = Validator::make($request->all(), [
+            'user' => 'required|string',
+            'piece' => 'required|string',
+            'validate' => 'boolean|required'
+        ], [
+            'user.required' => 'El usuario es requerido',
+            'piece.required' => 'La pieza es requerida',
+            'validate.required' => 'Se tiene que indicar el estado de la validación'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::where('uuid', $request->user)->first();
+
+        if ($user == null) {
+            return response()->json(['error' => 'El usuario no se encuentra'], 404);
+        }
+
+        $piece = Piece::where('piece', $request->piece)->first();
+
+        if ($piece == null) {
+            return response()->json(['error' => 'La pieza no se encuentra'], 404);
+        }
+
+        $community = $piece->Community;
+
+        if ($community) {
+            return response()->json(['error' => 'La pieza no pertenece a ninguna comunidad'], 404);
+        }
+
+        $inCommunity = $community->InCommunities->where('user_id', $user->id)->first();
+
+        if ($inCommunity == null) {
+            return response()->json(['error' => 'El usuario no pertence a la comunidad'], 422);
+        }
+
+        $stockControl = $inCommunity->StockControl->where('piece_id', $piece->id)->first();
+
+        // Permision user
+        $inCommunityUser = auth()->user()->InCommunities->where('community_id', $inCommunity->community_id)->first();
+
+        if (!auth()->user()->hasRole('USER:ADMIN') && ($inCommunityUser == null || !$inCommunity->hasRole('MAKER:ADMIN')) ) {
+            return response()->json(['error' => 'No tienes permisos para actualizar el stock'], 403);
+        }
+
+        // Check Validate
+        $stockControl->validated_at = $request->validate == true ? Carbon::now() : null;
+
+        if (!$stockControl->save()) {
+            return response()->json(['error' => 'No se ha podido indicar la validación de stock del usuario'], 500);
+        }
+
+        return response()->json(['message' => 'El stock se ha actualizado correctamente'], 200);
     }
 }
