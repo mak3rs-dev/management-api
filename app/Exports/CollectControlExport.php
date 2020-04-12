@@ -30,11 +30,8 @@ class CollectControlExport implements FromArray, WithHeadings
             'Dirección',
             'Localidad',
             'Provincia',
-            'Comunidad',
-            'País',
             'Código postal',
             'Nombre material',
-            'Cantidad material pedido',
             'Cantidad material a entregar',
             'Nombre pieza',
             'Cantidad a recoger'
@@ -58,13 +55,10 @@ class CollectControlExport implements FromArray, WithHeadings
             $array[$count][] = $item->collect_address;
             $array[$count][] = $item->collect_location;
             $array[$count][] = $item->collect_province;
-            $array[$count][] = $item->collect_state;
-            $array[$count][] = $item->collect_country;
             $array[$count][] = $item->collect_cp;
 
             foreach ($item->materials as $material) {
                 $array[$count][] = $material->MaterialRequest->Piece->name;
-                $array[$count][] = $material->MaterialRequest->units_request;
                 $array[$count][] = $material->units_delivered;
             }
 
