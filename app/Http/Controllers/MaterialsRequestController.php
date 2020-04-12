@@ -233,7 +233,7 @@ class MaterialsRequestController extends Controller
 
                 $collectMaterial_sum = $materialsRequest->CollectMaterials()->sum('units_delivered');
 
-                if ($materialsRequest->units_request < $collectMaterial_sum) {
+                if ($materialsRequest->units_request <= $collectMaterial_sum) {
                     return response()->json(['error' => 'No puedes modificar el pedido del material por que ya te han entregado '.$collectMaterial_sum.' material(es)'], 500);
                 }
 
