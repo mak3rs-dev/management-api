@@ -23,6 +23,7 @@ class CollectControlExport implements FromArray, WithHeadings
     public function headings(): array
     {
         return [
+            'Número Mak3r',
             'Nombre Mak3r',
             'Mak3r alias',
             'Dirección',
@@ -49,6 +50,7 @@ class CollectControlExport implements FromArray, WithHeadings
 
         $count = 0;
         foreach ($collecControl as $item) {
+            $array[$count][] = $item->mak3r_num;
             $array[$count][] = $item->user_name;
             $array[$count][] = $item->user_alias;
             $array[$count][] = $item->collect_address;
