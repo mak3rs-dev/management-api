@@ -43,26 +43,29 @@ class CollectControlExport implements FromArray, WithHeadings
         $array = [];
         $collecControl = $this->collect->orderBy('collect_cp', 'asc')->get();
 
+        $count = 0;
         foreach ($collecControl as $item) {
-            $array[0][] = $item->user_name;
-            $array[1][] = $item->user_alias;
-            $array[2][] = $item->collect_address;
-            $array[3][] = $item->collect_location;
-            $array[4][] = $item->collect_province;
-            $array[5][] = $item->collect_state;
-            $array[6][] = $item->collect_country;
-            $array[7][] = $item->collect_cp;
+            $array[$count][] = $item->user_name;
+            $array[$count][] = $item->user_alias;
+            $array[$count][] = $item->collect_address;
+            $array[$count][] = $item->collect_location;
+            $array[$count][] = $item->collect_province;
+            $array[$count][] = $item->collect_state;
+            $array[$count][] = $item->collect_country;
+            $array[$count][] = $item->collect_cp;
 
             foreach ($item->materials as $material) {
-                $array[8][] = $material->MaterialRequest->Piece->name;
-                $array[10][] = $material->MaterialRequest->units_request;
-                $array[11][] = $material->units_delivered;
+                $array[$count][] = $material->MaterialRequest->Piece->name;
+                $array[$count][] = $material->MaterialRequest->units_request;
+                $array[$count][] = $material->units_delivered;
             }
 
             foreach ($item->pieces as $piece) {
-                $array[12][] = $piece->Piece->name;
-                $array[13][] = $piece->units;
+                $array[$count][] = $piece->Piece->name;
+                $array[$count][] = $piece->units;
             }
+
+            $count++;
         }
 
         $this->header[] = 'Nombre material';
