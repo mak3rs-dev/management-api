@@ -62,6 +62,11 @@ class CollectControlExport implements FromArray, WithHeadings
                 $array[$count][] = $material->units_delivered;
             }
 
+            if (count($item->materials) == 0) {
+                $array[$count][] = '';
+                $array[$count][] = '';
+            }
+
             foreach ($item->pieces as $piece) {
                 $array[$count][] = $piece->Piece->name;
                 $array[$count][] = $piece->units;
