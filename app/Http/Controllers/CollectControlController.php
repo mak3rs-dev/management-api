@@ -238,6 +238,10 @@ class CollectControlController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+        if (count($request->pieces) == 0) {
+            return response()->json(['error' => 'Tienes que asignar al menos una pieza'], 422);
+        }
+
         $community = Community::where('uuid', $request->community)->first();
 
         if ($community == null) {
@@ -444,6 +448,10 @@ class CollectControlController extends Controller
         // We check that the validation is correct
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        if (count($request->pieces) == 0) {
+            return response()->json(['error' => 'Tienes que asignar al menos una pieza'], 422);
         }
 
         if ($request->collect < 0) {
