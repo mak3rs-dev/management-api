@@ -238,10 +238,6 @@ class CollectControlController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        if (count($request->pieces) == 0) {
-            return response()->json(['error' => 'Tienes que asignar al menos una pieza'], 422);
-        }
-
         $community = Community::where('uuid', $request->community)->first();
 
         if ($community == null) {
@@ -309,6 +305,7 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
         }
 
+        $countPieces = 0;
         foreach ($request->pieces as $piece) {
             if (intval($piece['units']) > 0) {
                 $p = Piece::where('uuid', $piece['uuid'])->first();
@@ -337,7 +334,14 @@ class CollectControlController extends Controller
                     DB::rollBack();
                     return response()->json(['error' => 'No se ha podido añadir la pieza a la recogida'], 500);
                 }
+
+                $countPieces++;
             }
+        }
+
+        if ($countPieces == 0) {
+            DB::rollBack();
+            return response()->json(['error' => 'No se ha podido crear la recogida por que no se ha encontrado ninguna pieza'], 500);
         }
 
         if ($request->materials != null) {
@@ -448,10 +452,6 @@ class CollectControlController extends Controller
         // We check that the validation is correct
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        if (count($request->pieces) == 0) {
-            return response()->json(['error' => 'Tienes que asignar al menos una pieza'], 422);
         }
 
         if ($request->collect < 0) {
