@@ -278,7 +278,9 @@ class AuthController extends Controller
         }
 
         // Create hash
-        $user->hash_password_verified = Str::uuid();
+       if ($user->hash_password_verified == null) {
+           $user->hash_password_verified = Str::uuid();
+       }
 
         if (!$user->save()) {
             return response()->json(['error' => 'No se ha podido recuperar la contraseña, porfavor inténtelo nuevamente'], 500);
