@@ -11,16 +11,6 @@ class CollectControlExport implements FromArray, WithHeadings
     use Exportable;
 
     private $collect = null;
-    private $header = [
-        'Nombre Mak3r',
-        'Mak3r alias',
-        'Dirección',
-        'Localidad',
-        'Provincia',
-        'Comunidad',
-        'País',
-        'Código postal'
-    ];
 
     public function __construct($_collect)
     {
@@ -32,7 +22,21 @@ class CollectControlExport implements FromArray, WithHeadings
      */
     public function headings(): array
     {
-        return $this->header;
+        return [
+            'Nombre Mak3r',
+            'Mak3r alias',
+            'Dirección',
+            'Localidad',
+            'Provincia',
+            'Comunidad',
+            'País',
+            'Código postal',
+            'Nombre material',
+            'Cantidad material pedido',
+            'Cantidad material a entregar',
+            'Nombre pieza',
+            'Cantidad a recoger'
+        ];
     }
 
     /**
@@ -67,13 +71,6 @@ class CollectControlExport implements FromArray, WithHeadings
 
             $count++;
         }
-
-        $this->header[] = 'Nombre material';
-        $this->header[] = 'Cantidad material pedido';
-        $this->header[] = 'Cantidad material a entregar';
-
-        $this->header[] = 'Nombre pieza';
-        $this->header[] = 'Cantidad a recoger';
 
         return $array;
     }
