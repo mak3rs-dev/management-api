@@ -6,6 +6,7 @@ use App\Exports\RankingExport;
 use App\Models\Community;
 use App\Models\InCommunity;
 use App\Models\Piece;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -68,7 +69,7 @@ class InCommunityController extends Controller
 
         $piece_id = null;
 
-        $select = ['ic.mak3r_num as mak3r_num', 'u.uuid as user_uuid', 'u.alias as user_alias'];
+        $select = ['ic.mak3r_num as mak3r_num', 'u.alias as user_alias'];
 
         $inCommunity = null;
         $inCommunity = $community->InCommunitiesUser();
@@ -80,8 +81,12 @@ class InCommunityController extends Controller
             }
         }
 
-        if ($inCommunity != null && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
+        $admin = false;
 
+        if (($inCommunity != null && $inCommunity->hasRole('MAKER:ADMIN')) || auth()->user()->hasRole('USER:ADMIN')) {
+            $admin = true;
+
+            array_push($select, 'u.uuid as user_uuid');
             array_push($select, 'u.name as user_name');
             array_push($select, 'u.address as user_address');
             array_push($select, 'u.location as user_location');
@@ -97,7 +102,7 @@ class InCommunityController extends Controller
 
         $ranking = DB::query()
             ->selectRaw('a.*, (a.units_manufactured - a.units_collected) as stock')
-            ->fromSub(function ($query) use ($select, $community, $request, $export, $piece_id) {
+            ->fromSub(function ($query) use ($select, $community, $request, $export, $piece_id, $admin) {
                 $query->select($select)
                     ->from('in_community as ic')
                     ->join('users as u', 'u.id', '=', 'ic.user_id')
@@ -148,12 +153,12 @@ class InCommunityController extends Controller
                     ->when($request->user != null, function ($query) use ($request) {
                         return $query->where('u.uuid', $request->user);
                     })
-                    ->when($request->mak3r_num != null, function ($query) use ($request) {
+                    ->when($request->mak3r_num != null && $admin, function ($query) use ($request) {
                         return $query->where('ic.mak3r_num', $request->mak3r_num);
                     })
                     ->groupBy('ic.user_id');
             }, 'a')
-            ->when(true, function ($query) use ($export) {
+            ->when(true && $admin, function ($query) use ($export) {
                 if ($export == "stock") {
                     return $query->orderBy('stock', 'desc');
 
@@ -162,8 +167,8 @@ class InCommunityController extends Controller
                 }
             });
 
-        if ($export == "export" && ( $inCommunity->hasRole('MAKER:ADMIN') || auth()->user()->hasRole('USER:ADMIN') )) {
-            return Excel::download(new RankingExport($community, $ranking),'ranking.csv', \Maatwebsite\Excel\Excel::CSV);
+        if ($export == "export" && $admin) {
+            return Excel::download(new RankingExport($community, $ranking),'ranking-'.Carbon::now()->format('YmdH:i:s').'.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
         return response()->json($ranking->paginate(50));
