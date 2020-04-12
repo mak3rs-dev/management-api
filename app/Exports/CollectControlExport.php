@@ -2,20 +2,29 @@
 
 namespace App\Exports;
 
-use App\Models\CollectControl;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class CollectControlExport implements FromCollection, WithHeadings
+class CollectControlExport implements FromArray, WithHeadings
 {
     use Exportable;
 
-    private $community;
+    private $collect = null;
+    private $header = [
+        'Nombre Mak3r',
+        'Mak3r alias',
+        'Dirección',
+        'Localidad',
+        'Provincia',
+        'Comunidad',
+        'País',
+        'Código postal'
+    ];
 
-    public function __construct($_community)
+    public function __construct($_collect)
     {
-        $this->community = $_community;
+        $this->collect = $_collect;
     }
 
     /**
@@ -23,40 +32,46 @@ class CollectControlExport implements FromCollection, WithHeadings
      */
     public function headings(): array
     {
-        return [
-            'Nombre Mak3r',
-            'Mak3r alias',
-            'Nombre pieza',
-            'Cantidad',
-            'Dirección',
-            'Localidad',
-            'Provincia',
-            'Comunidad',
-            'País',
-            'Código postal'
-        ];
+        return $this->header;
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
-    public function collection()
+     * @inheritDoc
+     */
+    public function array(): array
     {
-        $select = ['u.name as name_user', 'u.alias as  alias_user', 'p.name as piece_name',
-            'pc.units as cantidad', 'cc.address as address', 'cc.location as location',
-            'cc.province as province', 'cc.state as state', 'cc.country as country',
-            'cc.cp as cp'];
+        $array = [];
+        $collecControl = $this->collect->orderBy('collect_cp', 'asc')->get();
 
-        return CollectControl::from('collect_control as cc')
-            ->join('collect_pieces as pc', 'pc.collect_control_id', '=', 'cc.id')
-            ->join('pieces as p', 'p.id', '=', 'pc.piece_id')
-            ->join('status as st', 'st.id', '=', 'cc.status_id')
-            ->join('users as u', 'u.id', '=', 'cc.user_id')
-            ->select($select)
-            ->when(!$this->community->hasRole('MAKER:ADMIN'), function ($query) {
-                return $query->where('user_id', auth()->user()->id);
-            })
-            ->where('cc.community_id', $this->community->community_id)
-            ->get();
+        foreach ($collecControl as $item) {
+            $array[0][] = $item->user_name;
+            $array[1][] = $item->user_alias;
+            $array[2][] = $item->collect_address;
+            $array[3][] = $item->collect_location;
+            $array[4][] = $item->collect_province;
+            $array[5][] = $item->collect_state;
+            $array[6][] = $item->collect_country;
+            $array[7][] = $item->collect_cp;
+
+            foreach ($item->materials as $material) {
+                $array[8][] = $material->MaterialRequest->Piece->name;
+                $array[10][] = $material->MaterialRequest->units_request;
+                $array[11][] = $material->units_delivered;
+            }
+
+            foreach ($item->pieces as $piece) {
+                $array[12][] = $piece->Piece->name;
+                $array[13][] = $piece->units;
+            }
+        }
+
+        $this->header[] = 'Nombre material';
+        $this->header[] = 'Cantidad material pedido';
+        $this->header[] = 'Cantidad material a entregar';
+
+        $this->header[] = 'Nombre pieza';
+        $this->header[] = 'Cantidad a recoger';
+
+        return $array;
     }
 }

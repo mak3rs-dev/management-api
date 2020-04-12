@@ -12,6 +12,7 @@ use App\Models\MaterialRequest;
 use App\Models\Piece;
 use App\Models\Status;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -27,7 +28,7 @@ class CollectControlController extends Controller
 
     /**
      * @OA\GET(
-     *     path="/communities/collect/{communty}",
+     *     path="/communities/collect/{communty}/{export?}",
      *     tags={"Collect Control"},
      *     description="Obtenemos todas las recogidas",
      *     @OA\RequestBody( required=true,
@@ -49,16 +50,18 @@ class CollectControlController extends Controller
      * @param null $export
      * @return \Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
-    public function getCollectControl(Request $request, $alias = null) {
+    public function getCollectControl(Request $request, $alias = null, $export = null) {
         // Validate request
         $validator = Validator::make([
             'community' => $alias,
             'user' => $request->user,
-            'status_code' => $request->status
+            'status_code' => $request->status,
+            'export' => $export
         ], [
             'community' => 'required|string',
             'user' => 'nullable|string',
-            'status_code' => 'nullable|string'
+            'status_code' => 'nullable|string',
+            'export' => 'nullable|string'
         ], [
             'community.required' => 'La comunidad es requerida'
         ]);
@@ -117,7 +120,7 @@ class CollectControlController extends Controller
             }
         }
 
-        $select = ['cc.id as id', 'u.name as user_name', 'ic.mak3r_num as mak3r_num', 'cc.address as collect_address', 'cc.location as collect_location',
+        $select = ['cc.id as id', 'u.name as user_name', 'u.alias as user_alias', 'ic.mak3r_num as mak3r_num', 'cc.address as collect_address', 'cc.location as collect_location',
                     'cc.province as collect_province', 'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
                     'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'st.name as status',
                     'st.code as status_code', 'u.uuid as user_uuid'];
@@ -125,8 +128,6 @@ class CollectControlController extends Controller
         $collecControl = CollectControl::select($select)
                         ->from('collect_control as cc')
                         ->join('in_community as ic', 'cc.in_community_id', '=', 'ic.id')
-                        ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
-                        ->leftJoin('collect_materials as cm', 'cm.collect_control_id', '=', 'cc.id')
                         ->join('status as st', 'st.id', '=', 'cc.status_id')
                         ->join('users as u', 'u.id', '=', 'ic.user_id')
                         ->when($request->status_code != null, function ($query) use ($request) {
@@ -163,11 +164,13 @@ class CollectControlController extends Controller
                                             }
                                         ]);
                             }
-                        ])
-                        ->orderBy('cc.created_at', 'desc')
-                        ->paginate(15);
+                        ]);
 
-        return response()->json($collecControl, 200);
+        if ($export == "export" && $admin) {
+            return Excel::download(new CollectControlExport($collecControl),'recogidas-'.Carbon::now()->format('YmdH:i:s').'.csv', \Maatwebsite\Excel\Excel::CSV);
+        }
+
+        return response()->json($collecControl->orderBy('cc.created_at', 'desc')->paginate(15), 200);
     }
 
     /**
