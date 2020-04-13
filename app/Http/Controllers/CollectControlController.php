@@ -120,9 +120,9 @@ class CollectControlController extends Controller
             }
         }
 
-        $select = ['cc.id as id', 'u.name as user_name', 'u.alias as user_alias', 'u.phone as phone', 'ic.mak3r_num as mak3r_num', 'cc.address as collect_address', 'cc.location as collect_location',
-                    'cc.province as collect_province', 'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
-                    'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'st.name as status',
+        $select = ['cc.id as id', 'u.name as user_name', 'u.alias as user_alias', 'u.phone as phone', 'ic.mak3r_num as mak3r_num', 'cc.address as collect_address',
+                    'cc.location as collect_location', 'cc.province as collect_province', 'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
+                    'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'cc.updated_at as updated_at', 'st.name as status',
                     'st.code as status_code', 'u.uuid as user_uuid'];
 
         $collecControl = CollectControl::select($select)
