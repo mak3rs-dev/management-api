@@ -256,7 +256,7 @@ class PiecesController extends Controller
 
         $community = $piece->Community;
 
-        if ($community) {
+        if ($community == ) {
             return response()->json(['error' => 'La pieza no pertenece a ninguna comunidad'], 404);
         }
 
