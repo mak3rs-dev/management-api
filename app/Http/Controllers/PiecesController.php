@@ -248,7 +248,7 @@ class PiecesController extends Controller
             return response()->json(['error' => 'El usuario no se encuentra'], 404);
         }
 
-        $piece = Piece::where('piece', $request->piece)->first();
+        $piece = Piece::where('uuid', $request->piece)->first();
 
         if ($piece == null) {
             return response()->json(['error' => 'La pieza no se encuentra'], 404);
