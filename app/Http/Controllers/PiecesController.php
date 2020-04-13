@@ -248,7 +248,7 @@ class PiecesController extends Controller
             return response()->json(['error' => 'El usuario no se encuentra'], 404);
         }
 
-        $piece = Piece::where('piece', $request->piece)->first();
+        $piece = Piece::where('uuid', $request->piece)->first();
 
         if ($piece == null) {
             return response()->json(['error' => 'La pieza no se encuentra'], 404);
@@ -256,7 +256,7 @@ class PiecesController extends Controller
 
         $community = $piece->Community;
 
-        if ($community) {
+        if ($community == null) {
             return response()->json(['error' => 'La pieza no pertenece a ninguna comunidad'], 404);
         }
 
@@ -272,16 +272,16 @@ class PiecesController extends Controller
         $inCommunityUser = auth()->user()->InCommunities->where('community_id', $inCommunity->community_id)->first();
 
         if (!auth()->user()->hasRole('USER:ADMIN') && ($inCommunityUser == null || !$inCommunity->hasRole('MAKER:ADMIN')) ) {
-            return response()->json(['error' => 'No tienes permisos para actualizar el stock'], 403);
+            return response()->json(['error' => 'No tienes permisos para actualizar la validación de la pieza'], 403);
         }
 
         // Check Validate
         $stockControl->validated_at = $request->validate == true ? Carbon::now() : null;
 
         if (!$stockControl->save()) {
-            return response()->json(['error' => 'No se ha podido indicar la validación de stock del usuario'], 500);
+            return response()->json(['error' => 'No se ha podido indicar la validación de la pieza del usuario'], 500);
         }
 
-        return response()->json(['message' => 'El stock se ha actualizado correctamente'], 200);
+        return response()->json(['message' => 'La validación de la pieza se ha actualizado correctamente'], 200);
     }
 }
