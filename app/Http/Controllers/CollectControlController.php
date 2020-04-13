@@ -56,12 +56,14 @@ class CollectControlController extends Controller
             'community' => $alias,
             'user' => $request->user,
             'status_code' => $request->status,
-            'export' => $export
+            'export' => $export,
+            'mak3r_num' => $request->mak3r_num
         ], [
             'community' => 'required|string',
             'user' => 'nullable|string',
             'status_code' => 'nullable|string',
-            'export' => 'nullable|string'
+            'export' => 'nullable|string',
+            'mak3r_num' => 'nullable|string'
         ], [
             'community.required' => 'La comunidad es requerida'
         ]);
@@ -141,6 +143,9 @@ class CollectControlController extends Controller
                         })
                         ->when(!$admin, function ($query) use ($inCommunity)  {
                             return $query->where('ic.id', $inCommunity->id);
+                        })
+                        ->when($request->mak3r_num != null, function ($query) use ($request)  {
+                            return $query->where('ic.mak3r_num', $request->mak3r_num);
                         })
                         ->with([
                             'Pieces' => function ($query) {
