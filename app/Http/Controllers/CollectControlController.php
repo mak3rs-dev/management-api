@@ -37,6 +37,7 @@ class CollectControlController extends Controller
      *       @OA\Schema(
      *         @OA\Property(property="user", description="", type="string"),
      *         @OA\Property(property="status_code", description="export", type="string"),
+     *         @OA\Property(property="mak3r_num", description="export", type="string"),
      *       ),
      *     ),
      *     ),
@@ -63,7 +64,7 @@ class CollectControlController extends Controller
             'user' => 'nullable|string',
             'status_code' => 'nullable|string',
             'export' => 'nullable|string',
-            'mak3r_num' => 'nullable|string'
+            'mak3r_num' => 'nullable|array'
         ], [
             'community.required' => 'La comunidad es requerida'
         ]);
@@ -145,7 +146,7 @@ class CollectControlController extends Controller
                             return $query->where('ic.id', $inCommunity->id);
                         })
                         ->when($request->mak3r_num != null, function ($query) use ($request)  {
-                            return $query->where('ic.mak3r_num', $request->mak3r_num);
+                            return $query->whereIn('ic.mak3r_num', $request->mak3r_num);
                         })
                         ->with([
                             'Pieces' => function ($query) {
@@ -175,7 +176,7 @@ class CollectControlController extends Controller
             return Excel::download(new CollectControlExport($collecControl),'recogidas-'.Carbon::now()->format('YmdH:i:s').'.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
-        return response()->json($collecControl->orderBy('cc.created_at', 'desc')->paginate(15), 200);
+        return response()->json($collecControl->orderBy('cc.created_at', 'desc')->paginate(50), 200);
     }
 
     /**

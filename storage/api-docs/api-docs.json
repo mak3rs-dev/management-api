@@ -301,6 +301,10 @@
                                     "status_code": {
                                         "description": "export",
                                         "type": "string"
+                                    },
+                                    "mak3r_num": {
+                                        "description": "export",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
