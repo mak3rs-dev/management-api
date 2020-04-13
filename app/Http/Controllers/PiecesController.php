@@ -271,7 +271,7 @@ class PiecesController extends Controller
         // Permision user
         $inCommunityUser = auth()->user()->InCommunities->where('community_id', $inCommunity->community_id)->first();
 
-        if (!auth()->user()->hasRole('USER:ADMIN') && ($inCommunityUser == null || !$inCommunity->hasRole('MAKER:ADMIN')) ) {
+        if (!auth()->user()->hasRole('USER:ADMIN') && ($inCommunityUser == null || !$inCommunityUser->hasRole('MAKER:ADMIN')) ) {
             return response()->json(['error' => 'No tienes permisos para actualizar la validación de la pieza'], 403);
         }
 
