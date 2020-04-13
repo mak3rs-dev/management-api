@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CollectControl;
 use App\Models\Community;
 use App\Models\InCommunity;
 use App\Models\Piece;
