@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -34,7 +35,9 @@ class CollectControlExport implements FromArray, WithHeadings
             'Nombre material',
             'Cantidad material a entregar',
             'Nombre pieza',
-            'Cantidad a recoger'
+            'Cantidad a recoger',
+            'Fecha Creación',
+            'Fecha Actualización'
         ];
     }
 
@@ -71,6 +74,9 @@ class CollectControlExport implements FromArray, WithHeadings
                 $array[$count][] = $piece->Piece->name;
                 $array[$count][] = $piece->units;
             }
+
+            $array[$count][] = Carbon::parse($item->created_at)->format('d-m-Y H:i:s');
+            $array[$count][] = Carbon::parse($item->updated_at)->format('d-m-Y H:i:s');
 
             $count++;
         }
