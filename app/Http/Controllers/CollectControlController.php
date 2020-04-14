@@ -149,22 +149,34 @@ class CollectControlController extends Controller
                             return $query->whereIn('ic.mak3r_num', $request->mak3r_num);
                         })
                         ->with([
-                            'Pieces' => function ($query) {
+                            'Pieces' => function ($query) use ($user) {
                                 return $query->select('collect_control_id', 'units', 'piece_id')
                                     ->with([
-                                        'Piece' => function ($query) {
-                                            return $query->select('id', 'uuid', 'name', 'picture', 'description');
+                                        'Piece' => function ($query) use ($user) {
+                                            if ($user == null) {
+                                                $query->select('id', 'uuid', 'name');
+                                            } else {
+                                                $query->select('id', 'uuid', 'name', 'picture', 'description');
+                                            }
+
+                                            return $query;
                                         }
                                     ]);
                             },
-                            'Materials' => function ($query) {
+                            'Materials' => function ($query) use ($user) {
                                 return $query->select('collect_control_id', 'material_requests_id', 'units_delivered')
                                         ->with([
-                                            'MaterialRequest' => function ($query) {
+                                            'MaterialRequest' => function ($query) use ($user) {
                                                 return $query->select('id', 'piece_id', 'units_request')
                                                     ->with([
-                                                        'Piece' => function ($query) {
-                                                            return $query->select('id', 'uuid', 'name', 'picture', 'description');
+                                                        'Piece' => function ($query) use ($user) {
+                                                            if ($user == null) {
+                                                                $query->select('id', 'uuid', 'name');
+                                                            } else {
+                                                                $query->select('id', 'uuid', 'name', 'picture', 'description');
+                                                            }
+
+                                                            return $query;
                                                         },
                                                     ]);
                                             }
