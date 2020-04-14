@@ -153,7 +153,7 @@ class CollectControlController extends Controller
                                 return $query->select('collect_control_id', 'units', 'piece_id')
                                     ->with([
                                         'Piece' => function ($query) {
-                                            return $query->select('id', 'uuid', 'name', 'picture', 'description');
+                                            return $query->select('id', 'uuid', 'name');
                                         }
                                     ]);
                             },
@@ -164,7 +164,7 @@ class CollectControlController extends Controller
                                                 return $query->select('id', 'piece_id', 'units_request')
                                                     ->with([
                                                         'Piece' => function ($query) {
-                                                            return $query->select('id', 'uuid', 'name', 'picture', 'description');
+                                                            return $query->select('id', 'uuid', 'name');
                                                         },
                                                     ]);
                                             }
