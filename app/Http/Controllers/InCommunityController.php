@@ -100,56 +100,68 @@ class InCommunityController extends Controller
             array_push($select, DB::raw('SUBSTRING_INDEX(u.name," ",1) as user_name'));
         }
 
+        $arraySubSelect = [];
+        $arraySubSelect['units_manufactured'] = function ($query) use ($piece_id) {
+            return $query->selectRaw('IFNULL(SUM(sc.units_manufactured), 0)')
+                ->from('stock_control as sc')
+                ->whereColumn('sc.in_community_id', 'ic.id')
+                ->when($piece_id != null, function ($query) use ($piece_id) {
+                    return $query->where('sc.piece_id', $piece_id->id);
+                });
+        };
+
+        $arraySubSelect['units_collected'] = function ($query) use ($piece_id) {
+            return $query->selectRaw('IFNULL(SUM(cp.units), 0)')
+                ->from('collect_control as cc')
+                ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+                ->join('status as st', 'cc.status_id', '=', 'st.id')
+                ->whereColumn('cc.in_community_id', 'ic.id')
+                ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
+                ->when($piece_id != null, function ($query) use ($piece_id) {
+                    return $query->where('cp.piece_id', $piece_id->id);
+                });
+        };
+
+        $arraySubSelect['units_request'] = function ($query) use ($piece_id) {
+            return $query->selectRaw('IFNULL(SUM(mr.units_request), 0)')
+                ->from('material_requests as mr')
+                ->whereColumn('mr.in_community_id', 'ic.id')
+                ->when($piece_id != null, function ($query) use ($piece_id) {
+                    return $query->where('mr.piece_id', $piece_id->id);
+                });
+        };
+
+        $arraySubSelect['units_delivered'] = function ($query) use ($piece_id) {
+            return $query->selectRaw('IFNULL(SUM(cm.units_delivered), 0)')
+                ->from('collect_control as cc')
+                ->join('collect_materials as cm', 'cm.collect_control_id', '=', 'cc.id')
+                ->join('material_requests as mr', 'mr.id', '=', 'cm.material_requests_id')
+                ->join('status as st', 'cc.status_id', '=', 'st.id')
+                ->whereColumn('cc.in_community_id', 'ic.id')
+                ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
+                ->when($piece_id != null, function ($query) use ($piece_id) {
+                    return $query->where('mr.piece_id', $piece_id->id);
+                });
+        };
+
+        if ($admin) {
+            $arraySubSelect['num_active_collects'] = function ($query) {
+                return $query->selectRaw('COUNT(*)')
+                    ->from('collect_control as cc')
+                    ->join('status as st', 'cc.status_id', '=', 'st.id')
+                    ->whereColumn('cc.in_community_id', 'ic.id')
+                    ->whereIn('st.code', ['COLLECT:REQUESTED']);
+            };
+        }
+
         $ranking = DB::query()
             ->selectRaw('a.*, (a.units_manufactured - a.units_collected) as stock')
-            ->fromSub(function ($query) use ($select, $community, $request, $export, $piece_id, $admin) {
+            ->fromSub(function ($query) use ($select, $community, $request, $export, $piece_id, $admin, $arraySubSelect) {
                 $query->select($select)
                     ->from('in_community as ic')
                     ->join('users as u', 'u.id', '=', 'ic.user_id')
                     ->where('ic.community_id', $community->id)
-                    ->addSelect(
-                        [
-                            'units_manufactured' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('IFNULL(SUM(sc.units_manufactured), 0)')
-                                    ->from('stock_control as sc')
-                                    ->whereColumn('sc.in_community_id', 'ic.id')
-                                    ->when($piece_id != null, function ($query) use ($piece_id) {
-                                        return $query->where('sc.piece_id', $piece_id->id);
-                                    });
-                            },
-                            'units_collected' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('IFNULL(SUM(cp.units), 0)')
-                                    ->from('collect_control as cc')
-                                    ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
-                                    ->join('status as st', 'cc.status_id', '=', 'st.id')
-                                    ->whereColumn('cc.in_community_id', 'ic.id')
-                                    ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
-                                    ->when($piece_id != null, function ($query) use ($piece_id) {
-                                        return $query->where('cp.piece_id', $piece_id->id);
-                                    });
-                            },
-                            'units_request' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('IFNULL(SUM(mr.units_request), 0)')
-                                    ->from('material_requests as mr')
-                                    ->whereColumn('mr.in_community_id', 'ic.id')
-                                    ->when($piece_id != null, function ($query) use ($piece_id) {
-                                        return $query->where('mr.piece_id', $piece_id->id);
-                                    });
-                            },
-                            'units_delivered' => function ($query) use ($piece_id) {
-                                return $query->selectRaw('IFNULL(SUM(cm.units_delivered), 0)')
-                                    ->from('collect_control as cc')
-                                    ->join('collect_materials as cm', 'cm.collect_control_id', '=', 'cc.id')
-                                    ->join('material_requests as mr', 'mr.id', '=', 'cm.material_requests_id')
-                                    ->join('status as st', 'cc.status_id', '=', 'st.id')
-                                    ->whereColumn('cc.in_community_id', 'ic.id')
-                                    ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
-                                    ->when($piece_id != null, function ($query) use ($piece_id) {
-                                        return $query->where('mr.piece_id', $piece_id->id);
-                                    });
-                            }
-                        ]
-                    )
+                    ->addSelect($arraySubSelect)
                     ->when($request->user != null, function ($query) use ($request) {
                         return $query->where('u.uuid', $request->user);
                     })
