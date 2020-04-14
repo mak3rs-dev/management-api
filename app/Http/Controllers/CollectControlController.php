@@ -534,6 +534,14 @@ class CollectControlController extends Controller
             return response()->json(['error' => 'No se ha podido crear la recogida'], 500);
         }
 
+        $countUnits = 0;
+        for ($i = 0; $i < count($request->pieces) && $countUnits == 0; $i++) {
+            $units = intval($request->pieces[$i]['units']);
+            if ($units > 0) $countUnits++;
+        }
+
+        if ($countUnits == 0) return response()->json(['error' => 'La recogida no se puede quedar sin piezas'], 500);
+
         foreach ($request->pieces as $piece) {
             $p = Piece::where('uuid', $piece['uuid'])->first();
 
@@ -544,20 +552,25 @@ class CollectControlController extends Controller
 
             $units = intval($piece['units']);
 
-            // Check stock
-            $stock = $inCommunity->StockControl->where('piece_id', $p->id)->sum('units_manufactured') < $units;
-
-            if ($stock) {
-                DB::rollBack();
-                return response()->json(['error' => 'Has pedido más piezas de las que tienes en stock'], 500);
-            }
-
             $collect = $collect_control->CollectPieces;
+            $sumStockControl = $inCommunity->StockControl->where('piece_id', $p->id)->sum('units_manufactured');
+            $sumCollectPieces = CollectControl::from('collect_control as cc')
+                ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+                ->where('cc.in_community_id', $inCommunity->id)
+                ->where('cp.piece_id', $p->id)
+                ->sum('cp.units');
 
             $count = 0;
             foreach ($collect as $pieceCollect) {
                 if ($p != null && $p->id == $pieceCollect->piece_id) {
                     if ($units > 0) {
+                        // Check stock
+                        $stock = (($sumStockControl - $sumCollectPieces) + $pieceCollect->units) < $units;
+
+                        if ($stock) {
+                            DB::rollBack();
+                            return response()->json(['error' => 'Has pedido más piezas de las que tienes en stock'], 500);
+                        }
 
                         $pieceCollect->units = intval($piece['units']);
                         if (!$pieceCollect->save()) {
@@ -566,13 +579,7 @@ class CollectControlController extends Controller
                         }
 
                     } else {
-                        if (count($request->pieces) > 1) {
-                            $pieceCollect->delete();
-
-                        } else {
-                            DB::rollBack();
-                            return response()->json(['error' => 'La recogida no se puede quedar sin piezas'], 500);
-                        }
+                        $pieceCollect->delete();
                     }
 
                 } else {
@@ -580,7 +587,7 @@ class CollectControlController extends Controller
                 }
             }
 
-            if (count($collect) == $count) {
+            if (count($collect) == $count && $units > 0) {
                 $collectPiece = new CollectPieces();
                 $collectPiece->collect_control_id = $collect_control->id;
                 $collectPiece->piece_id = $p->id;

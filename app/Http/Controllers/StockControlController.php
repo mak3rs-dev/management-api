@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CollectControl;
 use App\Models\Community;
 use App\Models\InCommunity;
 use App\Models\Piece;
@@ -107,8 +108,21 @@ class StockControlController extends Controller
                 $stockControl->units_manufactured += $request->units;
 
             } else {
-                if (($request->units + $stockControl->units_manufactured) < 0) {
-                    return response()->json(['error' => 'No puedes descontar stock que no tienes'], 500);
+                // Calculate sum collect pieces
+                $sumUnits = CollectControl::from('collect_control as cc')
+                    ->join('collect_pieces as cp', 'cp.collect_control_id', '=', 'cc.id')
+                    ->join('status as st', 'st.id', '=', 'cc.status_id')
+                    ->where('cc.in_community_id', $inCommunity->id)
+                    ->where('cp.piece_id', $piece->id)
+                    ->whereIn('st.code', ['COLLECT:DELIVERED', 'COLLECT:RECEIVED'])
+                    ->sum('cp.units');
+
+                if ($sumUnits == null || (is_array($sumUnits) && count($sumUnits) == 0) ) {
+                    $sumUnits = 0;
+                }
+
+                if (($request->units + $stockControl->units_manufactured) < $sumUnits) {
+                    return response()->json(['error' => 'No te puedes descontar stock que no tienes'], 500);
                 }
 
                 $stockControl->units_manufactured -= abs($request->units);
