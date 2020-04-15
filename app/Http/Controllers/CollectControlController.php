@@ -36,8 +36,8 @@ class CollectControlController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="user", description="", type="string"),
-     *         @OA\Property(property="status_code", description="export", type="string"),
-     *         @OA\Property(property="mak3r_num", description="export", type="string"),
+     *         @OA\Property(property="status_code", description="", type="string"),
+     *         @OA\Property(property="mak3r_num", description="", type="array", @OA\Items(type="string", format="binary")),
      *       ),
      *     ),
      *     ),
@@ -481,20 +481,26 @@ class CollectControlController extends Controller
         $admin = false;
 
         if (!auth()->user()->hasRole('USER:ADMIN')) {
+            // Check user admin in community
+            $userCommunity = auth()->user()->InCommunities->where('community_id', $inCommunity->community_id)->first();
+
+            if ($userCommunity == null) {
+                return response()->json(['error' => 'Tu no perteneces a la comunidad'], 404);
+            }
+
             // Different user in community
             if (auth()->user()->id != $inCommunity->user_id) {
-                // Check user admin in community
-                $userCommunity = auth()->user()->InCommunities->where('community_id', $inCommunity->community_id)->first();
-
-                if ($userCommunity == null) {
-                    return response()->json(['error' => 'Tu no perteneces a la comunidad'], 404);
-                }
 
                 if ($userCommunity->hasRole('MAKER:ADMIN')) {
                     $admin = true;
 
                 } else {
                     return response()->json(['error' => 'No tienes permisos para gestionar esta recogida'], 403);
+                }
+
+            } else {
+                if ($userCommunity->hasRole('MAKER:ADMIN')) {
+                    $admin = true;
                 }
             }
 

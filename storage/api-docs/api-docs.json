@@ -299,12 +299,16 @@
                                         "type": "string"
                                     },
                                     "status_code": {
-                                        "description": "export",
+                                        "description": "",
                                         "type": "string"
                                     },
                                     "mak3r_num": {
-                                        "description": "export",
-                                        "type": "string"
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
                                     }
                                 },
                                 "type": "object"
