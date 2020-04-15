@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\RankingExport;
 use App\Models\Community;
-use App\Models\InCommunity;
 use App\Models\Piece;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -185,4 +184,6 @@ class InCommunityController extends Controller
 
         return response()->json($ranking->paginate(50));
     }
+
+
 }

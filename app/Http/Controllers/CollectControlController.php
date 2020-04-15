@@ -484,7 +484,7 @@ class CollectControlController extends Controller
             // Different user in community
             if (auth()->user()->id != $inCommunity->user_id) {
                 // Check user admin in community
-                $userCommunity = auth()->user()->InCommunities->where('community_id', $inCommunity->id)->first();
+                $userCommunity = auth()->user()->InCommunities->where('community_id', $inCommunity->community_id)->first();
 
                 if ($userCommunity == null) {
                     return response()->json(['error' => 'Tu no perteneces a la comunidad'], 404);
@@ -672,4 +672,41 @@ class CollectControlController extends Controller
         DB::commit();
         return response()->json(['message' => 'La recogida se ha actualizado correctamente'], 200);
     }
+
+    /*public function delete(Request $request) {
+        $validator = Validator::make($request->all(),[
+            'collect' => 'required|string',
+        ], [
+            'collect.required' => 'El collect es requerido'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $collect = CollectControl::where('uuid', $request->collect)->first();
+
+        if ($collect == null) {
+            return response()->json(['error' => 'La collect no se encuentra!'], 404);
+        }
+
+        $status = Status::where('code', 'COLLECT:REQUESTED')->first();
+
+        if ($status->id != $collect->status_id) {
+            return response()->json(['error' => 'La recogida solo se puede borrar cuando está en el estado de solicitada'], 422);
+        }
+
+        $inCommunity = $collect->InCommunity;
+
+        if (!auth()->user()->hasRole('USER:ADMIN') && ($inCommunity == null || $inCommunity->hasRole('MAKER:ADMIN'))) {
+            return response()->json(['error' => 'No tienes permisos para gestionar recogidas'], 403);
+        }
+
+        if ($collect->delete()) {
+            return response()->json(['error' => 'No se ha podido eliminar la recogida'], 500);
+        }
+
+        return response()->json(['message' => 'La recogida se ha eliminado correctamente'], 200);
+    }*/
 }
