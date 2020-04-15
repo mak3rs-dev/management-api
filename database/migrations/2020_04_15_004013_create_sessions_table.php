@@ -13,8 +13,10 @@ class CreateSessionsTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('sessions');
+
         Schema::create('sessions', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 191)->unique();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
