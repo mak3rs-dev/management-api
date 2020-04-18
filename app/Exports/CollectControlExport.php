@@ -48,13 +48,13 @@ class CollectControlExport implements FromArray, WithHeadings
         $countHeader = count($this->header);
         foreach ($this->collectsMaterial as $item) {
             array_push($this->header, $item->name);
-            $this->headerMaterial[$item->name] = $countHeader;
+            $this->headerMaterial[$item->uuid] = $countHeader;
             $countHeader++;
         }
 
         foreach ($this->collectsPieces as $item) {
             array_push($this->header, $item->name);
-            $this->headerPieces[$item->name] = $countHeader;
+            $this->headerPieces[$item->uuid] = $countHeader;
             $countHeader++;
         }
 
@@ -94,7 +94,7 @@ class CollectControlExport implements FromArray, WithHeadings
             foreach ($this->headerMaterial as $key => $value) {
                 $countMaterial = 0;
                 foreach ($item->materials as $material) {
-                    if ($key == $material->MaterialRequest->Piece->name) {
+                    if ($key == $material->MaterialRequest->Piece->uuid) {
                         $array[$count][$value] = $material->units_delivered;
 
                     } else {
@@ -110,7 +110,7 @@ class CollectControlExport implements FromArray, WithHeadings
             foreach ($this->headerPieces as $key => $value) {
                 $countPieces = 0;
                 foreach ($item->pieces as $piece) {
-                    if ($key == $piece->Piece->name) {
+                    if ($key == $piece->Piece->uuid) {
                         $array[$count][$value] = $piece->units;
 
                     } else {
