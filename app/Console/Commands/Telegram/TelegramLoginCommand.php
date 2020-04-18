@@ -43,8 +43,9 @@ class TelegramLoginCommand extends BaseCommand {
                                 $telData = json_decode($user->telegram_data);
                                 if (!$telData) $telData = new \stdClass();
                                 $telData->chatid = $this->update->getChat()->getId();
-                                $user->telegram_data = json_encode($telData);
-                                if ($user->save()) {
+
+                                $res = DB::table('users')->where('id',$user->id)->update(['telegram_data'=>json_encode($telData)]);
+                                if ($res) {
                                     $this->replyWithMessage(['text' => "Has iniciado sesión correctamente"]);
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
