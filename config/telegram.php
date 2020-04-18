@@ -44,6 +44,7 @@ return [
             'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
             'commands' => [
                 App\Console\Commands\Telegram\TelegramStartCommnand::class,
+                App\Console\Commands\Telegram\TelegramLoginCommnand::class,
             ],
         ],
 
