@@ -51,10 +51,10 @@ class TelegramLoginCommand extends BaseCommand {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
                             } else {
-                                $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                                $this->replyWithMessage(['text' => "No hemos encontrado ninguna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
                             }
                         } else {
-                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
+                            $this->replyWithMessage(['text' => "No hemos encontrado ninguna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
                         }
 
                     } else {
