@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands\Telegram;
 
-use Telegram\Bot\Actions;
-use Telegram\Bot\Commands\Command;
-
-class TelegramStartCommnand extends Command
+class TelegramStartCommnand extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -34,8 +31,19 @@ class TelegramStartCommnand extends Command
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
-        ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
-        $this->replyWithMessage(['text' => $text]);
+        if ($this->getUpdate()["message"]["chat"]["type"]=="private") {
+            if (!self::CheckAuth()) {
+                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
+                if (in_array('username', $this->getUpdate()["message"]["chat"]) && $this->getUpdate()["message"]["chat"]["username"]) {
+                    $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
+                } else {
+                    $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
+                }
+            }
+        }
+
+        // ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
+        // $this->replyWithMessage(['text' => $text]);
 
         /// This will update the chat status to typing...
         //$this->replyWithChatAction(['action' => Actions::TYPING]);

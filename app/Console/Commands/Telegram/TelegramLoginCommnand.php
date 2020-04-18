@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands\Telegram;
 
-use Telegram\Bot\Actions;
-use Telegram\Bot\Commands\Command;
-
-class TelegramLoginCommnand extends Command
+class TelegramLoginCommnand extends BaseCommand
 {
     /**
      * The name and signature of the console command.
