@@ -7,14 +7,18 @@ use Telegram\Bot\Commands\Command;
 
 abstract class BaseCommand extends Command {
 
+    /**
+     * Check user auth by alias and chat_id
+     *
+     * @return false|User
+     */
     protected function CheckAuth() {
-        $this->replyWithMessage(['text' => 'MSG']);
         if ($username = $this->update->getChat()->getUsername()) {
-            if ($userDb = User::where('alias', $username)->first()) {
+            if ($userDb = User::where('alias', '@'.$username)->first()) {
                 if ($telData = json_decode($userDb->telegram_data)) {
                     if (in_array('chatid', ((array)$telData))) {
                         if ($telData->chatid == $this->update->getChat()->getId()) {
-                            return true;
+                            return $userDb;
                         }
                     }
                 }
@@ -22,6 +26,10 @@ abstract class BaseCommand extends Command {
         }
 
         return false;
+    }
+
+    protected function isChatType($type='private') {
+        return $this->getUpdate()->getChat()->getType() == $type;
     }
 
 }
