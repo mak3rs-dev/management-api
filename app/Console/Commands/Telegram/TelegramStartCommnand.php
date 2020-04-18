@@ -32,7 +32,8 @@ class TelegramStartCommnand extends BaseCommand
         $update = $this->getUpdate();
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
-//        if ($update["message"]["chat"]["type"]=="private") {
+        if ($update["message"]["chat"]["type"]=="private") {
+            $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
 //            if (!parent::CheckAuth()) {
 //                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
 //                if (in_array('username', $update["message"]["chat"]) && $update["message"]["chat"]["username"]) {
@@ -41,7 +42,7 @@ class TelegramStartCommnand extends BaseCommand
 //                    $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
 //                }
 //            }
-//        }
+        }
 
         // ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
         // $this->replyWithMessage(['text' => $text]);
