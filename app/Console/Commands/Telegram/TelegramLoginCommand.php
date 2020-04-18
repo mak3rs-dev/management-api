@@ -41,7 +41,7 @@ class TelegramLoginCommand extends BaseCommand {
                         if ($user = DB::table('users')->where('alias', '@'.$username)->first()) {
                             if (Hash::check($password, $user->password)) {
                                 $telData = json_decode($user->telegram_data);
-                                if (!$telData) $telData = new stdClass();
+                                if (!$telData) $telData = new \stdClass();
                                 $telData->chatid = $this->update->getChat()->getId();
                                 $user->telegram_data = json_encode($telData);
                                 if ($user->save()) {
