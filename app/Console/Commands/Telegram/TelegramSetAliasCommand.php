@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Telegram;
 
+use Illuminate\Support\Facades\Hash;
+
 class TelegramSetAliasCommand extends BaseCommand {
     /**
      * The name and signature of the console command.
@@ -29,13 +31,33 @@ class TelegramSetAliasCommand extends BaseCommand {
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
 
         if (parent::isChatType('private')) {
-            $args = explode(' ', $arguments);
+            $args = parent::parseArgs($arguments);
             if (!parent::CheckAuth()) {
-                if (count($args)==2) {
-                    $email = $args[0];
-                    $password = $args[1];
+                if ($username = $this->update->getChat()->getUsername()) {
+                    if (count($args)==2) {
+                        $email = $args[0];
+                        $password = $args[1];
 
+                        if ($user = DB::table('users')->where('email', '@'.$email)->first()) {
+                            if (Hash::check($password, $user->password)) {
+
+                                $res = DB::table('users')->where('id',$user->id)->update(['alias' => "@".$username]);
+                                if ($res) {
+                                    $this->replyWithMessage(['text' => "Alias establecido correctamente"]);
+                                } else {
+                                    $this->replyWithMessage(['text' => "Se ha producido un error"]);
+                                }
+                            } else {
+                                $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                            }
+                        } else {
+                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                        }
+                    } else {
+                        $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [password]']);
+                    }
                 } else {
+                    $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
                     $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [password]']);
                 }
             } else {

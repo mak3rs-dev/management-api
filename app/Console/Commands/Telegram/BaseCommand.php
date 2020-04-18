@@ -16,7 +16,7 @@ abstract class BaseCommand extends Command {
         if ($username = $this->update->getChat()->getUsername()) {
             if ($userDb = User::where('alias', '@'.$username)->first()) {
                 if ($telData = json_decode($userDb->telegram_data)) {
-                    if (in_array('chatid', ((array)$telData))) {
+                    if (isset($telData->chatid)) {
                         if ($telData->chatid == $this->update->getChat()->getId()) {
                             return $userDb;
                         }
