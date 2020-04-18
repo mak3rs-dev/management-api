@@ -35,10 +35,10 @@ class TelegramStartCommnand extends BaseCommand
         try {
             $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
-            if ($this->update["message"]["chat"]["type"]=="private") {
+            if ($this->update->getChat()->getType()=="private") {
                 if (!parent::CheckAuth($this->update)) {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
-                    if (in_array('username', $this->update["message"]["chat"]) && $this->update["message"]["chat"]["username"]) {
+                    if ($this->update->getChat()->getUsername()) {
                         $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
                     } else {
                         $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
