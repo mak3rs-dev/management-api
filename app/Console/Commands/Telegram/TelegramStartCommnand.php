@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Telegram;
 
+use Telegram\Bot\Objects\User;
+
 class TelegramStartCommnand extends BaseCommand
 {
     /**
@@ -29,22 +31,26 @@ class TelegramStartCommnand extends BaseCommand
         // the user/chat id who triggered this command.
         // `replyWith<Message|Photo|Audio|Video|Voice|Document|Sticker|Location|ChatAction>()` all the available methods are dynamically
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
-        $update = $this->getUpdate();
-        $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
-        if ($update["message"]["chat"]["type"]=="private") {
-//            if (!parent::CheckAuth($update)) {
-                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
-                if (in_array('username', $update["message"]["chat"]) && $update["message"]["chat"]["username"]) {
-                    $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
-                } else {
-                    $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
+        try {
+            $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
+
+            if ($this->update["message"]["chat"]["type"]=="private") {
+                if (!parent::CheckAuth($this->update)) {
+                    $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
+                    if (in_array('username', $this->update["message"]["chat"]) && $this->update["message"]["chat"]["username"]) {
+                        $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
+                    } else {
+                        $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
+                    }
                 }
-//            }
+            }
+        } catch (Exception $e) {
+            ob_start(); var_dump($e); $text= ob_get_clean();
+            $this->replyWithMessage(['text' => $text]);
         }
 
-         ob_start(); var_dump($update); $text= ob_get_clean();
-         $this->replyWithMessage(['text' => $text]);
+
 
         /// This will update the chat status to typing...
         //$this->replyWithChatAction(['action' => Actions::TYPING]);
