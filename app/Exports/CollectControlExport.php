@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use App\Models\Piece;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromArray;
@@ -11,19 +12,21 @@ class CollectControlExport implements FromArray, WithHeadings
 {
     use Exportable;
 
-    private $collect = null;
+    private $collect;
+    private $community;
+    private $header;
+    private $headerDates;
+    private $headerMaterial = [];
+    private $headerPieces = [];
+    private $collectsMaterial;
+    private $collectsPieces;
 
-    public function __construct($_collect)
+    public function __construct($_collect, $_community)
     {
         $this->collect = $_collect;
-    }
+        $this->community = $_community;
 
-    /**
-     * @return array
-     */
-    public function headings(): array
-    {
-        return [
+        $this->header = [
             'Número Mak3r',
             'Nombre Mak3r',
             'Mak3r alias',
@@ -31,14 +34,42 @@ class CollectControlExport implements FromArray, WithHeadings
             'Dirección',
             'Localidad',
             'Provincia',
-            'Código postal',
-            'Nombre material',
-            'Cantidad material a entregar',
-            'Nombre pieza',
-            'Cantidad a recoger',
+            'Código postal'
+        ];
+
+        $this->headerDates = [
             'Fecha Creación',
             'Fecha Actualización'
         ];
+
+        $this->collectsMaterial = Piece::where('is_material', 1)->where('community_id', $this->community->id)->get();
+        $this->collectsPieces = Piece::where('is_piece', 1)->where('community_id', $this->community->id)->get();
+
+        $countHeader = count($this->header);
+        foreach ($this->collectsMaterial as $item) {
+            array_push($this->header, $item->name);
+            $this->headerMaterial[$item->name] = $countHeader;
+            $countHeader++;
+        }
+
+        foreach ($this->collectsPieces as $item) {
+            array_push($this->header, $item->name);
+            $this->headerPieces[$item->name] = $countHeader;
+            $countHeader++;
+        }
+
+        foreach ($this->headerDates as $item) {
+            array_push($this->header, $item);
+            $countHeader++;
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function headings(): array
+    {
+        return $this->header;
     }
 
     /**
@@ -60,19 +91,36 @@ class CollectControlExport implements FromArray, WithHeadings
             $array[$count][] = $item->collect_province;
             $array[$count][] = $item->collect_cp;
 
-            foreach ($item->materials as $material) {
-                $array[$count][] = $material->MaterialRequest->Piece->name;
-                $array[$count][] = $material->units_delivered;
+            foreach ($this->headerMaterial as $key => $value) {
+                $countMaterial = 0;
+                foreach ($item->materials as $material) {
+                    if ($key == $material->MaterialRequest->Piece->name) {
+                        $array[$count][$value] = $material->units_delivered;
+
+                    } else {
+                        $countMaterial++;
+                    }
+                }
+
+                if ($countMaterial == count($item->materials)) {
+                    $array[$count][$value] = '';
+                }
             }
 
-            if (count($item->materials) == 0) {
-                $array[$count][] = '';
-                $array[$count][] = '';
-            }
+            foreach ($this->headerPieces as $key => $value) {
+                $countPieces = 0;
+                foreach ($item->pieces as $piece) {
+                    if ($key == $piece->Piece->name) {
+                        $array[$count][$value] = $piece->units;
 
-            foreach ($item->pieces as $piece) {
-                $array[$count][] = $piece->Piece->name;
-                $array[$count][] = $piece->units;
+                    } else {
+                        $countPieces++;
+                    }
+                }
+
+                if ($countPieces == count($item->pieces)) {
+                    $array[$count][$value] = '';
+                }
             }
 
             $array[$count][] = Carbon::parse($item->created_at)->format('d-m-Y H:i:s');
