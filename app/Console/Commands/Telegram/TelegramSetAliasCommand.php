@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Telegram;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class TelegramSetAliasCommand extends BaseCommand {
@@ -38,7 +39,7 @@ class TelegramSetAliasCommand extends BaseCommand {
                         $email = $args[0];
                         $password = $args[1];
 
-                        if ($user = DB::table('users')->where('email', '@'.$email)->first()) {
+                        if ($user = DB::table('users')->where('email', $email)->first()) {
                             if (Hash::check($password, $user->password)) {
 
                                 $res = DB::table('users')->where('id',$user->id)->update(['alias' => "@".$username]);
