@@ -173,7 +173,7 @@ class CollectControlController extends Controller
                         ]);
 
         if ($export == "export" && $admin) {
-            return Excel::download(new CollectControlExport($collecControl),'recogidas-'.Carbon::now()->format('YmdH:i:s').'.csv', \Maatwebsite\Excel\Excel::CSV);
+            return Excel::download(new CollectControlExport($collecControl, $community),'recogidas-'.Carbon::now()->format('YmdH:i:s').'.csv', \Maatwebsite\Excel\Excel::CSV);
         }
 
         return response()->json($collecControl->orderBy('cc.created_at', 'desc')->paginate(50), 200);
