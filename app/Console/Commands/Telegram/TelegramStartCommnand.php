@@ -30,6 +30,7 @@ class TelegramStartCommnand extends BaseCommand
         // `replyWith<Message|Photo|Audio|Video|Voice|Document|Sticker|Location|ChatAction>()` all the available methods are dynamically
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
+        $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
 //
 //        if ($this->getUpdate()["message"]["chat"]["type"]=="private") {
 //            if (!parent::CheckAuth()) {
