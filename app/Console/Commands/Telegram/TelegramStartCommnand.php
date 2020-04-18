@@ -34,7 +34,7 @@ class TelegramStartCommnand extends BaseCommand
 
         if ($update["message"]["chat"]["type"]=="private") {
 //            if (!parent::CheckAuth($update)) {
-                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
+//                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
 //                if (in_array('username', $update["message"]["chat"]) && $update["message"]["chat"]["username"]) {
 //                    $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
 //                } else {
@@ -43,8 +43,8 @@ class TelegramStartCommnand extends BaseCommand
 //            }
         }
 
-        // ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
-        // $this->replyWithMessage(['text' => $text]);
+         ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
+         $this->replyWithMessage(['text' => $text]);
 
         /// This will update the chat status to typing...
         //$this->replyWithChatAction(['action' => Actions::TYPING]);
