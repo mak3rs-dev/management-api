@@ -29,18 +29,18 @@ class TelegramStartCommnand extends BaseCommand
         // the user/chat id who triggered this command.
         // `replyWith<Message|Photo|Audio|Video|Voice|Document|Sticker|Location|ChatAction>()` all the available methods are dynamically
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
-        $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
-
-        if ($this->getUpdate()["message"]["chat"]["type"]=="private") {
-            if (!parent::CheckAuth()) {
-                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
-                if (in_array('username', $this->getUpdate()["message"]["chat"]) && $this->getUpdate()["message"]["chat"]["username"]) {
-                    $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
-                } else {
-                    $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
-                }
-            }
-        }
+//        $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
+//
+//        if ($this->getUpdate()["message"]["chat"]["type"]=="private") {
+//            if (!parent::CheckAuth()) {
+//                $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
+//                if (in_array('username', $this->getUpdate()["message"]["chat"]) && $this->getUpdate()["message"]["chat"]["username"]) {
+//                    $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
+//                } else {
+//                    $this->replyWithMessage(['text' => 'Utiliza /login [email] [password]']);
+//                }
+//            }
+//        }
 
         // ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
         // $this->replyWithMessage(['text' => $text]);
