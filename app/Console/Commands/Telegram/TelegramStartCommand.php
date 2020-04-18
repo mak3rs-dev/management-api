@@ -36,10 +36,10 @@ class TelegramStartCommand extends BaseCommand
             if (!parent::CheckAuth($this->update)) {
                 if ($this->update->getChat()->getUsername()) {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
-                    $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
+                    $this->replyWithMessage(['text' => 'Utiliza /login [contraseña]']);
                 } else {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
-                    $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [password]']);
+                    $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [contraseña]']);
                 }
             }
         }

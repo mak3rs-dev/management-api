@@ -44,15 +44,15 @@ class TelegramSetAliasCommand extends BaseCommand {
 
                                 $res = DB::table('users')->where('id',$user->id)->update(['alias' => "@".$username]);
                                 if ($res) {
-                                    $this->replyWithMessage(['text' => "Alias establecido correctamente"]);
+                                    $this->replyWithMessage(['text' => "Alias establecido correctamente. Ahora puede iniciar sesión mediante \n\n/login [contraseña]"]);
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
                             } else {
-                                $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                                $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
                             }
                         } else {
-                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
                         }
                     } else {
                         $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [password]']);

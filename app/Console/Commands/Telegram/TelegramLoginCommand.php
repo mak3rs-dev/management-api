@@ -54,7 +54,7 @@ class TelegramLoginCommand extends BaseCommand {
                                 $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
                             }
                         } else {
-                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
                         }
 
                     } else {
@@ -62,7 +62,7 @@ class TelegramLoginCommand extends BaseCommand {
                     }
                 } else {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
-                    $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [password]']);
+                    $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [contraseña]']);
                 }
             } else {
                 $this->replyWithMessage(['text' => 'Ya ha iniciado sesión']);
