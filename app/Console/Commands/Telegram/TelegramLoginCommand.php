@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Telegram;
 
 use DB;
+use Illuminate\Support\Facades\Hash;
 
 class TelegramLoginCommand extends BaseCommand {
     /**
@@ -31,14 +32,14 @@ class TelegramLoginCommand extends BaseCommand {
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
 
         if (parent::isChatType('private')) {
-            $args = explode(' ', $arguments);
+            $args = parent::parseArgs($arguments);
             if (!parent::CheckAuth()) {
                 if ($username = $this->update->getChat()->getUsername()) {
                     if (count($args)==1) {
                         $password = $args[0];
 
                         if ($user = DB::table('users')->where('alias', '@'.$username)->first()) {
-                            if ($user->password==bcrypt($password)) {
+                            if (Hash::check($password, $user->password)) {
                                 $telData = json_decode($user->telegram_data);
                                 if (!$telData) $telData = new stdClass();
                                 $telData->chatid = $this->update->getChat()->getId();
@@ -48,9 +49,11 @@ class TelegramLoginCommand extends BaseCommand {
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
+                            } else {
+                                $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
                             }
                         } else {
-                            $this->replyWithMessage(['text' => "No hemos encontrado ningún usuario con tu alias, actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
+                            $this->replyWithMessage(['text' => "No hemos encontrado ningúna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
                         }
 
                     } else {

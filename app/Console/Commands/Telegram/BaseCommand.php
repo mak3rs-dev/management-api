@@ -32,4 +32,10 @@ abstract class BaseCommand extends Command {
         return $this->getUpdate()->getChat()->getType() == $type;
     }
 
+    protected function parseArgs($arguments) {
+        return array_filter(explode(' ', $arguments), function ($val) {
+            return ($val) ? true:false;
+        });
+    }
+
 }
