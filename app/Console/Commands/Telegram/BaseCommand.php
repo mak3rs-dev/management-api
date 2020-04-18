@@ -3,9 +3,9 @@
 namespace App\Console\Commands\Telegram;
 
 use App\Models\User;
-use \Telegram\Bot\Commands\Command;
+use Telegram\Bot\Commands\Command;
 
-abstract class BaseCommand extends Command {
+class BaseCommand extends Command {
 
     protected function CheckAuth() {
         $req = $this->getUpdate();
@@ -25,6 +25,9 @@ abstract class BaseCommand extends Command {
         }
 
         return false;
+    }
+
+    public function handle($arguments) {
     }
 
 }
