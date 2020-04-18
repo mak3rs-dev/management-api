@@ -28,8 +28,11 @@ abstract class BaseCommand extends Command {
         return false;
     }
 
-    protected function isChatType($type='private') {
-        return $this->getUpdate()->getChat()->getType() == $type;
+    protected function isChatType($type='private', $exactmatch=false) {
+        return ($exactmatch)
+            ? $this->getUpdate()->getChat()->getType() === $type
+            : strpos($this->getUpdate()->getChat()->getType(), $type)!==false
+        ;
     }
 
     protected function parseArgs($arguments) {

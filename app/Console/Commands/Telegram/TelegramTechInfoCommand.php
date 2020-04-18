@@ -2,21 +2,21 @@
 
 namespace App\Console\Commands\Telegram;
 
-class TelegramStartCommand extends BaseCommand
+class TelegramTechInfoCommand extends BaseCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $name = 'start';
+    protected $name = 'techinfo';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Start Command to get you started';
+    protected $description = 'Admin use only';
 
     /**
      * Execute the console command.
@@ -32,18 +32,12 @@ class TelegramStartCommand extends BaseCommand
 
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
-        if (parent::isChatType("private")) {
-            if (!parent::CheckAuth($this->update)) {
-                if ($this->update->getChat()->getUsername()) {
-                    $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
-                    $this->replyWithMessage(['text' => 'Utiliza /login [contraseña]']);
-                } else {
-                    $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
-                    $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [contraseña]']);
-                }
-            }
-        } else if (parent::isChatType("group")) {
-
+        if (parent::isChatType("group")) {
+            ob_start(); var_dump($this->update); $text= ob_get_clean();
+            $this->replyWithMessage(['text' => $text]);
+            $this->replyWithMessage(['text' => 'Te he enviado por privado la información del grupo']);
+        } else {
+            $this->replyWithMessage(['text' => 'El uso de este comando está restringido a grupos']);
         }
 
         // ob_start(); var_dump($e); $text= ob_get_clean();

@@ -46,6 +46,7 @@ return [
                 App\Console\Commands\Telegram\TelegramStartCommand::class,
                 App\Console\Commands\Telegram\TelegramLoginCommand::class,
                 App\Console\Commands\Telegram\TelegramSetAliasCommand::class,
+                App\Console\Commands\Telegram\TelegramTechInfoCommand::class,
             ],
         ],
 
