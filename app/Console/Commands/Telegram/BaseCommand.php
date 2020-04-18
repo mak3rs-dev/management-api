@@ -7,16 +7,14 @@ use Telegram\Bot\Commands\Command;
 
 class BaseCommand extends Command {
 
-    protected function CheckAuth() {
-        $req = $this->getUpdate();
-
-        if (in_array('username', $req["message"]["chat"]) && $req["message"]["chat"]["username"]) {
-            $username = $req["message"]["chat"]["type"]["username"];
+    protected function CheckAuth($update) {
+        if (in_array('username', $update["message"]["chat"]) && $update["message"]["chat"]["username"]) {
+            $username = $update["message"]["chat"]["type"]["username"];
 
             if ($userDb = User::where('alias', $username)->first()) {
                 if ($telData = json_decode($userDb->telegram_data)) {
                     if (in_array('chatid', ((array)$telData))) {
-                        if ($telData->chatid == $req["message"]["chat"]["type"]["id"]) {
+                        if ($telData->chatid == $update["message"]["chat"]["type"]["id"]) {
                             return true;
                         }
                     }
