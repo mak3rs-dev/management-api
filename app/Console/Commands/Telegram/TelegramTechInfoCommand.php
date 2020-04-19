@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands\Telegram;
 
+use Telegram\Bot\Exceptions\TelegramSDKException;
+
 class TelegramTechInfoCommand extends BaseCommand
 {
     /**
@@ -34,8 +36,21 @@ class TelegramTechInfoCommand extends BaseCommand
 
         if (parent::isChatType("group")) {
             ob_start(); var_dump($this->update); $text= ob_get_clean();
-            $this->replyWithMessage(['text' => $text]);
-            $this->replyWithMessage(['text' => 'Te he enviado por privado la información del grupo']);
+            if (parent::isGroupAdmin()) {
+
+                try {
+                    $this->getTelegram()->sendMessage([
+                        'chat_id' => $this->update->getMessage()->getFrom()->getId(),
+                        'text' => $text
+                    ]);
+                    $this->replyWithMessage(['text' => 'Te he enviado por privado la información del grupo']);
+                } catch (TelegramSDKException $e) {
+                    $this->replyWithMessage(['text' => 'Lo siento, no he conseguido darte lo que pedías..']);
+                }
+
+            } else {
+                $this->replyWithMessage(['text' => '¡Acceso denegado! Debes ser administrador ¬¬']);
+            }
         } else {
             $this->replyWithMessage(['text' => 'El uso de este comando está restringido a grupos']);
         }

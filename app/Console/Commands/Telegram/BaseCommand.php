@@ -35,6 +35,19 @@ abstract class BaseCommand extends Command {
         ;
     }
 
+    protected function isGroupAdmin() {
+        if (parent::isChatType("group")) {
+            $chatmember = $this->getTelegram()->getChatMember([
+                'chat_id' => $this->update->getChat()->getId(),
+                'user_id' => $this->update->getMessage()->getFrom()->getId()
+            ]);
+            if (in_array($chatmember->getStatus(), ['creator', 'administrator'])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected function parseArgs($arguments) {
         return array_filter(explode(' ', $arguments), function ($val) {
             return ($val) ? true:false;
