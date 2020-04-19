@@ -51,7 +51,7 @@ class TelegramRawUpdate extends Command {
                     Artisan::call('mak3rs:telegramCheckUser', [
                         '--msgId' => null,
                         '--groupId' => $this->data->getMessage()->getChat()->getId(),
-                        '--userId' => $member->getId()
+                        '--userId' => $member['id']
                     ]);
                 }
             } else {
