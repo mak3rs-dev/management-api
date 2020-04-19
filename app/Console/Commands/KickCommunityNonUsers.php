@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Community;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Exceptions\TelegramSDKException;
@@ -60,7 +61,8 @@ class KickCommunityNonUsers extends Command {
                     try {
                         Telegram::kickChatMember([
                             'chat_id' => $telData->chatid,
-                            'user_id' => $toKickUser
+                            'user_id' => $toKickUser,
+                            'until_data' => Carbon::now()->addSecond(60)->timestamp
                         ]);
                         $deletedItems[] = $toKickUser;
                     } catch (TelegramSDKException $e) {
