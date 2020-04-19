@@ -940,6 +940,53 @@
                 }
             }
         },
+        "/telegram/sendmessage": {
+            "post": {
+                "tags": [
+                    "Telegram Bot"
+                ],
+                "description": "Enviar mensaje a un usuario mediante el bot",
+                "operationId": "App\\Http\\Controllers\\SendMessageTelegramController::SendMessage",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "community": {
+                                        "description": "uuid",
+                                        "type": "string"
+                                    },
+                                    "user": {
+                                        "description": "uuid",
+                                        "type": "string"
+                                    },
+                                    "message": {
+                                        "description": "text",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/communities/piece/add-or-update": {
             "post": {
                 "tags": [
