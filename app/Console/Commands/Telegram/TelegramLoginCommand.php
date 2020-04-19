@@ -50,7 +50,7 @@ class TelegramLoginCommand extends BaseCommand {
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
-                                $this->getTelegram()->post('deleteMessage', [
+                                $this->getTelegram()->deleteMessage([
                                     'chat_id' => $this->update->getChat()->getId(),
                                     'message_id' => $this->update->getMessage()->getMessageId()
                                 ]);
