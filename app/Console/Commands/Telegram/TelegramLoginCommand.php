@@ -50,6 +50,10 @@ class TelegramLoginCommand extends BaseCommand {
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
+                                $this->getTelegram()->post('deleteMessage', [
+                                    'chat_id' => $this->update->getChat()->getId(),
+                                    'message_id' => $this->update->getMessage()->getMessageId()
+                                ]);
                             } else {
                                 $this->replyWithMessage(['text' => "No hemos encontrado ninguna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
                             }
