@@ -62,7 +62,7 @@ class KickCommunityNonUsers extends Command {
                         Telegram::kickChatMember([
                             'chat_id' => $telData->chatid,
                             'user_id' => $toKickUser,
-                            'until_data' => Carbon::now()->addSecond(60)->timestamp
+                            'until_date' => Carbon::now()->addSecond(60)->timestamp
                         ]);
                         $deletedItems[] = $toKickUser;
                     } catch (TelegramSDKException $e) {
