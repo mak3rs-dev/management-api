@@ -16,7 +16,7 @@ class TelegramStartCommand extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Start Command to get you started';
+    protected $description = 'Commando bienvenida';
 
     /**
      * Execute the console command.
@@ -37,13 +37,12 @@ class TelegramStartCommand extends BaseCommand
                 if ($this->update->getChat()->getUsername()) {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
                     $this->replyWithMessage(['text' => 'Utiliza /login [contraseña]']);
+
                 } else {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
                     $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [contraseña]']);
                 }
             }
-        } else if (parent::isChatType("group")) {
-
         }
 
         // ob_start(); var_dump($e); $text= ob_get_clean();

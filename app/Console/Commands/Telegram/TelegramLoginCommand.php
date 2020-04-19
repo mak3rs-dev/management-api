@@ -18,7 +18,7 @@ class TelegramLoginCommand extends BaseCommand {
      *
      * @var string
      */
-    protected $description = 'Login Command to get you started';
+    protected $description = 'Comando para iniciar sesión';
 
     /**
      * Execute the console command.
@@ -33,9 +33,10 @@ class TelegramLoginCommand extends BaseCommand {
 
         if (parent::isChatType('private')) {
             $args = parent::parseArgs($arguments);
+
             if (!parent::CheckAuth()) {
                 if ($username = $this->update->getChat()->getUsername()) {
-                    if (count($args)==1) {
+                    if (count($args) == 1) {
                         $password = $args[0];
 
                         if ($user = DB::table('users')->where('alias', '@'.$username)->first()) {
@@ -50,13 +51,16 @@ class TelegramLoginCommand extends BaseCommand {
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
+
                                 $this->getTelegram()->deleteMessage([
                                     'chat_id' => $this->update->getChat()->getId(),
                                     'message_id' => $this->update->getMessage()->getMessageId()
                                 ]);
+
                             } else {
                                 $this->replyWithMessage(['text' => "No hemos encontrado ninguna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [password]"]);
                             }
+
                         } else {
                             $this->replyWithMessage(['text' => "No hemos encontrado ninguna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
                         }
@@ -64,36 +68,15 @@ class TelegramLoginCommand extends BaseCommand {
                     } else {
                         $this->replyWithMessage(['text' => 'Utiliza /login [password]']);
                     }
+
                 } else {
                     $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
                     $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [contraseña]']);
                 }
+
             } else {
                 $this->replyWithMessage(['text' => 'Ya ha iniciado sesión']);
             }
         }
-
-        /// This will update the chat status to typing...
-        //$this->replyWithChatAction(['action' => Actions::TYPING]);
-
-        /*// This will prepare a list of available commands and send the user.
-        // First, Get an array of all registered commands
-        // They'll be in 'command-name' => 'Command Handler Class' format.
-        $commands = $this->getTelegram()->getCommands();
-
-        // Build the list
-        $response = '';
-        foreach ($commands as $name => $command) {
-            $response .= sprintf('/%s - %s' . PHP_EOL, $name, $command->getDescription());
-        }
-
-        // Reply with the commands list
-        $this->replyWithMessage(['text' => $response]);
-
-        // Trigger another command dynamically from within this command
-        // When you want to chain multiple commands within one or process the request further.
-        // The method supports second parameter arguments which you can optionally pass, By default
-        // it'll pass the same arguments that are received for this command originally.
-        $this->triggerCommand('subscribe');*/
     }
 }

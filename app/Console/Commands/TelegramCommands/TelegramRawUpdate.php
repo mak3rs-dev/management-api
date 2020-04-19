@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\TelegramCommands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -45,7 +45,7 @@ class TelegramRawUpdate extends Command {
     public function handle() {
         $this->data = $this->option('data');
 
-        if (strpos($this->data->getChat()->getType(), 'group')!==false) {
+        if (strpos($this->data->getChat()->getType(), 'group') !== false) {
             if ($members = $this->data->getMessage()->get('new_chat_members')) {
                 foreach ($members as $member) {
                     Artisan::call('mak3rs:telegramCheckUser', [
@@ -54,6 +54,7 @@ class TelegramRawUpdate extends Command {
                         '--userId' => $member['id']
                     ]);
                 }
+
             } else {
                 Artisan::call('mak3rs:telegramCheckUser', [
                     '--msgId' => $this->data->getMessage()->getMessageId(),
@@ -62,7 +63,5 @@ class TelegramRawUpdate extends Command {
                 ]);
             }
         }
-
     }
-
 }

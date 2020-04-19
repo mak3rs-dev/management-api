@@ -29,13 +29,21 @@ abstract class BaseCommand extends Command {
         return false;
     }
 
-    protected function isChatType($type='private', $exactmatch=false) {
+    /**
+     * @param string $type
+     * @param bool $exactmatch
+     * @return bool
+     */
+    protected function isChatType($type = 'private', $exactmatch = false) {
         return ($exactmatch)
             ? $this->getUpdate()->getChat()->getType() === $type
-            : strpos($this->getUpdate()->getChat()->getType(), $type)!==false
+            : strpos($this->getUpdate()->getChat()->getType(), $type) !== false
         ;
     }
 
+    /**
+     * @return bool
+     */
     protected function isGroupAdmin() {
         if (self::isChatType("group")) {
             try {
@@ -43,18 +51,26 @@ abstract class BaseCommand extends Command {
                     'chat_id' => $this->update->getChat()->getId(),
                     'user_id' => $this->update->getMessage()->getFrom()->getId()
                 ]);
+
                 if (in_array($chatmember->get('status'), ['creator', 'administrator'])) {
                     return true;
                 }
+
             } catch (TelegramSDKException $e) {}
         }
+
         return false;
     }
 
+    /**
+     * Parse arguments
+     *
+     * @param $arguments
+     * @return false|string[]
+     */
     protected function parseArgs($arguments) {
         return array_filter(explode(' ', $arguments), function ($val) {
-            return ($val) ? true:false;
+            return ($val) ? true : false;
         });
     }
-
 }

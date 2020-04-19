@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\TelegramCommands;
 
 use App\Models\Community;
 use App\Models\User;
@@ -46,6 +46,7 @@ class KickCommunityNonUsers extends Command {
             $this->info('Running for '.$community->name);
 
             $telData = json_decode($community->telegram_data);
+
             $kickExcludedIds = [];
             foreach ($telData->kickExcludedAlias as $item) $kickExcludedIds[] = $item;
 
@@ -65,10 +66,12 @@ class KickCommunityNonUsers extends Command {
                             'until_date' => Carbon::now()->addSecond(60)->timestamp
                         ]);
                         $deletedItems[] = $toKickUser;
+
                     } catch (TelegramSDKException $e) {
                         ob_start();var_dump($e);$textException=ob_get_clean();
                         Log::error($textException);
                     }
+
                 } else {
                     // Clean array if user shouldn't be deleted now
                     $deletedItems[] = $toKickUser;
