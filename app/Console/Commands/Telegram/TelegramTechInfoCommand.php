@@ -32,13 +32,10 @@ class TelegramTechInfoCommand extends BaseCommand
         // `replyWith<Message|Photo|Audio|Video|Voice|Document|Sticker|Location|ChatAction>()` all the available methods are dynamically
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
 
-        $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
-
         if (parent::isChatType("group")) {
-            ob_start(); var_dump($this->update); $text= ob_get_clean();
             if (parent::isGroupAdmin()) {
-
                 try {
+                    ob_start(); var_dump($this->update); $text= ob_get_clean();
                     $this->getTelegram()->sendMessage([
                         'chat_id' => $this->update->getMessage()->getFrom()->getId(),
                         'text' => $text

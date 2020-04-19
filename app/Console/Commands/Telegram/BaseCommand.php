@@ -4,6 +4,7 @@ namespace App\Console\Commands\Telegram;
 
 use App\Models\User;
 use Telegram\Bot\Commands\Command;
+use Telegram\Bot\Exceptions\TelegramSDKException;
 
 abstract class BaseCommand extends Command {
 
@@ -37,13 +38,15 @@ abstract class BaseCommand extends Command {
 
     protected function isGroupAdmin() {
         if (self::isChatType("group")) {
-            $chatmember = $this->getTelegram()->getChatMember([
-                'chat_id' => $this->update->getChat()->getId(),
-                'user_id' => $this->update->getMessage()->getFrom()->getId()
-            ]);
-            if (in_array($chatmember->getStatus(), ['creator', 'administrator'])) {
-                return true;
-            }
+            try {
+                $chatmember = $this->getTelegram()->getChatMember([
+                    'chat_id' => $this->update->getChat()->getId(),
+                    'user_id' => $this->update->getMessage()->getFrom()->getId()
+                ]);
+                if (in_array($chatmember->get('status'), ['creator', 'administrator'])) {
+                    return true;
+                }
+            } catch (TelegramSDKException $e) {}
         }
         return false;
     }
