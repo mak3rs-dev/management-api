@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Community;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Exceptions\TelegramSDKException;
@@ -47,7 +48,7 @@ class KickCommunityNonUsers extends Command {
             $kickExcludedIds = [];
             foreach ($telData->kickExcludedAlias as $item) $kickExcludedIds[] = $item;
 
-            $users = User::select('alias')->whereIn('id', $community->InCommunities->pluck('user_id')->toArray())->get();
+            $users = User::select('telegram_data')->where('telegram_data', "LIKE", "%chatid%")->whereIn('id', $community->InCommunities->pluck('user_id')->toArray())->get();
             foreach ($users as $user) {
                 $userTelData = json_encode($user->telegram_data);
                 $kickExcludedIds[] = $userTelData->chatid;
