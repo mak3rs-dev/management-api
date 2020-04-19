@@ -43,12 +43,17 @@ class TelegramSetAliasCommand extends BaseCommand {
                         if ($user = DB::table('users')->where('email', $email)->first()) {
                             if (Hash::check($password, $user->password)) {
 
-                                $res = DB::table('users')->where('id',$user->id)->update(['alias' => "@".$username]);
-                                if ($res>=0) {
+                                $res = DB::table('users')->where('id', $user->id)->update(['alias' => "@".$username]);
+                                if ($res >= 0) {
                                     $this->replyWithMessage(['text' => "Alias establecido correctamente. Ahora puede iniciar sesión mediante \n\n/login [contraseña]"]);
                                 } else {
                                     $this->replyWithMessage(['text' => "Se ha producido un error"]);
                                 }
+
+                                $this->getTelegram()->deleteMessage([
+                                    'chat_id' => $this->update->getChat()->getId(),
+                                    'message_id' => $this->update->getMessage()->getMessageId()
+                                ]);
 
                             } else {
                                 $this->replyWithMessage(['text' => "No hemos encontrado ninguna coincidencia con tu alias y contraseña, inténtalo de nuevo o actualiza tu alias mediante:\n/SetAlias [email] [contraseña]"]);
