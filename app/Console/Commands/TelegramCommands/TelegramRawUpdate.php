@@ -5,6 +5,7 @@ namespace App\Console\Commands\TelegramCommands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Telegram\Bot\Objects\Update;
+use Telegram\Bot\Objects\User;
 
 class TelegramRawUpdate extends Command {
     /**
@@ -43,15 +44,16 @@ class TelegramRawUpdate extends Command {
      * @return mixed
      */
     public function handle() {
-        $this->data = $this->option('data');
+        $this->data = new Update(json_decode($this->option('data'), true));
 
-        if (strpos($this->data->getChat()->getType(), 'group') !== false) {
+        if ($this->data != null && $this->data->getChat() != null && strpos($this->data->getChat()->getType(), 'group') !== false) {
             if ($members = $this->data->getMessage()->get('new_chat_members')) {
                 foreach ($members as $member) {
+                    $member = new User($member);
                     Artisan::call('mak3rs:telegramCheckUser', [
                         '--msgId' => null,
                         '--groupId' => $this->data->getMessage()->getChat()->getId(),
-                        '--userId' => $member['id']
+                        '--userId' => $member->getId()
                     ]);
                 }
 

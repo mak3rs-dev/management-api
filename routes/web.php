@@ -25,7 +25,7 @@ Route::post('{token}/webhook/telegram', function ($token) {
    if ($token == env('TELEGRAM_BOT_TOKEN', '')) {
        $update = Telegram::commandsHandler(true);
 
-       Artisan::call('mak3rs:telegramRawUpdate', ['--data' => $update]);
+       Artisan::call('mak3rs:telegramRawUpdate', ['--data' => json_encode($update)]);
 
        return 'ok';
    }
