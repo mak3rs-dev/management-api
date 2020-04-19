@@ -43,26 +43,29 @@ class TelegramCheckUser extends Command {
 
         $community = Community::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$groupId.*'")->first();
 
-        $telData = json_decode($community->telegram_data);
+        if ($community) {
+            $telData = json_decode($community->telegram_data);
 
-        if (isset($telData->autokicknonuser) && $telData->autokicknonuser) {
-            if (!isset($telData->pendingCheckUsers)) $telData->pendingCheckUsers = [];
-            if (!in_array($userId, $telData->pendingCheckUsers)) {
-                $inCommunity = User::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$userId.*'")->first()->InCommunities->where('community_id', $community->id)->first();
+            if (isset($telData->autokicknonuser) && $telData->autokicknonuser) {
+                if (!isset($telData->pendingCheckUsers)) $telData->pendingCheckUsers = [];
+                if (!in_array($userId, $telData->pendingCheckUsers)) {
+                    $inCommunity = User::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$userId.*'")->first()->InCommunities->where('community_id', $community->id)->first();
 
-                if (!$inCommunity) {
-                    $telData->pendingCheckUsers[] = $userId;
-                    $community->telegram_data = json_encode($telData);
+                    if (!$inCommunity) {
+                        $telData->pendingCheckUsers[] = $userId;
+                        $community->telegram_data = json_encode($telData);
 
-                    if ($community->save()) {
-                        Telegram::sendMessage(array_merge([
-                            'chat_id' => $groupId,
-                            'text' => 'Para permanecer en el grupo, debe de hablarme por privado e iniciar sesión para confirmar su cuenta'
-                        ], ($msgId?['reply_to_message_id'=>$msgId]:[])));
+                        if ($community->save()) {
+                            Telegram::sendMessage(array_merge([
+                                'chat_id' => $groupId,
+                                'text' => 'Para permanecer en el grupo, debe de hablarme por privado e iniciar sesión para confirmar su cuenta'
+                            ], ($msgId?['reply_to_message_id'=>$msgId]:[])));
+                        }
                     }
                 }
             }
         }
+
 
     }
 }
