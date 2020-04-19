@@ -41,33 +41,35 @@ class TelegramCheckUser extends Command {
         $groupId = $this->option('groupId');
         $userId = $this->option('userId');
 
-        $community = Community::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$groupId.*'")->first();
+        if ($userId != explode(':', env('TELEGRAM_BOT_TOKEN'))[0]) {
+            $community = Community::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$groupId.*'")->first();
+            if ($community) {
+                $telData = json_decode($community->telegram_data);
 
-        if ($community) {
-            $telData = json_decode($community->telegram_data);
+                if (isset($telData->autokicknonuser) && $telData->autokicknonuser) {
+                    if (!isset($telData->pendingCheckUsers)) $telData->pendingCheckUsers = [];
+                    if (!in_array($userId, $telData->pendingCheckUsers)) {
+                        $user = User::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$userId.*'")->first();
+                        $inCommunity = ($user)?$user->InCommunities->where('community_id', $community->id)->first():null;
 
-            if (isset($telData->autokicknonuser) && $telData->autokicknonuser) {
-                if (!isset($telData->pendingCheckUsers)) $telData->pendingCheckUsers = [];
-                if (!in_array($userId, $telData->pendingCheckUsers)) {
-                    $user = User::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$userId.*'")->first();
-                    $inCommunity = ($user)?$user->InCommunities->where('community_id', $community->id)->first():null;
+                        if (!$inCommunity) {
+                            $telData->pendingCheckUsers[] = $userId;
+                            $community->telegram_data = json_encode($telData);
 
-                    if (!$inCommunity) {
-                        $telData->pendingCheckUsers[] = $userId;
-                        $community->telegram_data = json_encode($telData);
+                            if ($community->save()) {
+                                $me = Telegram::getMe();
 
-                        if ($community->save()) {
-                            $me = Telegram::getMe();
-
-                            Telegram::sendMessage(array_merge([
-                                'chat_id' => $groupId,
-                                'text' => 'Para permanecer en el grupo, debe de hablarme por privado e iniciar sesión para confirmar su cuenta'."\n@".$me->getUsername()
-                            ], ($msgId?['reply_to_message_id'=>$msgId]:[])));
+                                Telegram::sendMessage(array_merge([
+                                    'chat_id' => $groupId,
+                                    'text' => 'Para permanecer en el grupo, debe de hablarme por privado e iniciar sesión para confirmar su cuenta'."\n@".$me->getUsername()
+                                ], ($msgId?['reply_to_message_id'=>$msgId]:[])));
+                            }
                         }
                     }
                 }
             }
         }
+
 
 
     }

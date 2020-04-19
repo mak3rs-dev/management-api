@@ -72,7 +72,7 @@ class KickCommunityNonUsers extends Command {
                 }
             }
 
-            foreach ($deletedItems as $item) unset($telData->pendingCheckUsers[$item]);
+            foreach ($deletedItems as $item) array_splice($telData->pendingCheckUsers, array_search($item, $telData->pendingCheckUsers), 1);
 
             $community->telegram_data = json_encode($telData);
             $community->save();
