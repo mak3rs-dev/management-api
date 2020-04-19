@@ -83,17 +83,22 @@ class SendMessageTelegramController extends Controller
         // Parse telegram_data
         $telData = json_decode($user->telegram_data);
 
-        // SendMessage
-        try {
-            Telegram::sendMessage([
-                'chat_id' => $telData->chatid,
-                'text' => $request->message
-            ]);
+        if ($telData != null && isset($telData->chatid)) {
+            // SendMessage
+            try {
+                Telegram::sendMessage([
+                    'chat_id' => $telData->chatid,
+                    'text' => $request->message
+                ]);
 
-            return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
+                return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
 
-        } catch (TelegramSDKException $e) {
-            return response()->json(['error' => 'El mensaje no se ha podido enviar correctamente'], 500);
+            } catch (TelegramSDKException $e) {
+                return response()->json(['error' => 'El mensaje no se ha podido enviar correctamente'], 500);
+            }
+
+        } else {
+            return response()->json(['error' => 'El usuario no tiene asociado un chat_id'], 500);
         }
     }
 }
