@@ -51,7 +51,7 @@ class KickCommunityNonUsers extends Command {
 
             $users = User::select('telegram_data')->where('telegram_data', "LIKE", "%chatid%")->whereIn('id', $community->InCommunities->pluck('user_id')->toArray())->get();
             foreach ($users as $user) {
-                $userTelData = json_encode($user->telegram_data);
+                $userTelData = json_decode($user->telegram_data);
                 $kickExcludedIds[] = $userTelData->chatid;
             }
 
@@ -69,6 +69,9 @@ class KickCommunityNonUsers extends Command {
                         ob_start();var_dump($e);$textException=ob_get_clean();
                         Log::error($textException);
                     }
+                } else {
+                    // Clean array if user shouldn't be deleted now
+                    $deletedItems[] = $toKickUser;
                 }
             }
 
