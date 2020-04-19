@@ -27,3 +27,6 @@ include_once 'path/routeUsers.php';
 
 // Route Converts
 include_once 'path/routeConverts.php';
+
+// Route Telegram
+include_once 'path/routeTelegram.php';

@@ -48,7 +48,7 @@ class KickCommunityNonUsers extends Command {
             $telData = json_decode($community->telegram_data);
 
             $kickExcludedIds = [];
-            foreach ($telData->kickExcludedAlias as $item) $kickExcludedIds[] = $item;
+            foreach ($telData->kickExcludedIds as $item) $kickExcludedIds[] = $item;
 
             $users = User::select('telegram_data')->where('telegram_data', "LIKE", "%chatid%")->whereIn('id', $community->InCommunities->pluck('user_id')->toArray())->get();
             foreach ($users as $user) {
