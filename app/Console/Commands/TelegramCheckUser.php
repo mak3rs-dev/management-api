@@ -13,7 +13,7 @@ class TelegramCheckUser extends Command {
      *
      * @var string
      */
-    protected $signature = 'mak3rs:TelegramCheckUser';
+    protected $signature = 'mak3rs:telegramCheckUser {--msgId=} {--groupId=} {--userId=}';
 
     /**
      * The console command description.

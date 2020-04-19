@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Telegram\Bot\Objects\Update;
 
 class TelegramRawUpdate extends Command {
@@ -11,7 +12,7 @@ class TelegramRawUpdate extends Command {
      *
      * @var string
      */
-    protected $signature = 'mak3rs:telegramRawUpdate';
+    protected $signature = 'mak3rs:telegramRawUpdate {--data=}';
 
     /**
      * The update event
@@ -47,14 +48,14 @@ class TelegramRawUpdate extends Command {
         if (strpos($this->data->getChat()->getType(), 'group')!==false) {
             if ($members = $this->data->getMessage()->get('new_chat_members')) {
                 foreach ($members as $member) {
-                    Artisan::call('mak3rs:telegramRawUpdate', [
+                    Artisan::call('mak3rs:telegramCheckUser', [
                         '--msgId' => null,
                         '--groupId' => $this->data->getMessage()->getChat()->getId(),
                         '--userId' => $member->getId()
                     ]);
                 }
             } else {
-                Artisan::call('mak3rs:telegramRawUpdate', [
+                Artisan::call('mak3rs:telegramCheckUser', [
                     '--msgId' => $this->data->getMessage()->getMessageId(),
                     '--groupId' => $this->data->getMessage()->getChat()->getId(),
                     '--userId' => $this->data->getMessage()->getFrom()->getId()
