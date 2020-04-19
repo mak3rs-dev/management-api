@@ -40,7 +40,7 @@ class TelegramTechInfoCommand extends BaseCommand
                         'chat_id' => $this->update->getMessage()->getFrom()->getId(),
                         'text' => $text
                     ]);
-                    $me = $this->getTelegram()::getMe();
+                    $me = $this->getTelegram()->getMe();
                     $this->replyWithMessage(['text' => 'Te he enviado por privado la información del grupo'."\n@".$me->getUsername()]);
                 } catch (TelegramSDKException $e) {
                     $this->replyWithMessage(['text' => 'Lo siento, no he conseguido darte lo que pedías..']);
