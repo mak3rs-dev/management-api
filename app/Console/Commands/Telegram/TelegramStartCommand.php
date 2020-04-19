@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands\Telegram;
 
-use Telegram\Bot\Actions;
-use Telegram\Bot\Commands\Command;
-
-class TelegramStartCommnand extends Command
+class TelegramStartCommand extends BaseCommand
 {
     /**
      * The name and signature of the console command.
@@ -19,7 +16,7 @@ class TelegramStartCommnand extends Command
      *
      * @var string
      */
-    protected $description = 'Start Command to get you started';
+    protected $description = 'Commando bienvenida';
 
     /**
      * Execute the console command.
@@ -32,10 +29,24 @@ class TelegramStartCommnand extends Command
         // the user/chat id who triggered this command.
         // `replyWith<Message|Photo|Audio|Video|Voice|Document|Sticker|Location|ChatAction>()` all the available methods are dynamically
         // handled when you replace `send<Method>` with `replyWith` and use the same parameters - except chat_id does NOT need to be included in the array.
+
         $this->replyWithMessage(['text' => 'Buenas! me llamo Mak3rsManagementBot y te doy la bienvenida!!']);
 
-        ob_start(); var_dump($this->getUpdate()); $text= ob_get_clean();
-        $this->replyWithMessage(['text' => $text]);
+        if (parent::isChatType("private")) {
+            if (!parent::CheckAuth($this->update)) {
+                if ($this->update->getChat()->getUsername()) {
+                    $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de iniciar sesión primero']);
+                    $this->replyWithMessage(['text' => 'Utiliza /login [contraseña]']);
+
+                } else {
+                    $this->replyWithMessage(['text' => 'Para empezar a interactuar debes de crearte un alias en Ajustes->Perfil->Username, y después ejecutar el siguiente comando']);
+                    $this->replyWithMessage(['text' => 'Utiliza /SetAlias [email] [contraseña]']);
+                }
+            }
+        }
+
+        // ob_start(); var_dump($e); $text= ob_get_clean();
+        // $this->replyWithMessage(['text' => $text]);
 
         /// This will update the chat status to typing...
         //$this->replyWithChatAction(['action' => Actions::TYPING]);

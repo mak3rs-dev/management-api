@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\TelegramCommands;
 
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Console\Command;

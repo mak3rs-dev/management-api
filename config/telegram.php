@@ -43,7 +43,10 @@ return [
             'username'  => 'Mak3rsManagementBetaBot',
             'token' => env('TELEGRAM_BOT_TOKEN', 'YOUR-BOT-TOKEN'),
             'commands' => [
-                App\Console\Commands\Telegram\TelegramStartCommnand::class,
+                App\Console\Commands\Telegram\TelegramStartCommand::class,
+                App\Console\Commands\Telegram\TelegramLoginCommand::class,
+                App\Console\Commands\Telegram\TelegramSetAliasCommand::class,
+                App\Console\Commands\Telegram\TelegramTechInfoCommand::class,
             ],
         ],
 
