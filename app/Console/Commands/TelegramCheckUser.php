@@ -49,16 +49,19 @@ class TelegramCheckUser extends Command {
             if (isset($telData->autokicknonuser) && $telData->autokicknonuser) {
                 if (!isset($telData->pendingCheckUsers)) $telData->pendingCheckUsers = [];
                 if (!in_array($userId, $telData->pendingCheckUsers)) {
-                    $inCommunity = User::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$userId.*'")->first()->InCommunities->where('community_id', $community->id)->first();
+                    $user = User::whereRaw("telegram_data REGEXP '.*\"chatid\":.*$userId.*'")->first();
+                    $inCommunity = ($user)?$user->InCommunities->where('community_id', $community->id)->first():null;
 
                     if (!$inCommunity) {
                         $telData->pendingCheckUsers[] = $userId;
                         $community->telegram_data = json_encode($telData);
 
                         if ($community->save()) {
+                            $me = Telegram::getMe();
+
                             Telegram::sendMessage(array_merge([
                                 'chat_id' => $groupId,
-                                'text' => 'Para permanecer en el grupo, debe de hablarme por privado e iniciar sesión para confirmar su cuenta'
+                                'text' => 'Para permanecer en el grupo, debe de hablarme por privado e iniciar sesión para confirmar su cuenta'."\n@".$me->getUsername()
                             ], ($msgId?['reply_to_message_id'=>$msgId]:[])));
                         }
                     }
