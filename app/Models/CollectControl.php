@@ -11,12 +11,17 @@ class CollectControl extends Model implements Auditable
 
     protected $table = 'collect_control';
 
+    protected $dates = [
+        'created_at', 'updated_at'
+    ];
+
     protected $fillable = [
         'id', 'in_community_id', 'status_id', 'address', 'province', 'state', 'location', 'country', 'cp', 'address_description', 'created_at', 'updated_at'
     ];
 
-    protected $dates = [
-        'created_at', 'updated_at'
+    protected $cast = [
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y H:i:s'
     ];
 
     public function InCommunity() {
