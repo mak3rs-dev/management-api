@@ -125,7 +125,7 @@ class CollectControlController extends Controller
 
         $select = ['cc.id as id', 'u.name as user_name', 'u.alias as user_alias', 'u.phone as phone', 'ic.mak3r_num as mak3r_num', 'cc.address as collect_address',
                     'cc.location as collect_location', 'cc.province as collect_province', 'cc.state as collect_state', 'cc.country as collect_country', 'cc.cp as collect_cp',
-                    'cc.address_description as collect_address_description', 'cc.created_at as created_at', 'cc.updated_at as updated_at', 'st.name as status',
+                    'cc.address_description as collect_address_description', DB::raw('DATE_FORMAT(cc.created_at, "%d-%m-%Y %H:%i") as created_at'), DB::raw('DATE_FORMAT(cc.updated_at, "%d-%m-%Y %H:%i") as updated_at'), 'st.name as status',
                     'st.code as status_code', 'u.uuid as user_uuid'];
 
         $collecControl = CollectControl::select($select)
