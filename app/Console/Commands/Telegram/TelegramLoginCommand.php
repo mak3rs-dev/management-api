@@ -48,7 +48,7 @@ class TelegramLoginCommand extends BaseCommand {
 
                                 $res = DB::table('users')->where('id',$user->id)->update([
                                     'telegram_data' => json_encode($telData),
-                                    'update_at' => Carbon::now()
+                                    'updated_at' => Carbon::now()
                                 ]);
                                 if ($res) {
                                     $this->replyWithMessage(['text' => "Has iniciado sesión correctamente"]);
