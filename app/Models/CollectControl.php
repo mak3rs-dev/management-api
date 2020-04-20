@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -19,10 +20,16 @@ class CollectControl extends Model implements Auditable
         'id', 'in_community_id', 'status_id', 'address', 'province', 'state', 'location', 'country', 'cp', 'address_description', 'created_at', 'updated_at'
     ];
 
-    protected $cast = [
-        'created_at' => 'datetime:d-m-Y H:i:s',
-        'updated_at' => 'datetime:d-m-Y H:i:s'
-    ];
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param DateTimeInterface $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date) : string
+    {
+        return $date->format('d-m-Y H:i:s');
+    }
 
     public function InCommunity() {
         return $this->belongsTo(InCommunity::class, 'in_community_id');
