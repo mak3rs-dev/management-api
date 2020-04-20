@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -14,6 +15,17 @@ class Community extends Model implements Auditable
     protected $fillable = [
         'uuid', 'alias', 'name', 'picture', 'description', 'telegram_data'
     ];
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param DateTimeInterface $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date) : string
+    {
+        return $date->format('d-m-Y H:i:s');
+    }
 
     public function Pieces() {
         return $this->hasMany(Piece::class, 'community_id');

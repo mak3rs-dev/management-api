@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Telegram;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -43,7 +44,10 @@ class TelegramSetAliasCommand extends BaseCommand {
                         if ($user = DB::table('users')->where('email', $email)->first()) {
                             if (Hash::check($password, $user->password)) {
 
-                                $res = DB::table('users')->where('id', $user->id)->update(['alias' => "@".$username]);
+                                $res = DB::table('users')->where('id', $user->id)->update([
+                                    'alias' => "@".$username,
+                                    'updated_at' => Carbon::now()
+                                ]);
                                 if ($res >= 0) {
                                     $this->replyWithMessage(['text' => "Alias establecido correctamente. Ahora puede iniciar sesión mediante \n\n/login [contraseña]"]);
                                 } else {
