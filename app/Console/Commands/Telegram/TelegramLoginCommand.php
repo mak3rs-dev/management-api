@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Telegram;
 
+use Carbon\Carbon;
 use DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -45,7 +46,10 @@ class TelegramLoginCommand extends BaseCommand {
                                 if (!$telData) $telData = new \stdClass();
                                 $telData->chatid = $this->update->getChat()->getId();
 
-                                $res = DB::table('users')->where('id',$user->id)->update(['telegram_data'=>json_encode($telData)]);
+                                $res = DB::table('users')->where('id',$user->id)->update([
+                                    'telegram_data' => json_encode($telData),
+                                    'update_at' => Carbon::now()
+                                ]);
                                 if ($res) {
                                     $this->replyWithMessage(['text' => "Has iniciado sesión correctamente"]);
                                 } else {
