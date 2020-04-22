@@ -76,6 +76,10 @@ class TelegramRawUpdate extends Command {
                 return;
             }
 
+            if (Str::startsWith($this->data->getMessage()->getText(), '/')) {
+                return;
+            }
+
             $message = "";
             switch (Str::lower($this->data->getMessage()->getText())) {
                 case "hola":
