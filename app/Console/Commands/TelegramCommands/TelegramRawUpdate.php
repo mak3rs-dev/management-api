@@ -52,7 +52,7 @@ class TelegramRawUpdate extends Command {
             return;
         }
 
-        if (strpos($this->data->getChat()->getType(), 'group') !== false) {
+        if (Str::contains($this->data->getChat()->getType(), 'group')) {
             if ($members = $this->data->getMessage()->get('new_chat_members')) {
                 foreach ($members as $member) {
                     $member = new User($member);
