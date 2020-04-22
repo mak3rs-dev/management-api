@@ -92,7 +92,6 @@ class TelegramRawUpdate extends Command {
 
                 default:
                     $message = "No entiendo lo que me quieres decir 🥺";
-                    break;
             }
 
             Telegram::sendMessage([
