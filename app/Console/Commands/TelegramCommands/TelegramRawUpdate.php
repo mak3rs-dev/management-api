@@ -79,7 +79,7 @@ class TelegramRawUpdate extends Command {
             $message = "";
             switch (Str::lower($this->data->getMessage()->getText())) {
                 case "hola":
-                    $commands = $this->getTelegram()->getCommands();
+                    $commands = Telegram::getCommands();
 
                     // Build the list
                     $response = '';
