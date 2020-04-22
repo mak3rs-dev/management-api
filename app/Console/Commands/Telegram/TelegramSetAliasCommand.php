@@ -19,7 +19,7 @@ class TelegramSetAliasCommand extends BaseCommand {
      *
      * @var string
      */
-    protected $description = 'Establecer el alias de la cuenta (necesario para utilizar el bot)';
+    protected $description = 'Comando para vincular el alias de telegram (necesario para utilizar el bot)';
 
     /**
      * Execute the console command.
