@@ -375,6 +375,9 @@ class AuthController extends Controller
     {
         $user = auth()->user();
         unset($user->id);
+        unset($user->telegram_data);
+        unset($user->hash_email_verified);
+        unset($user->hash_password_verified);
         return response()->json($user);
     }
 
