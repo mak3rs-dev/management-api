@@ -72,7 +72,7 @@ class TelegramRawUpdate extends Command {
             }
 
         } else {
-            if ($this->data->getMessage() != null && $this->data->getMessage()->getText() != null) {
+            if ($this->data->getMessage() == null || $this->data->getMessage()->getText() == null) {
                 return;
             }
 
