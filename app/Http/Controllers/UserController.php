@@ -73,7 +73,7 @@ class UserController extends Controller
             return response()->json(['error' => 'No tienes permisos'], 403);
         }
 
-        $users = User::select('u.name', 'u.alias', 'u.uuid')
+        $users = User::select('u.name', 'u.alias', 'u.uuid', 'ic.mak3r_num')
             ->from('users as u')
             ->join('in_community as ic', 'u.id', '=', 'ic.user_id')
             ->where('ic.community_id', $community->id)
