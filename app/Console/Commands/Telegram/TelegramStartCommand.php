@@ -16,7 +16,7 @@ class TelegramStartCommand extends BaseCommand
      *
      * @var string
      */
-    protected $description = 'Commando bienvenida';
+    protected $description = 'Comando bienvenida';
 
     /**
      * Execute the console command.

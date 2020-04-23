@@ -4,6 +4,8 @@ namespace App\Console\Commands\TelegramCommands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
+use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Objects\Update;
 use Telegram\Bot\Objects\User;
 
@@ -46,7 +48,11 @@ class TelegramRawUpdate extends Command {
     public function handle() {
         $this->data = new Update(json_decode($this->option('data'), true));
 
-        if ($this->data != null && $this->data->getChat() != null && strpos($this->data->getChat()->getType(), 'group') !== false) {
+        if ($this->data == null || $this->data->getChat() == null) {
+            return;
+        }
+
+        if (Str::contains($this->data->getChat()->getType(), 'group')) {
             if ($members = $this->data->getMessage()->get('new_chat_members')) {
                 foreach ($members as $member) {
                     $member = new User($member);
@@ -64,6 +70,39 @@ class TelegramRawUpdate extends Command {
                     '--userId' => $this->data->getMessage()->getFrom()->getId()
                 ]);
             }
+
+        } else {
+            if ($this->data->getMessage() == null || $this->data->getMessage()->getText() == null) {
+                return;
+            }
+
+            if (Str::startsWith($this->data->getMessage()->getText(), '/')) {
+                return;
+            }
+
+            $message = "";
+            switch (Str::lower($this->data->getMessage()->getText())) {
+                case "hola":
+                    $commands = Telegram::getCommands();
+
+                    // Build the list
+                    $response = '';
+                    foreach ($commands as $name => $command) {
+                        $response .= sprintf('/%s - %s' . PHP_EOL, $name, $command->getDescription());
+                    }
+
+                    $message = "Hola!! Soy un bot, no puedo atender tus mensajes a menos que me digas una función en específico, a continuación te describo las funciones, recuerda que también debes de indicar la /:\n\n$response";
+                    break;
+
+                default:
+                    $message = "No entiendo lo que me quieres decir 🥰, pero si escribes /help, quizás te pueda ayudar";
+            }
+
+            Telegram::sendMessage([
+                'chat_id' => $this->data->getMessage()->getChat()->getId(),
+                'text' => $message
+            ]);
+
         }
     }
 }
