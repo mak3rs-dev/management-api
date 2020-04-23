@@ -8,12 +8,85 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     public function __construct()
     {
         $this->middleware(['jwt.auth', 'privacy.policy']);
+    }
+
+    /**
+     * @OA\GET(
+     *     path="/communities/{alias}/users",
+     *     tags={"All Users of Community"},
+     *     description="Cuando un usuario se quiere añadir a una comunidad",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="q", description="search", type="string"),
+     *         @OA\Property(property="mak3r_num", description="", type="string"),
+     *       ),
+     *     ),
+     *     ),
+     *     @OA\Response(response=200, description="OK"),
+     *     @OA\Response(response=422, description=""),
+     *     @OA\Response(response=404, description=""),
+     *     @OA\Response(response=500, description=""),
+     * )
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserOfCommunity(Request $request, $alias = null) {
+        // Validate request
+        $validator = Validator::make([
+            'community' => $alias,
+            'q' => $request->q,
+            'mak3r_num' => $request->mak3r_num
+        ], [
+            'community' => 'required|string',
+            'q' => 'nullable|string',
+            'mak3r_num' => 'nullable|integer'
+        ], [
+            'community.required' => 'La comunidad es requerida'
+        ]);
+
+        // We check that the validation is correct
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Check community
+        $community = Community::where('alias', $alias)->first();
+
+        if ($community == null) {
+            return response()->json(['error' => 'La comunidad no se encuentra'], 404);
+        }
+
+        $inCommunity = $community->InCommunitiesUser();
+
+        // Check permissions in community
+        if (!auth()->user()->hasRole('USER:ADMIN') && ( $inCommunity == null || !$inCommunity->hasRole('MAKER:ADMIN'))) {
+            return response()->json(['error' => 'No tienes permisos'], 403);
+        }
+
+        $usersCommunities = $community->InCommunities
+            ->when($request->mak3r_num != null, function ($query) use ($request) {
+                return $query->where('mak3r_num', $request->mak3r_num);
+            })->pluck('user_id')->toArray();
+
+        $users = User::select('name', 'alias', 'uuid')
+            ->whereIn('id', $usersCommunities)
+            ->when($request->q != null, function ($query) use ($request) {
+                return $query->where('name', 'like', "%$request->q%")->orWhere('alias', 'like', "%$request->q%");
+            })
+            ->limit(100)
+            ->get();
+
+        return response()->json($users, 200);
     }
 
     /**

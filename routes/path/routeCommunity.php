@@ -16,4 +16,5 @@ Route::group(['prefix' => 'communities'], function () {
     Route::put('collect/update', 'CollectControlController@update');
     Route::post('materials/add-or-update', 'MaterialsRequestController@addOrUpdate');
     Route::get('materials/{community}', 'MaterialsRequestController@get');
+    Route::get('{alias}/users', 'UserController@getUserOfCommunity');
 });

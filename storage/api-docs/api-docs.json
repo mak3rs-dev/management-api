@@ -1034,6 +1034,49 @@
                 }
             }
         },
+        "/communities/{alias}/users": {
+            "get": {
+                "tags": [
+                    "All Users of Community"
+                ],
+                "description": "Cuando un usuario se quiere añadir a una comunidad",
+                "operationId": "App\\Http\\Controllers\\UserController::getUserOfCommunity",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "q": {
+                                        "description": "search",
+                                        "type": "string"
+                                    },
+                                    "mak3r_num": {
+                                        "description": "",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/communities/join": {
             "post": {
                 "tags": [
