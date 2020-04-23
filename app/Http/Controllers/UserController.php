@@ -73,15 +73,15 @@ class UserController extends Controller
             return response()->json(['error' => 'No tienes permisos'], 403);
         }
 
-        $usersCommunities = $community->InCommunities
-            ->when($request->mak3r_num != null, function ($query) use ($request) {
-                return $query->where('mak3r_num', $request->mak3r_num);
-            })->pluck('user_id')->toArray();
-
-        $users = User::select('name', 'alias', 'uuid')
-            ->whereIn('id', $usersCommunities)
+        $users = User::select('u.name', 'u.alias', 'u.uuid')
+            ->from('users as u')
+            ->join('in_community as ic', 'u.id', '=', 'ic.user_id')
+            ->where('ic.community_id', $community->id)
             ->when($request->q != null, function ($query) use ($request) {
-                return $query->where('name', 'like', "%$request->q%")->orWhere('alias', 'like', "%$request->q%");
+                return $query->where('u.name', 'like', "%$request->q%")->orWhere('u.alias', 'like', "%$request->q%");
+            })
+            ->when($request->mak3r_num != null, function ($query) use ($request) {
+                return $query->where('ic.mak3r_num', $request->mak3r_num);
             })
             ->limit(100)
             ->get();
