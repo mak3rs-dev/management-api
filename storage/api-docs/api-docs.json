@@ -282,7 +282,7 @@
             }
         },
         "/communities/collect/{communty}/{export?}": {
-            "get": {
+            "post": {
                 "tags": [
                     "Collect Control"
                 ],
