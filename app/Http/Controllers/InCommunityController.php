@@ -19,10 +19,20 @@ class InCommunityController extends Controller
     }
 
     /**
-     * @OA\GET(
+     * @OA\POST(
      *     path="/communities/ranking/{alias}/{export?stock}",
      *     tags={"Community"},
      *     description="Ranking de la comunidad",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="user", description="", type="string"),
+     *         @OA\Property(property="piece", description="", type="string"),
+     *         @OA\Property(property="mak3r_num", description="", type="array", @OA\Items(type="integer", format="binary")),
+     *       ),
+     *     ),
+     *     ),
      *     @OA\Response(response=200, description="ok"),
      * )
      *
@@ -44,7 +54,7 @@ class InCommunityController extends Controller
             'export' => 'nullable|string',
             'user' => 'nullable|string',
             'piece' => 'nullable|string',
-            'mak3r_num' => 'nullable|integer'
+            'mak3r_num' => 'nullable|array'
         ], [
             'alias.required' => 'El alias es requerido'
         ]);
@@ -165,7 +175,7 @@ class InCommunityController extends Controller
                         return $query->where('u.uuid', $request->user);
                     })
                     ->when($request->mak3r_num != null && $admin, function ($query) use ($request) {
-                        return $query->where('ic.mak3r_num', $request->mak3r_num);
+                        return $query->whereIn('ic.mak3r_num', $request->mak3r_num);
                     })
                     ->groupBy('ic.user_id');
             }, 'a')

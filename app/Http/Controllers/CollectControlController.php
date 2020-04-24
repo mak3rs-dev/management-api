@@ -27,7 +27,7 @@ class CollectControlController extends Controller
     }
 
     /**
-     * @OA\GET(
+     * @OA\POST(
      *     path="/communities/collect/{communty}/{export?}",
      *     tags={"Collect Control"},
      *     description="Obtenemos todas las recogidas",

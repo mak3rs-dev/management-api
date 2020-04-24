@@ -282,7 +282,7 @@
             }
         },
         "/communities/collect/{communty}/{export?}": {
-            "get": {
+            "post": {
                 "tags": [
                     "Collect Control"
                 ],
@@ -698,12 +698,40 @@
             }
         },
         "/communities/ranking/{alias}/{export?stock}": {
-            "get": {
+            "post": {
                 "tags": [
                     "Community"
                 ],
                 "description": "Ranking de la comunidad",
                 "operationId": "App\\Http\\Controllers\\InCommunityController::ranking",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "piece": {
+                                        "description": "",
+                                        "type": "string"
+                                    },
+                                    "mak3r_num": {
+                                        "description": "",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "ok"
@@ -1011,6 +1039,49 @@
                                     "units": {
                                         "description": "",
                                         "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "422": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/communities/{alias}/users": {
+            "get": {
+                "tags": [
+                    "All Users of Community"
+                ],
+                "description": "Cuando un usuario se quiere añadir a una comunidad",
+                "operationId": "App\\Http\\Controllers\\UserController::getUserOfCommunity",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "q": {
+                                        "description": "search",
+                                        "type": "string"
+                                    },
+                                    "mak3r_num": {
+                                        "description": "",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
