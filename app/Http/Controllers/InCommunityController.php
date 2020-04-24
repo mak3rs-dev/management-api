@@ -19,10 +19,20 @@ class InCommunityController extends Controller
     }
 
     /**
-     * @OA\GET(
+     * @OA\POST(
      *     path="/communities/ranking/{alias}/{export?stock}",
      *     tags={"Community"},
      *     description="Ranking de la comunidad",
+     *     @OA\RequestBody( required=false,
+     *     @OA\MediaType(
+     *       mediaType="application/json",
+     *       @OA\Schema(
+     *         @OA\Property(property="user", description="", type="string"),
+     *         @OA\Property(property="piece", description="", type="string"),
+     *         @OA\Property(property="mak3r_num", description="", type="array", @OA\Items(type="integer", format="binary")),
+     *       ),
+     *     ),
+     *     ),
      *     @OA\Response(response=200, description="ok"),
      * )
      *
