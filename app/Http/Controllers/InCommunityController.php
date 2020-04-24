@@ -44,7 +44,7 @@ class InCommunityController extends Controller
             'export' => 'nullable|string',
             'user' => 'nullable|string',
             'piece' => 'nullable|string',
-            'mak3r_num' => 'nullable|integer'
+            'mak3r_num' => 'nullable|array'
         ], [
             'alias.required' => 'El alias es requerido'
         ]);
@@ -165,7 +165,7 @@ class InCommunityController extends Controller
                         return $query->where('u.uuid', $request->user);
                     })
                     ->when($request->mak3r_num != null && $admin, function ($query) use ($request) {
-                        return $query->where('ic.mak3r_num', $request->mak3r_num);
+                        return $query->whereIn('ic.mak3r_num', $request->mak3r_num);
                     })
                     ->groupBy('ic.user_id');
             }, 'a')
