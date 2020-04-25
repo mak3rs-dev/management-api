@@ -26,7 +26,7 @@ class SendMessageTelegramController extends Controller
      *       mediaType="application/json",
      *       @OA\Schema(
      *         @OA\Property(property="community", description="uuid", type="string"),
-     *         @OA\Property(property="user", description="uuid", type="string"),
+     *         @OA\Property(property="users", description="uuid", type="string"),
      *         @OA\Property(property="message", description="text", type="string"),
      *       ),
      *     ),
@@ -44,7 +44,7 @@ class SendMessageTelegramController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'community' => 'required|string',
-            'user' => 'required|array|min:1',
+            'users' => 'required|array|min:1',
             'message' => 'required|string'
         ], [
             'community.required' => 'La comunidad es requerida',
@@ -58,7 +58,7 @@ class SendMessageTelegramController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $community = Community::where('uuid', $request->community)->first();
+        $community = Community::where('alias', $request->community)->first();
         if ($community == null) {
             return response()->json(['error' => 'No se encuentra la comunidad'], 404);
         }
