@@ -89,7 +89,7 @@ class SendMessageTelegramController extends Controller
                 try {
                     Telegram::sendMessage([
                         'chat_id' => $telData->chatid,
-                        'text' => $request->message . "mensaje enviado por " . Str::startsWith(auth()->user()->alias, "@") ? auth()->user()->alias : "@".auth()->user()->alias
+                        'text' => $request->message . "\n\nMensaje enviado por " . (Str::startsWith(auth()->user()->alias, "@") ? auth()->user()->alias : "@".auth()->user()->alias)
                     ]);
 
                 } catch (TelegramSDKException $e) {
