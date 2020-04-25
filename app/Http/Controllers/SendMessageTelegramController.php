@@ -102,7 +102,7 @@ class SendMessageTelegramController extends Controller
         }
 
         if ($errors > 0) {
-            return response()->json(['error' => $errors], 500);
+            return response()->json(['errors' => $errors], 500);
         }
 
         return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
