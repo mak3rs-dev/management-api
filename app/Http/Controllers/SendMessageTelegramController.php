@@ -69,22 +69,19 @@ class SendMessageTelegramController extends Controller
             return response()->json(['error' => 'No tienes permisos para enviar mensajes'], 403);
         }
 
-        $users = User::whereIn('uuid', $request->user)->first();
-        if ($users == null) {
-            return response()->json(['error' => 'No se encuentra el usuario'], 404);
-        }
-
-        if (!auth()->user()->hasRole('USER:ADMIN')) {
-            $inCommunityUser = $community->InCommunities->where('user_id', $user->id)->first();
-            if ($inCommunityUser == null) {
-                return response()->json(['error' => 'El Mak3r no pertenece a tu comunidad'], 403);
-            }
-        }
+        $users = User::whereIn('uuid', $request->user)->get();
 
         $errors = [];
         foreach ($users as $user) {
             // Parse telegram_data
             $telData = json_decode($user->telegram_data);
+
+            if (!auth()->user()->hasRole('USER:ADMIN')) {
+                $inCommunityUser = $community->InCommunities->where('user_id', $user->id)->first();
+                if ($inCommunityUser == null) {
+                    $errors[] = "El Mak3r $user->alias no pertenece a tu comunidad";
+                }
+            }
 
             if ($telData != null && isset($telData->chatid)) {
                 // SendMessage
