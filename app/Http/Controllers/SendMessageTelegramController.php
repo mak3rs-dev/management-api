@@ -41,7 +41,7 @@ class SendMessageTelegramController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function SendMessage(Request $request) {
-        /*// Validate request
+        // Validate request
         $validator = Validator::make($request->all(), [
             'community' => 'required|string',
             'users' => 'required|array|min:1',
@@ -102,7 +102,7 @@ class SendMessageTelegramController extends Controller
 
         if ($errors > 0) {
             return response()->json(['error' => $errors], 500);
-        }*/
+        }
 
         return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
     }
