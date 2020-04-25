@@ -72,6 +72,7 @@ class SendMessageTelegramController extends Controller
 
         $users = User::whereIn('uuid', $request->users)->get();
 
+        $message = $request->message . "\n\nMensaje enviado por " . (Str::startsWith(auth()->user()->alias, "@") ? auth()->user()->alias : "@".auth()->user()->alias);
         $errors = [];
         foreach ($users as $user) {
             if (!auth()->user()->hasRole('USER:ADMIN')) {
@@ -89,7 +90,7 @@ class SendMessageTelegramController extends Controller
                 try {
                     Telegram::sendMessage([
                         'chat_id' => $telData->chatid,
-                        'text' => $request->message . "\n\nMensaje enviado por " . (Str::startsWith(auth()->user()->alias, "@") ? auth()->user()->alias : "@".auth()->user()->alias)
+                        'text' => $message
                     ]);
 
                 } catch (TelegramSDKException $e) {
