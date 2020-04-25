@@ -41,7 +41,7 @@ class SendMessageTelegramController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function SendMessage(Request $request) {
-        // Validate request
+        /*// Validate request
         $validator = Validator::make($request->all(), [
             'community' => 'required|string',
             'users' => 'required|array|min:1',
@@ -73,15 +73,15 @@ class SendMessageTelegramController extends Controller
 
         $errors = [];
         foreach ($users as $user) {
-            // Parse telegram_data
-            $telData = json_decode($user->telegram_data);
-
             if (!auth()->user()->hasRole('USER:ADMIN')) {
                 $inCommunityUser = $community->InCommunities->where('user_id', $user->id)->first();
                 if ($inCommunityUser == null) {
                     $errors[] = "El Mak3r $user->alias no pertenece a tu comunidad";
                 }
             }
+
+            // Parse telegram_data
+            $telData = json_decode($user->telegram_data);
 
             if ($telData != null && isset($telData->chatid)) {
                 // SendMessage
@@ -102,7 +102,7 @@ class SendMessageTelegramController extends Controller
 
         if ($errors > 0) {
             return response()->json(['error' => $errors], 500);
-        }
+        }*/
 
         return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
     }
