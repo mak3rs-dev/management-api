@@ -6,6 +6,7 @@ use App\Models\Community;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Telegram\Bot\Exceptions\TelegramSDKException;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
@@ -88,7 +89,7 @@ class SendMessageTelegramController extends Controller
                 try {
                     Telegram::sendMessage([
                         'chat_id' => $telData->chatid,
-                        'text' => $request->message
+                        'text' => $request->message . "mensaje enviado por " . Str::startsWith("@") ? auth()->user()->alias : "@".auth()->user()->alias
                     ]);
 
                 } catch (TelegramSDKException $e) {
