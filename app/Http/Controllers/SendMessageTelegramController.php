@@ -102,7 +102,7 @@ class SendMessageTelegramController extends Controller
             }
         }
 
-        if ($errors > 0) {
+        if (count($errors) > 0) {
             return response()->json(['errors' => $errors], 500);
         }
 
