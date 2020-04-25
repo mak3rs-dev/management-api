@@ -44,11 +44,12 @@ class SendMessageTelegramController extends Controller
         // Validate request
         $validator = Validator::make($request->all(), [
             'community' => 'required|string',
-            'user' => 'required|string',
+            'user' => 'required|array|min:1',
             'message' => 'required|string'
         ], [
             'community.required' => 'La comunidad es requerida',
             'user.required' => 'El usuario es requerido',
+            'user.min' => 'Tiene que haber al menos un usuario',
             'message.required' => 'El mensaje es requerido'
         ]);
 
@@ -68,8 +69,8 @@ class SendMessageTelegramController extends Controller
             return response()->json(['error' => 'No tienes permisos para enviar mensajes'], 403);
         }
 
-        $user = User::where('uuid', $request->user)->first();
-        if ($user == null) {
+        $users = User::whereIn('uuid', $request->user)->first();
+        if ($users == null) {
             return response()->json(['error' => 'No se encuentra el usuario'], 404);
         }
 
@@ -80,25 +81,32 @@ class SendMessageTelegramController extends Controller
             }
         }
 
-        // Parse telegram_data
-        $telData = json_decode($user->telegram_data);
+        $errors = [];
+        foreach ($users as $user) {
+            // Parse telegram_data
+            $telData = json_decode($user->telegram_data);
 
-        if ($telData != null && isset($telData->chatid)) {
-            // SendMessage
-            try {
-                Telegram::sendMessage([
-                    'chat_id' => $telData->chatid,
-                    'text' => $request->message
-                ]);
+            if ($telData != null && isset($telData->chatid)) {
+                // SendMessage
+                try {
+                    Telegram::sendMessage([
+                        'chat_id' => $telData->chatid,
+                        'text' => $request->message
+                    ]);
 
-                return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
+                } catch (TelegramSDKException $e) {
+                    $errors[] = "Al usuario $user->alias no se le ha podido enviar el mensaje";
+                }
 
-            } catch (TelegramSDKException $e) {
-                return response()->json(['error' => 'El mensaje no se ha podido enviar correctamente'], 500);
+            } else {
+               $errors[] = "El usuario $user->alias no tiene un chat_id";
             }
-
-        } else {
-            return response()->json(['error' => 'El usuario no tiene asociado un chat_id'], 500);
         }
+
+        if ($errors > 0) {
+            return response()->json(['error' => $errors], 500);
+        }
+
+        return response()->json(['message' => 'El mensaje se ha enviado correctamente'], 200);
     }
 }
