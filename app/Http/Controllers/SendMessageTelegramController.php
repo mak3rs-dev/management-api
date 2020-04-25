@@ -69,7 +69,7 @@ class SendMessageTelegramController extends Controller
             return response()->json(['error' => 'No tienes permisos para enviar mensajes'], 403);
         }
 
-        $users = User::whereIn('uuid', $request->user)->get();
+        $users = User::whereIn('uuid', $request->users)->get();
 
         $errors = [];
         foreach ($users as $user) {
